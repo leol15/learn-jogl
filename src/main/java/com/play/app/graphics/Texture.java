@@ -1,12 +1,17 @@
 
 package com.play.app.graphics;
 
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
-import org.lwjgl.system.MemoryStack;
+import org.lwjgl.*;
+import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.*;
+import org.lwjgl.system.*;
 
+import java.nio.*;
+
+import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
+import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Texture {
@@ -45,22 +50,19 @@ public class Texture {
 
     private void loadTexture(String path) {
         ByteBuffer data;
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            IntBuffer w = stack.mallocInt(1);
-            IntBuffer h = stack.mallocInt(1);
-            IntBuffer comp = stack.mallocInt(1);
+        
+        IntBuffer w = BufferUtils.createIntBuffer(1);
+        IntBuffer h = BufferUtils.createIntBuffer(1);
+        IntBuffer comp = BufferUtils.createIntBuffer(1);
 
-            stbi_set_flip_vertically_on_load(true);
-            data = stbi_load(path, w, h, comp, 4);
-            if (data == null) {
-                System.out.println("Working Directory = " + System.getProperty("user.dir"));
-
-                throw new RuntimeException("Cannot load texture file: " +
-                    path + "\n" + stbi_failure_reason());
-            }
-            width = w.get();
-            height = h.get();
+        stbi_set_flip_vertically_on_load(true);
+        data = stbi_load(path, w, h, comp, 4);
+        if (data == null) {
+            throw new RuntimeException("Cannot load texture file: " +
+                path + "\n" + stbi_failure_reason());
         }
+        width = w.get();
+        height = h.get();
 
         bindTexture();
         setParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
