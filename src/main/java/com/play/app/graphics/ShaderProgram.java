@@ -58,8 +58,16 @@ public class ShaderProgram {
     
     // sets a uniform mat4 in the shader
     public void uniformMatrix4fv(String uniformName, FloatBuffer buffer) {
+        useProgram();
         int uniformId = glGetUniformLocation(id, uniformName);
         glUniformMatrix4fv(uniformId, false, buffer);
+    }
+
+    // sets the location of texture
+    public void uniform(String uniformName, int location) {
+        useProgram();
+        int uniformId = glGetUniformLocation(id, uniformName);
+        glUniform1i(uniformId, 0);
     }
 
 

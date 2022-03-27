@@ -37,8 +37,8 @@ public class Rendering {
 
 
         ShaderProgram shaderProgram = new ShaderProgram();
-        shaderProgram.loadShaderFromPath("/shaders/Simple.vert", GL_VERTEX_SHADER);
-        shaderProgram.loadShaderFromPath("/shaders/Simple.frag", GL_FRAGMENT_SHADER);
+        shaderProgram.loadShaderFromPath("resources/shaders/Simple.vert", GL_VERTEX_SHADER);
+        shaderProgram.loadShaderFromPath("resources/shaders/Simple.frag", GL_FRAGMENT_SHADER);
         shaderProgram.linkProgram();
         shaderProgram.useProgram();   
 
@@ -72,6 +72,10 @@ public class Rendering {
             glfwSwapBuffers(window);
 
             glClear(GL_COLOR_BUFFER_BIT);
+
+            model.rotate(0.01f, new Vector3f(0, 0, 1));
+            model.get(fbModel);
+            shaderProgram.uniformMatrix4fv("model", fbModel);
 
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
