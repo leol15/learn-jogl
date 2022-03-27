@@ -23,32 +23,28 @@ public class Rendering {
         int vao = glGenVertexArrays();
         glBindVertexArray(vao);
 
-        try (MemoryStack stack = MemoryStack.stackPush()) {
-            FloatBuffer vertices = stack.mallocFloat(3 * 6);
-            vertices.put(-0.6f).put(-0.4f).put(0f).put(1f).put(0f).put(0f);
-            vertices.put(0.6f).put(-0.4f).put(0f).put(0f).put(1f).put(0f);
-            vertices.put(0f).put(0.6f).put(0f).put(0f).put(0f).put(1f);
-            vertices.flip();
+        FloatBuffer vertices = BufferUtils.createFloatBuffer(3 * 6);
+        vertices.put(-0.6f).put(-0.4f).put(0f).put(1f).put(0f).put(0f);
+        vertices.put(0.6f).put(-0.4f).put(0f).put(0f).put(1f).put(0f);
+        vertices.put(0f).put(0.6f).put(0f).put(0f).put(0f).put(1f);
+        vertices.flip();
 
-            int vbo = glGenBuffers();
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-        }
+        int vbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
 
 
+        // setup shader
         ShaderProgram shaderProgram = new ShaderProgram();
         shaderProgram.loadShaderFromPath("resources/shaders/Simple.vert", GL_VERTEX_SHADER);
         shaderProgram.loadShaderFromPath("resources/shaders/Simple.frag", GL_FRAGMENT_SHADER);
         shaderProgram.linkProgram();
         shaderProgram.useProgram();   
 
-        // setup VAO
-        int floatSize = 4;
+        shaderProgram.setVertexAttribPointer("position", 3, 6 * Float.BYTES, 0);
+        shaderProgram.setVertexAttribPointer("color",    3, 6 * Float.BYTES, 3 * Float.BYTES);
 
-        shaderProgram.setVertexAttribPointer("position", 3, 6 * floatSize, 0);
-        shaderProgram.setVertexAttribPointer("color",    3, 6 * floatSize, 3 * floatSize);
-
-        // set uniform location
+        // set uniform locations
         Matrix4f model = new Matrix4f();
         FloatBuffer fbModel = BufferUtils.createFloatBuffer(16);
         model.get(fbModel);
@@ -63,6 +59,8 @@ public class Rendering {
         FloatBuffer fbProjection = BufferUtils.createFloatBuffer(16);
         projection.get(fbProjection);
         shaderProgram.uniformMatrix4fv("projection", fbProjection);
+
+
 
 		glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
 

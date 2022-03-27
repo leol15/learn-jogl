@@ -25,8 +25,8 @@ public class App {
 
 		// run the main class
 		// new GameTutorial(this.window);
-		// new Rendering(this.window);
-		new UseTexture(this.window);
+		new Rendering(this.window);
+		// new UseTexture(this.window);
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);
