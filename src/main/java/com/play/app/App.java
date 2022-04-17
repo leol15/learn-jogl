@@ -25,8 +25,10 @@ public class App {
 
 		// run the main class
 		// new GameTutorial(this.window);
-		// new Rendering(this.window);
-		new UseTexture(this.window);
+		new Rendering(this.window);
+		// new Batching(this.window);
+		// new UseTexture(this.window);
+		// new Input(this.window);
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);
@@ -95,6 +97,10 @@ public class App {
 
 		glfwMakeContextCurrent(window);
         GL.createCapabilities();
+
+        /* Enable blending */
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	private void loop() {

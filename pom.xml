@@ -59,6 +59,7 @@
     <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-par</artifactId><classifier>natives-windows</classifier></dependency>
     <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-stb</artifactId><classifier>natives-windows</classifier></dependency>
     <dependency><groupId>org.joml</groupId><artifactId>joml</artifactId><version>1.10.4</version></dependency>
+    <!-- https://joml-ci.github.io/JOML/apidocs/org/joml/ -->
   </dependencies>
 
   <build>

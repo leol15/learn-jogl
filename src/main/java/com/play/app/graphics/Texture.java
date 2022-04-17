@@ -2,16 +2,11 @@
 package com.play.app.graphics;
 
 import org.lwjgl.*;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
 
 import java.nio.*;
 
 import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
-import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Texture {
@@ -22,18 +17,55 @@ public class Texture {
     public Texture() {
         id = glGenTextures();
     }
+    public Texture(int width, int height) {
+        id = glGenTextures();
+        this.width = width;
+        this.height = height;
+    }
 
     public Texture(String path) {
         this();
         loadTexture(path);
     }
 
+    /**
+     * Creates a texture with specified width, height and data.
+     *
+     * @param width  Width of the texture
+     * @param height Height of the texture
+     * @param data   Picture Data in RGBA format
+     *
+     * @return Texture from the specified data
+     */
+    public static Texture createTexture(int width, int height, ByteBuffer data) {
+        Texture texture = new Texture(width, height);
+
+        texture.bindTexture();
+
+        texture.setParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        texture.setParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        texture.setParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        texture.setParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 
+            width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+        texture.unBindTexture();
+        return texture;
+    }
+
+    
+    // getters
     public int getId() { return id; }
     public int getWidth() { return width; }
     public int getHeight() { return height; }
 
     public void bindTexture() {
         glBindTexture(GL_TEXTURE_2D, id);
+    }    
+    
+    public void unBindTexture() {
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     public void setParameteri(int name, int value) {

@@ -11,38 +11,32 @@ import java.nio.*;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
 import com.play.app.graphics.*;
+import com.play.app.utils.VAO;
 
 public class Rendering {
 
     public Rendering(long window) {
-        int vao = glGenVertexArrays();
-        glBindVertexArray(vao);
+        glEnable(GL_DEPTH_TEST);  
 
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(3 * 6);
-        vertices.put(-0.6f).put(-0.4f).put(0f).put(1f).put(0f).put(0f);
-        vertices.put(0.6f).put(-0.4f).put(0f).put(0f).put(1f).put(0f);
-        vertices.put(0f).put(0.6f).put(0f).put(0f).put(0f).put(1f);
-        vertices.flip();
-
-        int vbo = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         // setup shader
         ShaderProgram shaderProgram = new ShaderProgram();
         shaderProgram.loadShaderFromPath("resources/shaders/Simple.vert", GL_VERTEX_SHADER);
         shaderProgram.loadShaderFromPath("resources/shaders/Simple.frag", GL_FRAGMENT_SHADER);
         shaderProgram.linkProgram();
-        shaderProgram.useProgram();   
+        shaderProgram.useProgram();
 
+
+        VAO cubeVao = VAO.createCube();
+        cubeVao.bind();
         shaderProgram.setVertexAttribPointer("position", 3, 6 * Float.BYTES, 0);
         shaderProgram.setVertexAttribPointer("color",    3, 6 * Float.BYTES, 3 * Float.BYTES);
+        cubeVao.unbind();
 
         // set uniform locations
         Matrix4f model = new Matrix4f();
@@ -61,21 +55,25 @@ public class Rendering {
         shaderProgram.uniformMatrix4fv("projection", fbProjection);
 
 
-
-		glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+		glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
+        model.scale(1.3f);
 
         while (!glfwWindowShouldClose(window)) {
             // loop
             double time =glfwGetTime();
             glfwSwapBuffers(window);
 
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            model.rotate(0.01f, new Vector3f(0, 0, 1));
+            model.rotate(0.01f, new Vector3f(1, 1, 1));
             model.get(fbModel);
+
+            cubeVao.bind();
             shaderProgram.uniformMatrix4fv("model", fbModel);
 
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+            // glDrawArrays(GL_TRIANGLES, 0, 3);
+            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
 
             glfwPollEvents();
         }

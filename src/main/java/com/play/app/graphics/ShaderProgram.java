@@ -1,8 +1,9 @@
 package com.play.app.graphics;
 
-import org.lwjgl.*;
+import org.joml.*;
 import java.nio.*;
 import static org.lwjgl.opengl.GL30.*;
+
 
 import com.play.app.utils.*;
 
@@ -26,11 +27,17 @@ public class ShaderProgram {
 
         int shaderId = glCreateShader(type);
         String source = AssetTools.loadTextFile(path);
+        if (source == null) {
+            glDeleteShader(shaderId);
+            return;
+        }
+
         glShaderSource(shaderId, source);
         glCompileShader(shaderId);
         if (glGetShaderi(shaderId, GL_COMPILE_STATUS) != GL_TRUE) {
             throw new RuntimeException(glGetShaderInfoLog(shaderId));
         }
+        
         glAttachShader(id, shaderId);
         glDeleteShader(shaderId);
     }
@@ -50,6 +57,8 @@ public class ShaderProgram {
         glUseProgram(id);
     }
 
+    // note! Need a valid VAO to be bound
+    // deprecated, wrong, should `glVertexAttribPointer` directly to a VAO 
     public void setVertexAttribPointer(String attributeName, int size, int stride, int offset) {
         int attributeId = glGetAttribLocation(id, attributeName);
         glEnableVertexAttribArray(attributeId);
@@ -62,6 +71,19 @@ public class ShaderProgram {
         int uniformId = glGetUniformLocation(id, uniformName);
         glUniformMatrix4fv(uniformId, false, buffer);
     }
+
+    public void uniform2f(String uniformName, Vector2f v) {
+        useProgram();
+        int uniformId = glGetUniformLocation(id, uniformName);
+        glUniform2f(uniformId, v.x, v.y);
+    }
+
+    public void uniform3f(String uniformName, Vector3f v) {
+        useProgram();
+        int uniformId = glGetUniformLocation(id, uniformName);
+        glUniform3f(uniformId, v.x, v.y, v.z);
+    }
+
 
     // sets the location of texture
     public void uniform(String uniformName, int location) {
