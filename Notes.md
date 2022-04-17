@@ -1,4 +1,10 @@
-Need to bind VAO for setVertexAttribPointer
+- Need to bind VAO for setVertexAttribPointer
+
+
+# TODO:
+
+- Learn about dynamic draw
+
 
 
 ## Input

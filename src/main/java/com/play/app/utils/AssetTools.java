@@ -5,6 +5,9 @@ package com.play.app.utils;
 import java.io.*;
 import java.util.*;
 
+import javax.imageio.ImageIO;
+import java.awt.image.*;
+
 
 public class AssetTools {
 
@@ -31,6 +34,15 @@ public class AssetTools {
         } catch (FileNotFoundException e) {
             System.err.println("Cannot find file: " + path);
             return null;
+        }
+    }
+
+    public static void saveBufferedImage(BufferedImage image, String path) {
+        try {
+            ImageIO.write(image, "png", new File(path));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 

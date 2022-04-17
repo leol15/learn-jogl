@@ -25,10 +25,10 @@ public class App {
 
 		// run the main class
 		// new GameTutorial(this.window);
-		new Rendering(this.window);
+		// new Rendering(this.window);
 		// new Batching(this.window);
 		// new UseTexture(this.window);
-		// new Input(this.window);
+		new Input(this.window);
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);

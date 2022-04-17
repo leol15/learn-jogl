@@ -84,6 +84,12 @@ public class ShaderProgram {
         glUniform3f(uniformId, v.x, v.y, v.z);
     }
 
+    public void uniform4f(String uniformName, Vector4f v) {
+        useProgram();
+        int uniformId = glGetUniformLocation(id, uniformName);
+        glUniform4f(uniformId, v.x, v.y, v.z, v.w);
+    }
+
 
     // sets the location of texture
     public void uniform(String uniformName, int location) {

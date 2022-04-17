@@ -50,7 +50,7 @@ public class Texture {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 
             width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 
-        texture.unBindTexture();
+        texture.unbindTexture();
         return texture;
     }
 
@@ -64,7 +64,7 @@ public class Texture {
         glBindTexture(GL_TEXTURE_2D, id);
     }    
     
-    public void unBindTexture() {
+    public void unbindTexture() {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
