@@ -1,27 +1,34 @@
 package com.play.app.graphics;
 
 
+import static java.awt.Font.BOLD;
+import static java.awt.Font.MONOSPACED;
+import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+
+import java.awt.Font;
+import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.awt.image.AffineTransformOp;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.play.app.utils.VAO;
 
+import org.joml.Matrix4f;
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
-import static org.lwjgl.opengl.GL30.*;
-import static java.awt.Font.MONOSPACED;
-import static java.awt.Font.PLAIN;
-
-import java.awt.Font;
-
-import com.play.app.utils.*;
 
 public class Text {
 
@@ -50,7 +57,13 @@ public class Text {
     }
     
 
-    private final Texture texture;
+    // static things
+    private static ShaderProgram textShader;
+
+    // styles
+    private Vector4f textColor = new Vector4f(0.1f, 0.1f, 0.1f, 1f);
+
+    private Texture texture;
     /**
      * Contains the glyphs for each char.
      */
@@ -58,16 +71,41 @@ public class Text {
     private int fontHeight;
     private VAO vao;
     private int numChars;
+    private float textWidth;
+    private float textHeight;
 
-    public Text() {
-        texture = createFontTexture(new Font(MONOSPACED, PLAIN, 16), true);
+    public Text(long window) {
+        if (textShader == null) {
+            initStatic(window);
+        }
+        texture = createFontTexture(new Font(MONOSPACED, BOLD, 20), true);
+        // textShader.uniform("texImage", 0);  for multiple texture
+
         fontHeight = texture.getHeight();
         vao = new VAO();
     }
 
-    public void setText(CharSequence text, float x, float y, float windowWidth, float windowHeight) {
-        numChars = text.length();
+    public Text(long window, CharSequence text, float x, float y) {
+        this(window);
+        setText(text, x, y);
+    }
 
+    public float getWidth() { return textWidth; }
+    public float getHeight() { return textHeight; }
+    public void setColor(Color c) {
+        setColor(c.getRed() / 255.0f,
+                 c.getGreen() / 255.0f,
+                 c.getBlue() / 255.0f,
+                 c.getAlpha() / 255.0f);
+    }
+    public void setColor(float r, float g, float b, float a) {
+        textColor.set(r, g, b, a);
+    }
+
+    public void setText(CharSequence text, float x, float y) {
+        numChars = 0;
+        textWidth = 0;
+        textHeight = 0;
         /**
          * Layout: 
          *  12 56
@@ -75,14 +113,13 @@ public class Text {
          */
         FloatBuffer fb = BufferUtils.createFloatBuffer(text.length() * 4 * (3 + 2));
         IntBuffer ib = BufferUtils.createIntBuffer(text.length() * 6);
-        
         float drawX = x;
         float drawY = y;
         for (int i = 0; i < text.length(); i++) {
             char ch = text.charAt(i);
             if (ch == '\n') {
                 /* Line feed, set x and y to draw at the next line */
-                drawY -= fontHeight;
+                drawY += fontHeight;
                 drawX = x;
                 continue;
             }
@@ -92,51 +129,54 @@ public class Text {
             }
             Glyph g = glyphs.get(ch);
 
-            int indexBase = fb.position();
-            addChar(fb, drawX, drawY, g.x, g.y, g.width, g.height);
-            // fb.put(drawX).put(drawY).put(0).put(g.x).put(g.y);
-            // fb.put(drawX + g.width).put(drawY).put(0).put(g.x + g.width).put(g.y);
-            // fb.put(drawX + g.width).put(drawY + g.height).put(0).put(g.x + g.width).put(g.y + g.height);
-            // fb.put(drawX).put(drawY + g.height).put(0).put(g.x).put(g.y + g.height);
-
+            addCharToBuffer(fb, drawX, drawY, g.x, g.y, g.width, g.height);
+            int indexBase = numChars * 4;
             ib.put(indexBase).put(indexBase + 1).put(indexBase + 2);
             ib.put(indexBase).put(indexBase + 2).put(indexBase + 3);
 
+            numChars++;
             drawX += g.width;
+            textWidth = Math.max(textWidth, drawX - x);
+            textHeight = Math.max(textHeight, drawY + g.height - y);
         }
+        fb.flip();
+        ib.flip();
         vao.bufferVerticies(fb);
         vao.bufferIndices(ib);
+        vao.vertexAttribPointerF(0, 3, 5, 0);
+        vao.vertexAttribPointerF(1, 2, 5, 3);
     }
 
+    public void draw() {
+        textShader.uniform4f("color", textColor);
+
+        texture.bindTexture();
+        textShader.useProgram();
+        vao.bind();
+
+        // textShader.uniform("texcoord", 0);
+        glDrawElements(GL_TRIANGLES, numChars * 6, GL_UNSIGNED_INT, 0);
+
+        vao.unbind();
+        textShader.unuseProgram();
+        texture.unbindTexture();
+    }
+
+
     // coords in screen space
-    private void addChar(FloatBuffer fb, float x, float y, float tx, float ty, float tw, float th) {
+    private void addCharToBuffer(FloatBuffer fb, float x, float y, float tx, float ty, float tw, float th) {
         float w = tw;
         float h = th;
         tx = tx / texture.getWidth();
         ty = ty / texture.getHeight();
         tw = tw / texture.getWidth();
         th = th / texture.getHeight();
-        // Func.toGLPosition(x, max, isY)
-    }
-
-
-    /**
-     * Draw text at the specified position and color.
-     * @param renderer The renderer to use
-     * @param text     Text to draw
-     * @param x        X coordinate of the text position
-     * @param y        Y coordinate of the text position
-     * @param c        Color to use
-     */
-    public void draw() {
-        texture.bindTexture();
-        vao.bind();
         
-        glDrawElements(GL_TRIANGLES, numChars * 6, GL_UNSIGNED_INT, 0);
-        texture.unbindTexture();
-        vao.unbind();
+        fb.put(x).put(y).put(0).put(tx).put(ty);
+        fb.put(x + w).put(y).put(0).put(tx + tw).put(ty);
+        fb.put(x + w).put(y + h).put(0).put(tx + tw).put(ty + th);
+        fb.put(x).put(y + h).put(0).put(tx).put(ty + th);
     }
-
 
     /**
      * Helper to load font into a texture
@@ -176,8 +216,6 @@ public class Text {
             g.drawImage(charImage, x, 0, null);
             x += ch.width;
             glyphs.put(c, ch);
-
-            System.out.println("char " + c + " w " + charWidth + " h " + charHeight);
         }
 
         /* Flip image Horizontal to get the origin to bottom left */
@@ -185,7 +223,7 @@ public class Text {
         transform.translate(0, -image.getHeight());
         AffineTransformOp operation = new AffineTransformOp(transform,
                                                             AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-        image = operation.filter(image, null);
+        // image = operation.filter(image, null);
         /* Get charWidth and charHeight of image */
         int width = image.getWidth();
         int height = image.getHeight();
@@ -238,4 +276,30 @@ public class Text {
         g.dispose();
         return image;
     }
+
+
+    private void initStatic(long window) {
+        // get window stats
+        IntBuffer windowWidthBuffer = BufferUtils.createIntBuffer(1);
+        IntBuffer windowHeightBuffer = BufferUtils.createIntBuffer(1);
+        // Get the window size passed to glfwCreateWindow
+        glfwGetWindowSize(window, windowWidthBuffer, windowHeightBuffer);
+        int windowWidth = windowWidthBuffer.get();
+        int windowHeight = windowHeightBuffer.get();
+
+        textShader = new ShaderProgram();
+        textShader.loadShaderFromPath("resources/shaders/Text.vert", GL_VERTEX_SHADER);
+        textShader.loadShaderFromPath("resources/shaders/Text.frag", GL_FRAGMENT_SHADER);
+        textShader.linkProgram();
+
+        // screen to UI projection
+        Matrix4f projection = new Matrix4f();
+        projection.scale(2f / windowWidth, -2f / windowHeight, 1);
+        projection.translate(-windowWidth / 2, -windowHeight / 2, 0);
+        FloatBuffer screenToGLSpace = BufferUtils.createFloatBuffer(16);
+        projection.get(screenToGLSpace);
+        textShader.uniformMatrix4fv("UItoGL", screenToGLSpace);
+
+    }
+
 }

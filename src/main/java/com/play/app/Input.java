@@ -22,10 +22,16 @@ public class Input {
 
     public Input(long window) {
 
+        /* Enable blending */
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
         Button button = new Button(window, 0, 0, 100f, 100f);
         button.setColor(Color.BLACK);
         Button button2 = new Button(window, 100, 100, 100f, 100f);
-        Button button3 = new Button(window, 300, 300, 100f, 100f);
+        Button button3 = new Button(window, 300, 300, "Yoooo");
 
         int[] tmp = new int[1];
         button.setAction(() -> {

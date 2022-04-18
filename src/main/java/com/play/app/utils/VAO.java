@@ -36,10 +36,11 @@ public class VAO {
         unbind();
     }
 
-    public void vertexAttribPointer(int index, int size, int type, int stride) {
+    public void vertexAttribPointerF(int index, int size, int stride, int offset) {
         bind();
         glEnableVertexAttribArray(index);
-        glVertexAttribPointer(index, size, GL_FLOAT, false, stride, 0);
+        glVertexAttribPointer(index, size, GL_FLOAT, false, 
+            stride * Float.BYTES, offset * Float.BYTES);
         unbind();
     }
 

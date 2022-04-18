@@ -33,10 +33,8 @@ public class Rendering {
 
 
         VAO cubeVao = VAO.createCube();
-        cubeVao.bind();
-        shaderProgram.setVertexAttribPointer("position", 3, 6 * Float.BYTES, 0);
-        shaderProgram.setVertexAttribPointer("color",    3, 6 * Float.BYTES, 3 * Float.BYTES);
-        cubeVao.unbind();
+        cubeVao.vertexAttribPointerF(0, 3, 6, 0);
+        cubeVao.vertexAttribPointerF(1, 3, 6, 3);
 
         // set uniform locations
         Matrix4f model = new Matrix4f();

@@ -40,17 +40,12 @@ public class Texture {
     public static Texture createTexture(int width, int height, ByteBuffer data) {
         Texture texture = new Texture(width, height);
 
-        texture.bindTexture();
-
         texture.setParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         texture.setParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         texture.setParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         texture.setParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        texture.texImage2D(GL_RGBA8, width, height, GL_RGBA, data);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 
-            width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-        texture.unbindTexture();
         return texture;
     }
 
@@ -69,13 +64,17 @@ public class Texture {
     }
 
     public void setParameteri(int name, int value) {
+        bindTexture();
         glTexParameteri(GL_TEXTURE_2D, name, value);
+        unbindTexture();
     }
 
     public void texImage2D(int internalFormat, int width, int height,
             int format, ByteBuffer data) {
+        bindTexture();
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0,
             format, GL_UNSIGNED_BYTE, data);
+        unbindTexture();
     }
 
     public void detele() { glDeleteTextures(id); }
@@ -96,13 +95,13 @@ public class Texture {
         width = w.get();
         height = h.get();
 
-        bindTexture();
         setParameteri(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         setParameteri(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
         setParameteri(GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         setParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
-            width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        texImage2D(GL_RGBA8, width, height, GL_RGBA, data);
+
+        System.out.println("Loadeding texture from file: " + path + " [w " + width + ", h " + height + "]");
     }
 
 }

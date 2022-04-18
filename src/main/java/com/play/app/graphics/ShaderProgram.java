@@ -56,6 +56,10 @@ public class ShaderProgram {
     public void useProgram() {
         glUseProgram(id);
     }
+    
+    public void unuseProgram() {
+        glUseProgram(0);
+    }
 
     // note! Need a valid VAO to be bound
     // deprecated, wrong, should `glVertexAttribPointer` directly to a VAO 
@@ -70,24 +74,28 @@ public class ShaderProgram {
         useProgram();
         int uniformId = glGetUniformLocation(id, uniformName);
         glUniformMatrix4fv(uniformId, false, buffer);
+        unuseProgram();
     }
 
     public void uniform2f(String uniformName, Vector2f v) {
         useProgram();
         int uniformId = glGetUniformLocation(id, uniformName);
         glUniform2f(uniformId, v.x, v.y);
+        unuseProgram();
     }
 
     public void uniform3f(String uniformName, Vector3f v) {
         useProgram();
         int uniformId = glGetUniformLocation(id, uniformName);
         glUniform3f(uniformId, v.x, v.y, v.z);
+        unuseProgram();
     }
 
     public void uniform4f(String uniformName, Vector4f v) {
         useProgram();
         int uniformId = glGetUniformLocation(id, uniformName);
         glUniform4f(uniformId, v.x, v.y, v.z, v.w);
+        unuseProgram();
     }
 
 
@@ -95,7 +103,8 @@ public class ShaderProgram {
     public void uniform(String uniformName, int location) {
         useProgram();
         int uniformId = glGetUniformLocation(id, uniformName);
-        glUniform1i(uniformId, 0);
+        glUniform1i(uniformId, location);
+        unuseProgram();
     }
 
 

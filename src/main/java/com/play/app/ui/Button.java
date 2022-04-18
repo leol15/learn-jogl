@@ -25,7 +25,7 @@ public class Button {
     private Text text;
 
     // static things
-    static ShaderProgram buttonShader;
+    static ShaderProgram uiShader;
     static List<Button> buttons = new ArrayList<>();
     static float windowWidth, windowHeight;
 
@@ -35,12 +35,28 @@ public class Button {
 
     // coordinates are in screen space
     public Button(long window, float x, float y, float width, float height) {
-        if (buttonShader == null) {
+        if (uiShader == null) {
             initStatic(window);
         }
+        this.text = new Text(window, "Button", x, y);
+        init(x, y, width, height);
+    }
+    
+    public Button(long window, float x, float y, CharSequence label) {
+        if (uiShader == null) {
+            initStatic(window);
+        }
+        this.text = new Text(window, label, x, y);
+        init(x, y, text.getWidth(), text.getHeight());
+    }
 
+    private void init(float x, float y, float width, float height) {
         bounds = new Rect(x, y, width, height);
-        
+        vao = createSquare(x, y, width, height);
+        buttons.add(this);
+    }
+    
+    private VAO createSquare(float x, float y, float width, float height) {
         FloatBuffer vertices = BufferUtils.createFloatBuffer(4 * 3);
         vertices.put(x).put(y).put(0);
         vertices.put(x + width).put(y).put(0);
@@ -55,13 +71,8 @@ public class Button {
         vao = new VAO();
         vao.bufferVerticies(vertices);
         vao.bufferIndices(elements);
-        vao.vertexAttribPointer(0, 3, GL_FLOAT, 3 * Float.BYTES);
-
-        // create text
-        text = new Text();
-        // text.setText("Button", 0, 0);
-
-        buttons.add(this);
+        vao.vertexAttribPointerF(0, 3, 3, 0);
+        return vao;
     }
 
     public void setAction(Runnable r) { action = r; }
@@ -74,6 +85,7 @@ public class Button {
     }
     public void setColor(float r, float g, float b, float a) {
         buttonColor.set(r, g, b, a);
+        text.setColor(1 - r, 1 - g, 1 - b, 1);
     }
 
     public void show() {
@@ -81,14 +93,17 @@ public class Button {
             return;
         }
 
+        uiShader.uniform4f("color", buttonColor);
+        
         vao.bind();
-        buttonShader.useProgram();
-        buttonShader.uniform4f("color", buttonColor);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        vao.unbind();
-        glUseProgram(0);
+        uiShader.useProgram();
 
-        // text.draw();
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        glUseProgram(0);
+        vao.unbind();
+        
+        text.draw();
     }
     
     private boolean handleClick(double x, double y) {
@@ -104,14 +119,6 @@ public class Button {
 
 
     private void initStatic(long window) {
-        // create one off shader
-        buttonShader = new ShaderProgram();
-        buttonShader.loadShaderFromPath("resources/shaders/UI.vert", GL_VERTEX_SHADER);
-        buttonShader.loadShaderFromPath("resources/shaders/UI.frag", GL_FRAGMENT_SHADER);
-        buttonShader.linkProgram();
-        buttonShader.useProgram();
-        glUseProgram(0);
-        
         // setup one callback on mouse click
         final DoubleBuffer mouseX = BufferUtils.createDoubleBuffer(1);
         final DoubleBuffer mouseY = BufferUtils.createDoubleBuffer(1);
@@ -136,15 +143,19 @@ public class Button {
         windowWidth = windowWidthBuffer.get();
         windowHeight = windowHeightBuffer.get();
 
+        // create one off shader
+        uiShader = new ShaderProgram();
+        uiShader.loadShaderFromPath("resources/shaders/UI.vert", GL_VERTEX_SHADER);
+        uiShader.loadShaderFromPath("resources/shaders/UI.frag", GL_FRAGMENT_SHADER);
+        uiShader.linkProgram();
+
         // setup projection matrix to screen space
         Matrix4f projection = new Matrix4f();
         projection.scale(2f / windowWidth, -2f / windowHeight, 1);
         projection.translate(- windowWidth / 2, -windowHeight / 2, 0);
         FloatBuffer screenToGLSpace = BufferUtils.createFloatBuffer(16);
         projection.get(screenToGLSpace);
-        buttonShader.useProgram();
-        buttonShader.uniformMatrix4fv("UItoGL", screenToGLSpace);
-        glUseProgram(0);
+        uiShader.uniformMatrix4fv("UItoGL", screenToGLSpace);
     }
     
 }
