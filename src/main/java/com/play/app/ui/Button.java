@@ -19,19 +19,22 @@ import com.play.app.geometry.*;
 public class Button {
 
     // state
-    private Vector4f buttonColor = new Vector4f(0.8f, 0.8f, 0.8f, 1f);
+    private Vector4f buttonColor = new Vector4f();
     private boolean visible = true;
     private Runnable action = null;
     private Text text;
-
+    
     // static things
     static ShaderProgram uiShader;
     static List<Button> buttons = new ArrayList<>();
     static float windowWidth, windowHeight;
-
+    
     // internal things
     private VAO vao;
     private Rect bounds; // in window space
+    private static long window;
+    private boolean hovered;
+    private Vector4f hoveredColor = new Vector4f(0.8f, 0.8f, 0.8f, 1f);
 
     // coordinates are in screen space
     public Button(long window, float x, float y, float width, float height) {
@@ -53,6 +56,7 @@ public class Button {
     private void init(float x, float y, float width, float height) {
         bounds = new Rect(x, y, width, height);
         vao = createSquare(x, y, width, height);
+        setColor(0.8f, 0.8f, 0.8f, 1f);
         buttons.add(this);
     }
     
@@ -85,6 +89,12 @@ public class Button {
     }
     public void setColor(float r, float g, float b, float a) {
         buttonColor.set(r, g, b, a);
+        if (buttonColor.length() < 1.01f) {
+            hoveredColor.set(0.2, 0.2, 0.2, 1);
+        } else {
+            buttonColor.mul(1.2f, hoveredColor);
+        }
+        hoveredColor.mul(1, 1, 1, 0.7f);
         text.setColor(1 - r, 1 - g, 1 - b, 1);
     }
 
@@ -93,8 +103,8 @@ public class Button {
             return;
         }
 
-        uiShader.uniform4f("color", buttonColor);
-        
+        uiShader.uniform4f("color", hovered ? hoveredColor : buttonColor);
+
         vao.bind();
         uiShader.useProgram();
 
@@ -118,7 +128,8 @@ public class Button {
     }
 
 
-    private void initStatic(long window) {
+    private void initStatic(long windowId) {
+        window = windowId;
         // setup one callback on mouse click
         final DoubleBuffer mouseX = BufferUtils.createDoubleBuffer(1);
         final DoubleBuffer mouseY = BufferUtils.createDoubleBuffer(1);
@@ -134,6 +145,11 @@ public class Button {
                 }
             }
         });
+
+        glfwSetCursorPosCallback(window, (windowIn, xpos, ypos) -> {
+            cursorHover(xpos, ypos);
+        });
+
         
         // get window stats
         IntBuffer windowWidthBuffer = BufferUtils.createIntBuffer(1);
@@ -158,5 +174,13 @@ public class Button {
         uiShader.uniformMatrix4fv("UItoGL", screenToGLSpace);
     }
     
+    private void cursorHover(double x, double y) {
+        boolean anyHover = false;
+        for (Button b : buttons) {
+            b.hovered = b.bounds.inside((float) x, (float) y);
+            anyHover |= b.hovered;
+        }
+        Cursor.setCusor(window, anyHover ? Cursor.CURSOR_POINTING_HAND : Cursor.CURSOR_ARROW);
+    }
 }
 
