@@ -14,22 +14,23 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
+import com.play.app.geometry.Plane;
 import com.play.app.graphics.*;
 import com.play.app.utils.VAO;
 
 public class Rendering {
 
     public Rendering(long window) {
-        glEnable(GL_DEPTH_TEST);  
+        glEnable(GL_DEPTH_TEST);
+        // glDepthFunc(GL_LESS);
 
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // setup shader
         ShaderProgram shaderProgram = new ShaderProgram();
         shaderProgram.loadShaderFromPath("resources/shaders/Simple.vert", GL_VERTEX_SHADER);
         shaderProgram.loadShaderFromPath("resources/shaders/Simple.frag", GL_FRAGMENT_SHADER);
         shaderProgram.linkProgram();
-        shaderProgram.useProgram();
 
 
         VAO cubeVao = VAO.createCube();
@@ -53,8 +54,20 @@ public class Rendering {
         shaderProgram.uniformMatrix4fv("projection", fbProjection);
 
 
+
+        ShaderProgram planeShader = new ShaderProgram()
+            .withShader("resources/shaders/Simple3D.vert", GL_VERTEX_SHADER)
+            .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
+            .linkProgram();
+        planeShader.uniformMatrix4fv("view", fbView);
+        planeShader.uniformMatrix4fv("projection", fbProjection);
+        Plane p = new Plane();
+        p.model
+            .rotate(0.5f, new Vector3f(1, 0, 0))
+            .translate(0, 0, -0.5f);
+
 		glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
-        model.scale(1.3f);
+        model.scale(0.6f);
 
         while (!glfwWindowShouldClose(window)) {
             // loop
@@ -66,11 +79,15 @@ public class Rendering {
             model.rotate(0.01f, new Vector3f(1, 1, 1));
             model.get(fbModel);
 
-            cubeVao.bind();
             shaderProgram.uniformMatrix4fv("model", fbModel);
-
+            
+            shaderProgram.useProgram();
             // glDrawArrays(GL_TRIANGLES, 0, 3);
+            cubeVao.bind();
             glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+            
+            p.model.translate(0, 0, 0.001f);
+            p.draw(planeShader);
 
 
             glfwPollEvents();

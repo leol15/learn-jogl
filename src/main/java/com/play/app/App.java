@@ -7,6 +7,8 @@ import org.lwjgl.system.*;
 
 import java.nio.*;
 
+import com.play.app.graphics.Text;
+
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -18,17 +20,22 @@ public class App {
 	// The window handle
 	private long window;
 
+	int WINDOW_WIDTH = 1200;
+	int WINDOW_HEIGHT = 900;
 	public void run() {
 		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
 		init();
+
+		System.out.println("OpenGL version: " + glGetString(GL_VERSION));
 
 		// run the main class
 		// new GameTutorial(this.window);
 		// new Rendering(this.window);
 		// new Batching(this.window);
 		// new UseTexture(this.window);
-		new Input(this.window);
+		// new Input(this.window);
+		new BatchRendering(this.window);
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);
@@ -58,7 +65,7 @@ public class App {
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
 
 		// Create the window
-		window = glfwCreateWindow(600, 600, "Hello World!", NULL, NULL);
+		window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Hello World!", NULL, NULL);
 		if ( window == NULL )
 			throw new RuntimeException("Failed to create the GLFW window");
 

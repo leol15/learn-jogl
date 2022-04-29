@@ -22,6 +22,11 @@ public class ShaderProgram {
         return id;
     }
 
+    public ShaderProgram withShader(String path, int type) {
+        loadShaderFromPath(path, type);
+        return this;
+    }
+
     public void loadShaderFromPath(String path, int type) {
         System.out.println("loading shader from path: " + path);
 
@@ -42,7 +47,7 @@ public class ShaderProgram {
         glDeleteShader(shaderId);
     }
 
-    public void linkProgram() {
+    public ShaderProgram linkProgram() {
         // default out variable name in fragment shader, hack, TODO
         glBindFragDataLocation(id, 0, "fragColor");
 
@@ -51,6 +56,8 @@ public class ShaderProgram {
         if (status != GL_TRUE) {
             throw new RuntimeException(glGetProgramInfoLog(id));
         }
+
+        return this;
     }
 
     public void useProgram() {
