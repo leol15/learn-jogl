@@ -18,6 +18,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 import com.play.app.geometry.Plane;
 import com.play.app.graphics.*;
 import com.play.app.ui.CameraControl;
+import com.play.app.ui.WindowManager;
 import com.play.app.utils.CONST;
 import com.play.app.utils.VAO;
 
@@ -28,7 +29,8 @@ public class BatchRendering {
         // glDepthFunc(GL_LESS);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        CameraControl camera = new CameraControl(window);
+        WindowManager windowManager = new WindowManager(window);
+        CameraControl camera = new CameraControl(windowManager);
 
         // set uniform locations
         Matrix4f identity = new Matrix4f();
@@ -41,7 +43,7 @@ public class BatchRendering {
                 .linkProgram();
         simple3DShader.uniformMatrix4fv(CONST.MODEL_MATRIX, identifyBuffer);
 
-        Text fpsCounter = new Text(window, "FPS: 1", 0, 0);
+        Text fpsCounter = new Text(windowManager, "FPS: 1", 0, 0);
         fpsCounter.setColor(Color.RED);
         double previousTime = 0;
 

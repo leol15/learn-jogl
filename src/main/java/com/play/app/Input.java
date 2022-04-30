@@ -27,11 +27,12 @@ public class Input {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        WindowManager windowManager = new WindowManager(window);
 
-        Button button = new Button(window, 0, 0, 100f, 100f);
+        Button button = new Button(windowManager, 0, 0, 100f, 100f);
         button.setColor(Color.BLACK);
-        Button button2 = new Button(window, 100, 100, 100f, 100f);
-        Button button3 = new Button(window, 300, 300, "Yoooo");
+        Button button2 = new Button(windowManager, 100, 100, 100f, 100f);
+        Button button3 = new Button(windowManager, 300, 300, "Yoooo");
 
         int[] tmp = new int[1];
         button.setAction(() -> {
@@ -40,14 +41,13 @@ public class Input {
             button.setColor(tmp[0] % 2 == 0 ? Color.RED : Color.GREEN);
         });
 
-		glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
+        glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
 
         while (!glfwWindowShouldClose(window)) {
             // loop
-            double time =glfwGetTime();
+            double time = glfwGetTime();
             glfwSwapBuffers(window);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 
             button.show();
             button2.show();
@@ -56,6 +56,5 @@ public class Input {
             glfwPollEvents();
         }
     }
-
 
 }

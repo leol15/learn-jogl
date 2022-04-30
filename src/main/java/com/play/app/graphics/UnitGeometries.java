@@ -30,7 +30,6 @@ public class UnitGeometries {
     private static final VAO PyramidVAO = createCube();
 
     // wireframe
-    private static final VAO AxisSphere = createAxisSphere();
     private static final VAO Circle = createCircle();
 
     private static final int ATTR_SIZE = 3 + 3 + 2;
@@ -57,10 +56,6 @@ public class UnitGeometries {
 
     public static void drawPyramid() {
         PyramidVAO.draw();
-    }
-
-    public static void drawAxisSphere() {
-        AxisSphere.draw();
     }
 
     public static void drawCircle() {
@@ -153,34 +148,6 @@ public class UnitGeometries {
         vao.vertexAttribPointerF(2, 2, ATTR_SIZE, 6);
 
         vao.setDrawFunction(() -> glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0));
-        return vao;
-    }
-
-    private static VAO createAxisSphere() {
-        VAO vao = new VAO();
-        final int numPointsInRing = 30;
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(3 * numPointsInRing * 3);
-        // x, y
-        for (int i = 0; i < numPointsInRing; i++) {
-            float x = (float) Math.sin(i * Math.PI * 2 / numPointsInRing);
-            float y = (float) Math.cos(i * Math.PI * 2 / numPointsInRing);
-            vertices.put(x).put(y).put(0);
-        }
-        for (int i = 0; i < numPointsInRing; i++) {
-            float x = (float) Math.sin(i * Math.PI * 2 / numPointsInRing);
-            float y = (float) Math.cos(i * Math.PI * 2 / numPointsInRing);
-            vertices.put(x).put(0).put(y);
-        }
-        for (int i = 0; i < numPointsInRing; i++) {
-            float x = (float) Math.sin(i * Math.PI * 2 / numPointsInRing);
-            float y = (float) Math.cos(i * Math.PI * 2 / numPointsInRing);
-            vertices.put(0).put(x).put(y);
-        }
-        vertices.flip();
-        vao.bufferVerticies(vertices);
-        vao.vertexAttribPointerF(0, 3, 3, 0);
-
-        vao.setDrawFunction(() -> glDrawArrays(GL_LINE_LOOP, 0, numPointsInRing * 3));
         return vao;
     }
 

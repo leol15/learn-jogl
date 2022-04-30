@@ -118,7 +118,9 @@ public class App {
 		// lines
 		glEnable(GL_LINE_SMOOTH);
 		glEnable(GL_LINE_STIPPLE);
-		glLineWidth(100);
+		glLineWidth(5); // does not work
+
+		glPointSize(3);
 
 	}
 

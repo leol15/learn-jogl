@@ -17,7 +17,9 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 import com.play.app.geometry.Plane;
 import com.play.app.graphics.*;
+import com.play.app.ui.Button;
 import com.play.app.ui.CameraControl;
+import com.play.app.ui.WindowManager;
 import com.play.app.utils.CONST;
 import com.play.app.utils.VAO;
 
@@ -25,35 +27,25 @@ public class DrawLines {
     public DrawLines(long window) {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        // int vao = glGenVertexArrays();
-        // glBindVertexArray(vao);
+        WindowManager windowManager = new WindowManager(window);
 
-        // int vbo = glGenBuffers();
-        // glBindBuffer(GL_ARRAY_BUFFER, vbo);
         VAO lineVAO = new VAO();
-
         FloatBuffer vertices = BufferUtils.createFloatBuffer(3 * 4);
-
         vertices.put(0).put(0).put(0);
         vertices.put(0.5f).put(0.5f).put(0);
         vertices.put(0).put(0.5f).put(0);
         vertices.put(0).put(0.5f).put(0.5f);
-
         vertices.flip();
         lineVAO.bufferVerticies(vertices);
-        // glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-
         lineVAO.vertexAttribPointerF(0, 3, 3, 0);
-        // glEnableVertexAttribArray(0);
-        // glVertexAttribPointer(0, 3, GL_FLOAT, false,
-        // 3 * Float.BYTES, 0 * Float.BYTES);
 
         ShaderProgram shader = new ShaderProgram()
                 .withShader(CONST.SHADER_FOLDER + "Line.vert", GL_VERTEX_SHADER)
                 .withShader(CONST.SHADER_FOLDER + "Line.frag", GL_FRAGMENT_SHADER)
                 .linkProgram();
 
-        CameraControl cam = new CameraControl(window);
+        CameraControl cam = new CameraControl(windowManager);
+
         FloatBuffer idenBuf = BufferUtils.createFloatBuffer(16);
         Matrix4f iden = new Matrix4f();
         iden.get(idenBuf);
@@ -65,6 +57,15 @@ public class DrawLines {
                 .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
                 .linkProgram();
         simple3DShader.uniformMatrix4fv(CONST.MODEL_MATRIX, idenBuf);
+
+        // ui
+        final Button togglePolygonMode = new Button(windowManager, 0, 50, "Toggle Polygon Mode");
+        final int[] toggleState = new int[1];
+        final int[] polygonMode = { GL_LINE, GL_FILL, GL_POINT };
+        togglePolygonMode.setAction(() -> {
+            glPolygonMode(GL_FRONT_AND_BACK, polygonMode[toggleState[0]]);
+            toggleState[0] = (toggleState[0] + 1) % polygonMode.length;
+        });
 
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
         while (!glfwWindowShouldClose(window)) {
@@ -82,12 +83,13 @@ public class DrawLines {
             lineVAO.unbind();
             shader.unuseProgram();
 
-            // simple3DShader.useProgram();
-            // UnitGeometries.drawCube();
-            // simple3DShader.unuseProgram();
+            simple3DShader.useProgram();
+            UnitGeometries.drawCube();
+            simple3DShader.unuseProgram();
 
             cam.draw();
 
+            togglePolygonMode.show();
             glfwPollEvents();
         }
     }

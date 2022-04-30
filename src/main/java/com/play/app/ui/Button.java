@@ -12,9 +12,9 @@ import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.glfw.GLFW.*;
 
 import com.play.app.graphics.*;
+import com.play.app.ui.WindowManager.Layer;
 import com.play.app.utils.VAO;
 import com.play.app.geometry.*;
-
 
 public class Button {
 
@@ -23,33 +23,35 @@ public class Button {
     private boolean visible = true;
     private Runnable action = null;
     private Text text;
-    
+
     // static things
     static ShaderProgram uiShader;
     static List<Button> buttons = new ArrayList<>();
     static float windowWidth, windowHeight;
-    
+
     // internal things
     private VAO vao;
     private Rect bounds; // in window space
-    private static long window;
     private boolean hovered;
     private Vector4f hoveredColor = new Vector4f(0.8f, 0.8f, 0.8f, 1f);
+    private final WindowManager windowManager;
 
     // coordinates are in screen space
-    public Button(long window, float x, float y, float width, float height) {
+    public Button(WindowManager windowManager, float x, float y, float width, float height) {
+        this.windowManager = windowManager;
         if (uiShader == null) {
-            initStatic(window);
+            initStatic(windowManager);
         }
-        this.text = new Text(window, "Button", x, y);
+        this.text = new Text(windowManager, "Button", x, y);
         init(x, y, width, height);
     }
-    
-    public Button(long window, float x, float y, CharSequence label) {
+
+    public Button(WindowManager windowManager, float x, float y, CharSequence label) {
+        this.windowManager = windowManager;
         if (uiShader == null) {
-            initStatic(window);
+            initStatic(windowManager);
         }
-        this.text = new Text(window, label, x, y);
+        this.text = new Text(windowManager, label, x, y);
         init(x, y, text.getWidth(), text.getHeight());
     }
 
@@ -59,7 +61,7 @@ public class Button {
         setColor(0.8f, 0.8f, 0.8f, 1f);
         buttons.add(this);
     }
-    
+
     private VAO createSquare(float x, float y, float width, float height) {
         FloatBuffer vertices = BufferUtils.createFloatBuffer(4 * 3);
         vertices.put(x).put(y).put(0);
@@ -79,14 +81,21 @@ public class Button {
         return vao;
     }
 
-    public void setAction(Runnable r) { action = r; }
-    public void setVisible(boolean v) { visible = v; }
+    public void setAction(Runnable r) {
+        action = r;
+    }
+
+    public void setVisible(boolean v) {
+        visible = v;
+    }
+
     public void setColor(Color c) {
         setColor(c.getRed() / 255.0f,
-                 c.getGreen() / 255.0f,
-                 c.getBlue() / 255.0f,
-                 c.getAlpha() / 255.0f);
+                c.getGreen() / 255.0f,
+                c.getBlue() / 255.0f,
+                c.getAlpha() / 255.0f);
     }
+
     public void setColor(float r, float g, float b, float a) {
         buttonColor.set(r, g, b, a);
         if (buttonColor.length() < 1.01f) {
@@ -108,54 +117,59 @@ public class Button {
         vao.bind();
         uiShader.useProgram();
 
+        int oldPolygonMode = glGetInteger(GL_POLYGON_MODE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        glUseProgram(0);
+        glPolygonMode(GL_FRONT_AND_BACK, oldPolygonMode);
+
+        uiShader.unuseProgram();
         vao.unbind();
-        
+
+        glClear(GL_DEPTH_BUFFER_BIT);
         text.draw();
     }
-    
-    private boolean handleClick(double x, double y) {
+
+    private boolean handleClick(double x, double y, int buttonAction) {
         if (bounds.inside((float) x, (float) y)) {
+            windowManager.stopPropagation();
             System.out.println("Button Clicked");
-            if (action != null) {
-                action.run();
-                return true;
+            if (buttonAction == GLFW_PRESS) {
+                if (action != null) {
+                    action.run();
+                    return true;
+                }
             }
         }
         return false;
     }
 
-
-    private void initStatic(long windowId) {
-        window = windowId;
+    private void initStatic(WindowManager windowManager) {
         // setup one callback on mouse click
         final DoubleBuffer mouseX = BufferUtils.createDoubleBuffer(1);
         final DoubleBuffer mouseY = BufferUtils.createDoubleBuffer(1);
-        glfwSetMouseButtonCallback(window, (window2, button, action, mods) -> {
-            if (action != GLFW_RELEASE) {
-                return;
-            }
-            glfwGetCursorPos(window2, mouseX, mouseY);
+        windowManager.addMouseButtonCallback(Layer.UI, (window, button, action, mods) -> {
+            glfwGetCursorPos(window, mouseX, mouseY);
             for (int i = 0; i < buttons.size(); i++) {
-                if (!buttons.get(i).visible) continue;
-                if (buttons.get(i).handleClick(mouseX.get(0), mouseY.get(0))) {
+                if (!buttons.get(i).visible)
+                    continue;
+                if (buttons.get(i).handleClick(mouseX.get(0), mouseY.get(0), action)) {
                     break;
                 }
             }
         });
 
-        glfwSetCursorPosCallback(window, (windowIn, xpos, ypos) -> {
+        windowManager.addCursorPosCallback(Layer.UI, (window, xpos, ypos) -> {
             cursorHover(xpos, ypos);
         });
 
-        
         // get window stats
         IntBuffer windowWidthBuffer = BufferUtils.createIntBuffer(1);
         IntBuffer windowHeightBuffer = BufferUtils.createIntBuffer(1);
         // Get the window size passed to glfwCreateWindow
-        glfwGetWindowSize(window, windowWidthBuffer, windowHeightBuffer);
+        // TODO allow resize
+        glfwGetWindowSize(windowManager.window, windowWidthBuffer, windowHeightBuffer);
         windowWidth = windowWidthBuffer.get();
         windowHeight = windowHeightBuffer.get();
 
@@ -168,19 +182,22 @@ public class Button {
         // setup projection matrix to screen space
         Matrix4f projection = new Matrix4f();
         projection.scale(2f / windowWidth, -2f / windowHeight, 1);
-        projection.translate(- windowWidth / 2, -windowHeight / 2, 0);
+        projection.translate(-windowWidth / 2, -windowHeight / 2, 0);
         FloatBuffer screenToGLSpace = BufferUtils.createFloatBuffer(16);
         projection.get(screenToGLSpace);
         uiShader.uniformMatrix4fv("UItoGL", screenToGLSpace);
     }
-    
+
     private void cursorHover(double x, double y) {
         boolean anyHover = false;
         for (Button b : buttons) {
             b.hovered = b.bounds.inside((float) x, (float) y);
             anyHover |= b.hovered;
         }
-        Cursor.setCusor(window, anyHover ? Cursor.CURSOR_POINTING_HAND : Cursor.CURSOR_ARROW);
+        if (anyHover) {
+            Cursor.setCusor(windowManager.window, Cursor.CURSOR_POINTING_HAND);
+        } else {
+            Cursor.setCusor(windowManager.window, Cursor.CURSOR_ARROW);
+        }
     }
 }
-

@@ -1,6 +1,5 @@
 package com.play.app.graphics;
 
-
 import static java.awt.Font.BOLD;
 import static java.awt.Font.MONOSPACED;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
@@ -9,6 +8,9 @@ import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
 import static org.lwjgl.opengl.GL11.glDrawElements;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+
+import static org.lwjgl.opengl.GL11.*;
+import org.lwjgl.opengl.*;
 
 import java.awt.Font;
 import java.awt.Color;
@@ -24,6 +26,7 @@ import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.play.app.ui.WindowManager;
 import com.play.app.utils.VAO;
 
 import org.joml.Matrix4f;
@@ -38,6 +41,7 @@ public class Text {
         public final int x;
         public final int y;
         public final float advance;
+
         /**
          * Creates a font Glyph.
          *
@@ -55,7 +59,6 @@ public class Text {
             this.advance = advance;
         }
     }
-    
 
     // static things
     private static ShaderProgram textShader;
@@ -74,30 +77,37 @@ public class Text {
     private float textWidth;
     private float textHeight;
 
-    public Text(long window) {
+    public Text(WindowManager windowManager) {
         if (textShader == null) {
-            initStatic(window);
+            initStatic(windowManager);
         }
         texture = createFontTexture(new Font(MONOSPACED, BOLD, 20), true);
-        // textShader.uniform("texImage", 0);  for multiple texture
+        // textShader.uniform("texImage", 0); for multiple texture
 
         fontHeight = texture.getHeight();
         vao = new VAO();
     }
 
-    public Text(long window, CharSequence text, float x, float y) {
-        this(window);
+    public Text(WindowManager windowManager, CharSequence text, float x, float y) {
+        this(windowManager);
         setText(text, x, y);
     }
 
-    public float getWidth() { return textWidth; }
-    public float getHeight() { return textHeight; }
+    public float getWidth() {
+        return textWidth;
+    }
+
+    public float getHeight() {
+        return textHeight;
+    }
+
     public void setColor(Color c) {
         setColor(c.getRed() / 255.0f,
-                 c.getGreen() / 255.0f,
-                 c.getBlue() / 255.0f,
-                 c.getAlpha() / 255.0f);
+                c.getGreen() / 255.0f,
+                c.getBlue() / 255.0f,
+                c.getAlpha() / 255.0f);
     }
+
     public void setColor(float r, float g, float b, float a) {
         textColor.set(r, g, b, a);
     }
@@ -107,9 +117,9 @@ public class Text {
         textWidth = 0;
         textHeight = 0;
         /**
-         * Layout: 
-         *  12 56
-         *  43 87
+         * Layout:
+         * 12 56
+         * 43 87
          */
         FloatBuffer fb = BufferUtils.createFloatBuffer(text.length() * 4 * (3 + 2));
         IntBuffer ib = BufferUtils.createIntBuffer(text.length() * 6);
@@ -155,13 +165,15 @@ public class Text {
         vao.bind();
 
         // textShader.uniform("texcoord", 0);
+        int oldPolygonMode = glGetInteger(GL_POLYGON_MODE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glDrawElements(GL_TRIANGLES, numChars * 6, GL_UNSIGNED_INT, 0);
+        glPolygonMode(GL_FRONT_AND_BACK, oldPolygonMode);
 
         vao.unbind();
         textShader.unuseProgram();
         texture.unbindTexture();
     }
-
 
     // coords in screen space
     private void addCharToBuffer(FloatBuffer fb, float x, float y, float tx, float ty, float tw, float th) {
@@ -171,7 +183,7 @@ public class Text {
         ty = ty / texture.getHeight();
         tw = tw / texture.getWidth();
         th = th / texture.getHeight();
-        
+
         fb.put(x).put(y).put(0).put(tx).put(ty);
         fb.put(x + w).put(y).put(0).put(tx + tw).put(ty);
         fb.put(x + w).put(y + h).put(0).put(tx + tw).put(ty + th);
@@ -180,6 +192,7 @@ public class Text {
 
     /**
      * Helper to load font into a texture
+     * 
      * @param font
      * @param antiAlias
      * @return
@@ -189,10 +202,12 @@ public class Text {
         int imageHeight = 0;
 
         for (int i = 32; i < 256; i++) {
-            if (i == 127) continue;
+            if (i == 127)
+                continue;
             char c = (char) i;
             BufferedImage ch = createCharImage(font, c, antiAlias);
-            if (ch == null) continue;
+            if (ch == null)
+                continue;
 
             imageWidth += ch.getWidth();
             imageHeight = Math.max(imageHeight, ch.getHeight());
@@ -205,10 +220,12 @@ public class Text {
 
         // draw font to image
         for (int i = 32; i < 256; i++) {
-            if (i == 127) continue;
+            if (i == 127)
+                continue;
             char c = (char) i;
             BufferedImage charImage = createCharImage(font, c, antiAlias);
-            if (charImage == null) continue;
+            if (charImage == null)
+                continue;
             int charWidth = charImage.getWidth();
             int charHeight = charImage.getHeight();
 
@@ -222,7 +239,7 @@ public class Text {
         AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
         transform.translate(0, -image.getHeight());
         AffineTransformOp operation = new AffineTransformOp(transform,
-                                                            AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+                AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
         // image = operation.filter(image, null);
         /* Get charWidth and charHeight of image */
         int width = image.getWidth();
@@ -239,8 +256,8 @@ public class Text {
                 int pixel = pixels[i * width + j];
                 // RGB
                 buffer.put((byte) ((pixel >> 16) & 0xFF));
-                buffer.put((byte) ((pixel >> 8 ) & 0xFF));
-                buffer.put((byte) ((pixel >> 0 ) & 0xFF));
+                buffer.put((byte) ((pixel >> 8) & 0xFF));
+                buffer.put((byte) ((pixel >> 0) & 0xFF));
                 // alpha
                 buffer.put((byte) ((pixel >> 24) & 0xFF));
             }
@@ -263,7 +280,8 @@ public class Text {
 
         int charWidth = metrics.charWidth(c);
         int charHeight = metrics.getHeight();
-        if (charWidth == 0) return null;
+        if (charWidth == 0)
+            return null;
 
         image = new BufferedImage(charWidth, charHeight, BufferedImage.TYPE_INT_ARGB);
         g = image.createGraphics();
@@ -277,13 +295,12 @@ public class Text {
         return image;
     }
 
-
-    private void initStatic(long window) {
+    private void initStatic(WindowManager windowManager) {
         // get window stats
         IntBuffer windowWidthBuffer = BufferUtils.createIntBuffer(1);
         IntBuffer windowHeightBuffer = BufferUtils.createIntBuffer(1);
         // Get the window size passed to glfwCreateWindow
-        glfwGetWindowSize(window, windowWidthBuffer, windowHeightBuffer);
+        glfwGetWindowSize(windowManager.window, windowWidthBuffer, windowHeightBuffer);
         int windowWidth = windowWidthBuffer.get();
         int windowHeight = windowHeightBuffer.get();
 
@@ -299,7 +316,6 @@ public class Text {
         FloatBuffer screenToGLSpace = BufferUtils.createFloatBuffer(16);
         projection.get(screenToGLSpace);
         textShader.uniformMatrix4fv("UItoGL", screenToGLSpace);
-
     }
 
 }
