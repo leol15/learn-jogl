@@ -8,6 +8,7 @@ import org.lwjgl.system.*;
 import java.nio.*;
 
 import com.play.app.graphics.Text;
+import com.play.app.graphics.UnitGeometries;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -29,6 +30,7 @@ public class App {
 		init();
 
 		System.out.println("OpenGL version: " + glGetString(GL_VERSION));
+		UnitGeometries.initStatic();
 
 		// run the main class
 		// new GameTutorial(window);
@@ -36,8 +38,8 @@ public class App {
 		// new Batching(window);
 		// new UseTexture(window);
 		// new Input(window);
-		// new BatchRendering(window);
-		new DrawLines(window);
+		new BatchRendering(window);
+		// new DrawLines(window);
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);

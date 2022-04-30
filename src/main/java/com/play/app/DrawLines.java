@@ -38,25 +38,19 @@ public class DrawLines {
         vertices.flip();
         lineVAO.bufferVerticies(vertices);
         lineVAO.vertexAttribPointerF(0, 3, 3, 0);
+        lineVAO.setDrawFunction(() -> glDrawArrays(GL_LINE_LOOP, 0, 4));
 
-        ShaderProgram shader = new ShaderProgram()
+        ShaderProgram lineShader = new ShaderProgram()
                 .withShader(CONST.SHADER_FOLDER + "Line.vert", GL_VERTEX_SHADER)
                 .withShader(CONST.SHADER_FOLDER + "Line.frag", GL_FRAGMENT_SHADER)
                 .linkProgram();
 
         CameraControl cam = new CameraControl(windowManager);
 
-        FloatBuffer idenBuf = BufferUtils.createFloatBuffer(16);
-        Matrix4f iden = new Matrix4f();
-        iden.get(idenBuf);
-        shader.uniformMatrix4fv(CONST.MODEL_MATRIX, idenBuf);
-
-        iden.get(idenBuf);
         ShaderProgram simple3DShader = new ShaderProgram()
                 .withShader("resources/shaders/Simple3D.vert", GL_VERTEX_SHADER)
                 .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
                 .linkProgram();
-        simple3DShader.uniformMatrix4fv(CONST.MODEL_MATRIX, idenBuf);
 
         // ui
         final Button togglePolygonMode = new Button(windowManager, 0, 50, "Toggle Polygon Mode");
@@ -67,6 +61,10 @@ public class DrawLines {
             toggleState[0] = (toggleState[0] + 1) % polygonMode.length;
         });
 
+        Text fpsCounter = new Text(windowManager, "FPS: 1", 0, 0);
+        fpsCounter.setColor(Color.RED);
+        double previousTime = 0;
+
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
         while (!glfwWindowShouldClose(window)) {
             // loop
@@ -74,18 +72,25 @@ public class DrawLines {
             glfwSwapBuffers(window);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            cam.setViewAndProjection(shader);
+            float fps = (float) (1 / (time - previousTime));
+            fpsCounter.setText(String.format("FPS: %.2f", fps), 0, 0);
+            fpsCounter.draw();
+            previousTime = time;
+
+            cam.setViewAndProjection(lineShader);
             cam.setViewAndProjection(simple3DShader);
 
-            shader.useProgram();
-            lineVAO.bind();
-            glDrawArrays(GL_LINE_LOOP, 0, 4);
-            lineVAO.unbind();
-            shader.unuseProgram();
+            lineShader.uniform4f("color", new Vector4f(0, 0, 1, 1));
+            lineShader.useProgram();
+            UnitGeometries.drawCircle();
+            lineShader.uniform4f("color", new Vector4f(1, 0, 1, 1));
+            lineShader.useProgram();
+            lineVAO.draw();
+            lineShader.unuseProgram();
 
-            simple3DShader.useProgram();
-            UnitGeometries.drawCube();
-            simple3DShader.unuseProgram();
+            // simple3DShader.useProgram();
+            // UnitGeometries.drawCube();
+            // simple3DShader.unuseProgram();
 
             cam.draw();
 

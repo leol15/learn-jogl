@@ -113,6 +113,7 @@ public class Text {
     }
 
     public void setText(CharSequence text, float x, float y) {
+        // TODO bug, resetting text messes up GL
         numChars = 0;
         textWidth = 0;
         textHeight = 0;

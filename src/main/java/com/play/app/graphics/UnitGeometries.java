@@ -22,17 +22,31 @@ import static org.lwjgl.opengl.GL30.*;
 public class UnitGeometries {
 
     // solid
-    private static final VAO CubeVAO = createCube();
-    private static final VAO PlaneVAO = createPlane();
-    private static final VAO SphereVAO = createCube();
-    private static final VAO ConeVAO = createCube();
-    private static final VAO CyclinderVAO = createCube();
-    private static final VAO PyramidVAO = createCube();
+    private static VAO CubeVAO;
+    private static VAO PlaneVAO;
+    private static VAO SphereVAO;
+    private static VAO ConeVAO;
+    private static VAO CyclinderVAO;
+    private static VAO PyramidVAO;
 
     // wireframe
-    private static final VAO Circle = createCircle();
+    private static VAO Circle;
 
     private static final int ATTR_SIZE = 3 + 3 + 2;
+
+    // must be called to initialize
+    public static void initStatic() {
+        // solid
+        CubeVAO = createCube();
+        PlaneVAO = createPlane();
+        SphereVAO = createCube();
+        ConeVAO = createCube();
+        CyclinderVAO = createCube();
+        PyramidVAO = createCube();
+
+        // wireframe
+        Circle = createCircle();
+    }
 
     public static void drawCube() {
         CubeVAO.draw();

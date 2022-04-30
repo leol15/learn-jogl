@@ -6,9 +6,9 @@ in vec2 uv;
 
 out vec3 vertexColor;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 model = mat4(1);
+uniform mat4 view = mat4(1);
+uniform mat4 projection = mat4(1);
 
 void main() {
     vertexColor = vec3(0.8, 0.8, 0.8);
