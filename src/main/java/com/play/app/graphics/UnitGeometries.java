@@ -30,7 +30,8 @@ public class UnitGeometries {
     private static final VAO PyramidVAO = createCube();
 
     // wireframe
-    private static final VAO AxisSphere = createAxisShpere();
+    private static final VAO AxisSphere = createAxisSphere();
+    private static final VAO Circle = createCircle();
 
     private static final int ATTR_SIZE = 3 + 3 + 2;
 
@@ -60,6 +61,10 @@ public class UnitGeometries {
 
     public static void drawAxisSphere() {
         AxisSphere.draw();
+    }
+
+    public static void drawCircle() {
+        Circle.draw();
     }
 
     private static VAO createCube() {
@@ -151,46 +156,53 @@ public class UnitGeometries {
         return vao;
     }
 
-    private static VAO createAxisShpere() {
+    private static VAO createAxisSphere() {
         VAO vao = new VAO();
         final int numPointsInRing = 30;
         FloatBuffer vertices = BufferUtils.createFloatBuffer(3 * numPointsInRing * 3);
         // x, y
-        // for (int i = 0; i < numPointsInRing; i++) {
-        // float x = (float) Math.sin(i / Math.PI / 2 / numPointsInRing);
-        // float y = (float) Math.cos(i / Math.PI / 2 / numPointsInRing);
-        // vertices.put(x).put(y).put(0);
-        // if (i < 3) {
-        // Func.p("i " + i + " X " + x + " Y " + y);
-        // }
-        // }
-        // for (int i = 0; i < numPointsInRing; i++) {
-        // float x = (float) Math.sin(i / Math.PI / 2 / numPointsInRing);
-        // float y = (float) Math.cos(i / Math.PI / 2 / numPointsInRing);
-        // vertices.put(x).put(0).put(y);
-        // }
-        // for (int i = 0; i < numPointsInRing; i++) {
-        // float x = (float) Math.sin(i / Math.PI / 2 / numPointsInRing);
-        // float y = (float) Math.cos(i / Math.PI / 2 / numPointsInRing);
-        // vertices.put(0).put(x).put(y);
-        // }
-        vertices.put(0).put(0).put(0);
-        vertices.put(0).put(0).put(1);
-        vertices.put(0).put(1).put(1);
-        vertices.put(0).put(1).put(2);
+        for (int i = 0; i < numPointsInRing; i++) {
+            float x = (float) Math.sin(i * Math.PI * 2 / numPointsInRing);
+            float y = (float) Math.cos(i * Math.PI * 2 / numPointsInRing);
+            vertices.put(x).put(y).put(0);
+        }
+        for (int i = 0; i < numPointsInRing; i++) {
+            float x = (float) Math.sin(i * Math.PI * 2 / numPointsInRing);
+            float y = (float) Math.cos(i * Math.PI * 2 / numPointsInRing);
+            vertices.put(x).put(0).put(y);
+        }
+        for (int i = 0; i < numPointsInRing; i++) {
+            float x = (float) Math.sin(i * Math.PI * 2 / numPointsInRing);
+            float y = (float) Math.cos(i * Math.PI * 2 / numPointsInRing);
+            vertices.put(0).put(x).put(y);
+        }
         vertices.flip();
         vao.bufferVerticies(vertices);
-
-        IntBuffer elements = BufferUtils.createIntBuffer(0);
-        elements.flip();
-        vao.bufferIndices(elements);
-
         vao.vertexAttribPointerF(0, 3, 3, 0);
-        vao.setDrawFunction(() -> {
-            glDrawArrays(GL_LINE_STRIP, 0, 4);
-            // glDrawArrays(GL_LINE_LOOP, numPointsInRing, numPointsInRing);
-            // glDrawArrays(GL_LINE_LOOP, numPointsInRing * 2, numPointsInRing);
-        });
+
+        vao.setDrawFunction(() -> glDrawArrays(GL_LINE_LOOP, 0, numPointsInRing * 3));
+        return vao;
+    }
+
+    private static VAO createCircle() {
+        VAO vao = new VAO();
+        final int numVerticies = 50;
+        FloatBuffer vertices = BufferUtils.createFloatBuffer(3 * numVerticies * 3);
+        // x, y
+        for (int i = 0; i < numVerticies; i++) {
+            float x = (float) Math.sin(i * Math.PI * 2 / numVerticies);
+            float y = (float) Math.cos(i * Math.PI * 2 / numVerticies);
+            vertices.put(x).put(y).put(0);
+            if (i == 0) {
+                Func.p("x" + x + "y" + y);
+            }
+        }
+        vertices.flip();
+        vao.bufferVerticies(vertices);
+        vao.vertexAttribPointerF(0, 3, 3, 0);
+
+        vao.setDrawFunction(() -> glDrawArrays(GL_LINE_LOOP, 0, numVerticies));
+
         return vao;
     }
 }

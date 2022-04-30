@@ -22,6 +22,7 @@ public class App {
 
 	int WINDOW_WIDTH = 1200;
 	int WINDOW_HEIGHT = 900;
+
 	public void run() {
 		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
@@ -30,12 +31,13 @@ public class App {
 		System.out.println("OpenGL version: " + glGetString(GL_VERSION));
 
 		// run the main class
-		// new GameTutorial(this.window);
-		// new Rendering(this.window);
-		// new Batching(this.window);
-		// new UseTexture(this.window);
-		// new Input(this.window);
-		new BatchRendering(this.window);
+		// new GameTutorial(window);
+		// new Rendering(window);
+		// new Batching(window);
+		// new UseTexture(window);
+		// new Input(window);
+		// new BatchRendering(window);
+		new DrawLines(window);
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);
@@ -52,7 +54,7 @@ public class App {
 		GLFWErrorCallback.createPrint(System.err).set();
 
 		// Initialize GLFW. Most GLFW functions will not work before doing this.
-		if ( !glfwInit() )
+		if (!glfwInit())
 			throw new IllegalStateException("Unable to initialize GLFW");
 
 		// Configure GLFW
@@ -63,20 +65,23 @@ public class App {
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
 		glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
+		glfwWindowHint(GLFW_SAMPLES, 4);
+		// glEnable(GL_MULTISAMPLE);
 
 		// Create the window
 		window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Hello World!", NULL, NULL);
-		if ( window == NULL )
+		if (window == NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
 
-		// Setup a key callback. It will be called every time a key is pressed, repeated or released.
+		// Setup a key callback. It will be called every time a key is pressed, repeated
+		// or released.
 		glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
-			if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
+			if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
 				glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
 		});
 
 		// Get the thread stack and push a new frame
-		try ( MemoryStack stack = stackPush() ) {
+		try (MemoryStack stack = stackPush()) {
 			IntBuffer pWidth = stack.mallocInt(1); // int*
 			IntBuffer pHeight = stack.mallocInt(1); // int*
 
@@ -88,10 +93,9 @@ public class App {
 
 			// Center the window
 			glfwSetWindowPos(
-				window,
-				(vidmode.width() - pWidth.get(0)) / 2,
-				(vidmode.height() - pHeight.get(0)) / 2
-			);
+					window,
+					(vidmode.width() - pWidth.get(0)) / 2,
+					(vidmode.height() - pHeight.get(0)) / 2);
 		} // the stack frame is popped automatically
 
 		// Make the OpenGL context current
@@ -103,11 +107,19 @@ public class App {
 		glfwShowWindow(window);
 
 		glfwMakeContextCurrent(window);
-        GL.createCapabilities();
+		GL.createCapabilities();
 
-        /* Enable blending */
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		/* Enable blending */
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glEnable(GL_DEPTH_TEST);
+
+		// lines
+		glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_LINE_STIPPLE);
+		glLineWidth(100);
+
 	}
 
 	private void loop() {
@@ -123,7 +135,7 @@ public class App {
 
 		// Run the rendering loop until the user has attempted to close
 		// the window or has pressed the ESCAPE key.
-		while ( !glfwWindowShouldClose(window) ) {
+		while (!glfwWindowShouldClose(window)) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
 			glfwSwapBuffers(window); // swap the color buffers

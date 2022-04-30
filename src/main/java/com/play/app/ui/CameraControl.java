@@ -1,5 +1,6 @@
 package com.play.app.ui;
 
+import java.awt.Color;
 import java.nio.FloatBuffer;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.graphics.UnitGeometries;
@@ -10,7 +11,7 @@ import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
 import static org.lwjgl.opengl.GL30.*;
@@ -33,7 +34,21 @@ public class CameraControl {
     private double mouseX, mouseY;
     private int[] windowSize;
 
+    // marker related
+    private float markerScale = 15;
+    private float drawMarkerFrame = 0;
     private static final ShaderProgram debugShader = createLineShader();
+    private static final FloatBuffer modelBuffer = BufferUtils.createFloatBuffer(16);
+    private final Matrix4f[] ringModelMatrix = {
+            new Matrix4f(),
+            new Matrix4f().setRotationXYZ(0, (float) Math.PI / 2, 0),
+            new Matrix4f().setRotationXYZ((float) Math.PI / 2, 0, 0)
+    };
+    private static final Vector4f[] ringColor = {
+            Func.toVec4(Color.RED),
+            Func.toVec4(Color.GREEN),
+            Func.toVec4(Color.CYAN)
+    };
 
     private enum MouseButton {
         LEFT, RIGHT, MIDDLE, NONE;
@@ -80,14 +95,26 @@ public class CameraControl {
     }
 
     public void draw() {
+        // only draw marker when moving or rotating
+        if (activeMouseButton == MouseButton.NONE && drawMarkerFrame <= 0) {
+            return;
+        }
+        drawMarkerFrame--;
         setViewAndProjection(debugShader);
-        debugShader.useProgram();
-        UnitGeometries.drawAxisSphere();
-        debugShader.unuseProgram();
+        for (int i = 0; i < ringModelMatrix.length; i++) {
+            ringModelMatrix[i].get(modelBuffer);
+            debugShader.uniformMatrix4fv(CONST.MODEL_MATRIX, modelBuffer);
+            debugShader.uniform4f("color", ringColor[i]);
+            debugShader.useProgram();
+            UnitGeometries.drawCircle();
+            debugShader.unuseProgram();
+        }
+
     }
 
     private void updateView() {
         view.setLookAt(cameraPosition, cameraTarget, cameraUp);
+        updateMarker();
     }
 
     private void updateProjection() {
@@ -98,22 +125,11 @@ public class CameraControl {
     private void mouseButtonCallback(long window, int button, int action, int mode) {
         if (action == 1) {
             activeMouseButton = MouseButton.values()[button];
+            cursorPosCallback(window, mouseX, mouseY);
         } else {
             activeMouseButton = MouseButton.NONE;
         }
         mouseButtonMode = mode;
-    }
-
-    private void scrollCallback(long window, double xoffset, double yoffset) {
-        if (activeMouseButton == MouseButton.MIDDLE) {
-            // rotating, skip zoom
-            return;
-        }
-        zoomCamera(xoffset, yoffset);
-    }
-
-    private void cursorEnterCallback(long window, boolean entered) {
-
     }
 
     private void cursorPosCallback(long window, double xpos, double ypos) {
@@ -123,61 +139,73 @@ public class CameraControl {
         mouseY = ypos;
         switch (activeMouseButton) {
             case LEFT:
+                markerScale = 30;
                 moveCamera(dx, dy);
                 break;
             case RIGHT:
+                markerScale = 15;
                 rotateCamera(dx, dy);
                 break;
             case MIDDLE:
+                markerScale = 15;
                 rotateCamera(dx, dy);
                 break;
             default:
         }
     }
 
+    private void cursorEnterCallback(long window, boolean entered) {
+
+    }
+
+    private void scrollCallback(long window, double xoffset, double yoffset) {
+        if (activeMouseButton == MouseButton.MIDDLE) {
+            // rotating, skip zoom
+            return;
+        }
+        drawMarkerFrame = 45;
+        markerScale = 30;
+        zoomCamera(xoffset, yoffset);
+    }
+
     private void windowSizeCallback(long window, int w, int h) {
         glViewport(0, 0, w, h);
-
         windowSize[0] = w;
         windowSize[1] = h;
         updateProjection();
     }
 
     private void moveCamera(double dx, double dy) {
+        final float dxFraction = (float) dx / windowSize[0];
+        final float dyFraction = (float) dy / windowSize[1];
+
         final Vector3f cameraDir = new Vector3f();
         cameraTarget.sub(cameraPosition, cameraDir);
         final float cameraDistance = cameraDir.length();
 
         final Vector3f xDir = new Vector3f();
-        cameraDir.cross(cameraUp, xDir);
-        xDir.normalize();
-        final float dxFraction = (float) dx / windowSize[0];
-        final float dyFraction = (float) dy / windowSize[1];
-        xDir.mul(dxFraction * cameraDistance);
+        final Vector3f yDir = new Vector3f();
 
-        final Vector3f yDir = new Vector3f(cameraUp);
-        yDir.mul(dyFraction * cameraDistance);
+        cameraDir.cross(cameraUp, xDir);
+        xDir.cross(cameraDir, yDir);
+
+        xDir.normalize().mul(dxFraction * cameraDistance);
+        yDir.normalize().mul(dyFraction * cameraDistance);
 
         cameraPosition.sub(xDir).add(yDir);
         cameraTarget.sub(xDir).add(yDir);
-        // Func.p("Move yDir " + yDir);
-        // Func.p("Move x " + dx + " y " + dy);
+
         updateView();
     }
 
     private void rotateCamera(double dx, double dy) {
-        // TODO use better scale factor
         // snapping
         final double speed = dx * dx + dy * dy; // or 3
         final double absDx = Math.abs(dx);
         final double absDy = Math.abs(dy);
         final double magicValue = Math.abs((absDx - absDy) / (absDx + absDy));
         final double diff = absDx - absDy;
-        Func.p("dx " + dx + " dy " + dy + " bound " + speed + " magic " + magicValue);
-        if (dx == 0 || dy == 0) {
-
-        } else if (diff != 0 && (magicValue > 0.45 || speed < 10)) {
-            Func.p("snap");
+        if (!(dx == 0 || dy == 0 || diff == 0) && (magicValue > 0.45 || speed < 10)) {
             if (absDx > absDy) {
                 dy = 0;
             } else {
@@ -185,33 +213,15 @@ public class CameraControl {
             }
         }
 
-        final Quaternionf spin = new Quaternionf().rotateAxis((float) -dx / 200, cameraUp);
+        final Quaternionf spin = new Quaternionf().rotateAxis((float) -dx / 300f, cameraUp);
         final Vector3f yawAxis = new Vector3f();
         final Vector3f translatedCam = new Vector3f();
         cameraPosition.sub(cameraTarget, translatedCam);
         cameraUp.cross(translatedCam, yawAxis);
-        final Quaternionf yaw = new Quaternionf().rotateAxis((float) -dy / 500, yawAxis);
+        final Quaternionf yaw = new Quaternionf().rotateAxis((float) -dy / 600f, yawAxis);
 
         translatedCam.rotate(spin).rotate(yaw);
         translatedCam.add(cameraTarget, cameraPosition);
-
-        // final Vector3f translatedCam = new Vector3f();
-        // cameraPosition.sub(cameraTarget, translatedCam);
-        // final float cameraDistance = translatedCam.length();
-        // translatedCam.normalize();
-
-        // translatedCam.rotateAxis((float) (-dx / windowSize[0] * 6),
-        // cameraUp.x, cameraUp.y, cameraUp.z);
-        // translatedCam.normalize();
-
-        // final Vector3f yawAxis = new Vector3f();
-        // cameraUp.cross(translatedCam, yawAxis);
-
-        // translatedCam.rotateAxis((float) (-dy / windowSize[1] * 3),
-        // yawAxis.x, yawAxis.y, yawAxis.z, cameraPosition);
-
-        // cameraPosition.normalize().mul(cameraDistance);
-        // cameraPosition.add(cameraTarget);
 
         updateView();
     }
@@ -233,7 +243,7 @@ public class CameraControl {
 
         cameraDir.normalize().mul((float) yoffset * zoomScaler);
 
-        if (yoffset > 0 && cameraDistance - cameraDir.length() < 0.1f) {
+        if (yoffset > 0 && cameraDistance - cameraDir.length() < 0.3f) {
             // trying to zoom too close
         } else {
             cameraPosition.add(cameraDir);
@@ -252,5 +262,19 @@ public class CameraControl {
         identityMatrix.get(identityMatrixBuffer);
         shaderProgram.uniformMatrix4fv(CONST.MODEL_MATRIX, identityMatrixBuffer);
         return shaderProgram;
+    }
+
+    private static final Matrix4f[] RING_MODEL_MATRIX_BASE = {
+            new Matrix4f(),
+            new Matrix4f().setRotationXYZ(0, (float) Math.PI / 2, 0),
+            new Matrix4f().setRotationXYZ((float) Math.PI / 2, 0, 0)
+    };
+
+    private void updateMarker() {
+        final float cameraDistance = cameraPosition.distance(cameraTarget) / markerScale;
+        for (int i = 0; i < RING_MODEL_MATRIX_BASE.length; i++) {
+            RING_MODEL_MATRIX_BASE[i].scaleLocal(cameraDistance, ringModelMatrix[i]);
+            ringModelMatrix[i].translateLocal(cameraTarget);
+        }
     }
 }

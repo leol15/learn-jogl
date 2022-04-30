@@ -1,7 +1,9 @@
 package com.play.app.utils;
 
+import java.awt.Color;
 import java.nio.IntBuffer;
 
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -19,5 +21,9 @@ public class Func {
         size[0] = w.get();
         size[1] = h.get();
         return size;
+    }
+
+    public static Vector4f toVec4(Color c) {
+        return new Vector4f(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).div(255);
     }
 }
