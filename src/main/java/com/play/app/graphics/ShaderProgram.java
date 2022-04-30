@@ -4,7 +4,6 @@ import org.joml.*;
 import java.nio.*;
 import static org.lwjgl.opengl.GL30.*;
 
-
 import com.play.app.utils.*;
 
 public class ShaderProgram {
@@ -42,7 +41,7 @@ public class ShaderProgram {
         if (glGetShaderi(shaderId, GL_COMPILE_STATUS) != GL_TRUE) {
             throw new RuntimeException(glGetShaderInfoLog(shaderId));
         }
-        
+
         glAttachShader(id, shaderId);
         glDeleteShader(shaderId);
     }
@@ -63,19 +62,19 @@ public class ShaderProgram {
     public void useProgram() {
         glUseProgram(id);
     }
-    
+
     public void unuseProgram() {
         glUseProgram(0);
     }
 
     // note! Need a valid VAO to be bound
-    // deprecated, wrong, should `glVertexAttribPointer` directly to a VAO 
+    // deprecated, wrong, should `glVertexAttribPointer` directly to a VAO
     public void setVertexAttribPointer(String attributeName, int size, int stride, int offset) {
         int attributeId = glGetAttribLocation(id, attributeName);
         glEnableVertexAttribArray(attributeId);
         glVertexAttribPointer(attributeId, size, GL_FLOAT, false, stride, offset);
     }
-    
+
     // sets a uniform mat4 in the shader
     public void uniformMatrix4fv(String uniformName, FloatBuffer buffer) {
         useProgram();
@@ -105,7 +104,6 @@ public class ShaderProgram {
         unuseProgram();
     }
 
-
     // sets the location of texture
     public void uniform(String uniformName, int location) {
         useProgram();
@@ -113,6 +111,5 @@ public class ShaderProgram {
         glUniform1i(uniformId, location);
         unuseProgram();
     }
-
 
 }

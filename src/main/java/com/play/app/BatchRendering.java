@@ -17,6 +17,7 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 import com.play.app.geometry.Plane;
 import com.play.app.graphics.*;
+import com.play.app.ui.CameraControl;
 import com.play.app.utils.CONST;
 import com.play.app.utils.VAO;
 
@@ -28,49 +29,42 @@ public class BatchRendering {
         // glDepthFunc(GL_LESS);
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+        CameraControl camera = new CameraControl(window);
 
         // set uniform locations
-        Matrix4f view = new Matrix4f();
-        FloatBuffer fbView = BufferUtils.createFloatBuffer(16);
-        view.get(fbView);
-
-        Matrix4f projection = new Matrix4f().ortho(-1f, 1f, -1f, 1f, -1f, 1f);
-        FloatBuffer fbProjection = BufferUtils.createFloatBuffer(16);
-        projection.get(fbProjection);
-
         Matrix4f identity = new Matrix4f();
         FloatBuffer identifyBuffer = BufferUtils.createFloatBuffer(16);
         identity.get(identifyBuffer);
 
         ShaderProgram simple3DShader = new ShaderProgram()
-            .withShader("resources/shaders/Simple3D.vert", GL_VERTEX_SHADER)
-            .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
-            .linkProgram();
-        simple3DShader.uniformMatrix4fv(CONST.VIEW_MATRIX, fbView);
-        simple3DShader.uniformMatrix4fv(CONST.PROJECTION_MATRIX, fbProjection);
+                .withShader("resources/shaders/Simple3D.vert", GL_VERTEX_SHADER)
+                .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
+                .linkProgram();
         simple3DShader.uniformMatrix4fv(CONST.MODEL_MATRIX, identifyBuffer);
 
-		glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
-
-        Text fpsCounter = new Text(window, "FPS: 1", 0, 20);
+        Text fpsCounter = new Text(window, "FPS: 1", 0, 0);
         fpsCounter.setColor(Color.RED);
-        
         double previousTime = 0;
+
+        glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
+
         while (!glfwWindowShouldClose(window)) {
             // loop
             double time = glfwGetTime();
             glfwSwapBuffers(window);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            
-            float fps = (float) (1 / (time - previousTime));
 
+            camera.setViewAndProjection(simple3DShader);
+
+            float fps = (float) (1 / (time - previousTime));
             fpsCounter.setText(String.format("FPS: %.2f", fps), 0, 0);
             fpsCounter.draw();
-            
+
             simple3DShader.useProgram();
             UnitGeometries.drawCube();
             simple3DShader.unuseProgram();
 
+            camera.draw();
 
             previousTime = time;
             glfwPollEvents();

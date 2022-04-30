@@ -1,7 +1,23 @@
 package com.play.app.utils;
 
+import java.nio.IntBuffer;
+
+import org.lwjgl.BufferUtils;
+
+import static org.lwjgl.glfw.GLFW.*;
+
 public class Func {
     public static void p(final String s) {
         System.err.println(s);
+    }
+
+    public static int[] getWindowSize(long window) {
+        int[] size = new int[2];
+        IntBuffer w = BufferUtils.createIntBuffer(1);
+        IntBuffer h = BufferUtils.createIntBuffer(1);
+        glfwGetWindowSize(window, w, h);
+        size[0] = w.get();
+        size[1] = h.get();
+        return size;
     }
 }
