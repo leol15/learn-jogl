@@ -28,8 +28,7 @@ public class BatchRendering {
 
     public BatchRendering(long window) {
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         WindowManager windowManager = new WindowManager(window);
         CameraControl camera = new CameraControl(windowManager);
@@ -46,8 +45,7 @@ public class BatchRendering {
         final Matrix4f cubeModel = new Matrix4f().translate(1, 0, 0);
         final Matrix4f cyclinderModel = new Matrix4f().translate(2.5f, 0, 0.5f);
         final Matrix4f coneModel = new Matrix4f().translate(3.5f, 0, 0.5f);
-        final Matrix4f planeModel = new Matrix4f().translate(-1, 0, 0);
-        final Matrix4f pyramidModel = new Matrix4f().translate(-2, 0, 0);
+        final Matrix4f planeModel = new Matrix4f().translate(-2, 0, 0);
         final Matrix4f sphereModel = new Matrix4f().translate(0, 0, 0);
 
         // ui
@@ -84,10 +82,6 @@ public class BatchRendering {
             simple3DShader.uniformMatrix4fv(CONST.MODEL_MATRIX, planeModel);
             simple3DShader.useProgram();
             UnitGeometries.drawPlane();
-
-            simple3DShader.uniformMatrix4fv(CONST.MODEL_MATRIX, pyramidModel);
-            simple3DShader.useProgram();
-            UnitGeometries.drawPyramid();
 
             simple3DShader.uniformMatrix4fv(CONST.MODEL_MATRIX, sphereModel);
             simple3DShader.useProgram();

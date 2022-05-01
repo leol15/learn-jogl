@@ -22,8 +22,8 @@ public class App {
 	// The window handle
 	private long window;
 
-	int WINDOW_WIDTH = 1200;
-	int WINDOW_HEIGHT = 900;
+	int WINDOW_WIDTH = 1800;
+	int WINDOW_HEIGHT = 1200;
 
 	public void run() {
 		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
@@ -40,8 +40,8 @@ public class App {
 		// new Rendering(window);
 		// new Batching(window);
 		// new UseTexture(window);
-		new Input(window);
-		// new BatchRendering(window);
+		// new Input(window);
+		new BatchRendering(window);
 		// new DrawLines(window);
 
 		// Free the window callbacks and destroy the window

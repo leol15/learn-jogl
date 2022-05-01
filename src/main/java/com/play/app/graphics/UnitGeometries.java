@@ -2,6 +2,8 @@ package com.play.app.graphics;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.play.app.utils.Func;
 import com.play.app.utils.VAO;
@@ -21,31 +23,31 @@ import static org.lwjgl.opengl.GL30.*;
  */
 public class UnitGeometries {
 
+    // mapping from resolution to VAO
     // solid
     private static VAO CubeVAO;
-    private static VAO PlaneVAO;
-    private static VAO SphereVAO;
-    private static VAO ConeVAO;
-    private static VAO CyclinderVAO;
-    private static VAO PyramidVAO;
+    private static Map<Integer, VAO> SphereVAO = new HashMap<>();
+    private static Map<Integer, VAO> ConeVAO = new HashMap<>();
+    private static Map<Integer, VAO> CyclinderVAO = new HashMap<>();
 
     // wireframe
-    private static VAO Circle;
+    private static VAO PlaneVAO;
+    private static Map<Integer, VAO> CircleVAO = new HashMap<>();
 
     private static final int ATTR_SIZE = 3 + 3 + 2;
+    private static final int DEFAULT_NUM_SECTIONS = 10;
 
     // must be called to initialize
     public static void initStatic() {
         // solid
         CubeVAO = createCube();
-        PlaneVAO = createPlane();
-        SphereVAO = createCube();
-        ConeVAO = createCone();
-        CyclinderVAO = createCyclinder();
-        PyramidVAO = createCube();
+        SphereVAO.put(0, createSphere(DEFAULT_NUM_SECTIONS, DEFAULT_NUM_SECTIONS));
+        ConeVAO.put(0, createCone(DEFAULT_NUM_SECTIONS));
+        CyclinderVAO.put(0, createCyclinder(DEFAULT_NUM_SECTIONS));
 
         // wireframe
-        Circle = createCircle();
+        PlaneVAO = createPlane();
+        CircleVAO.put(0, createCircle(DEFAULT_NUM_SECTIONS));
     }
 
     ////////////////////
@@ -60,23 +62,51 @@ public class UnitGeometries {
     }
 
     public static void drawSphere() {
-        SphereVAO.draw();
+        drawSphere(DEFAULT_NUM_SECTIONS);
     }
 
     public static void drawCone() {
-        ConeVAO.draw();
+        drawCone(DEFAULT_NUM_SECTIONS);
     }
 
     public static void drawCyclinder() {
-        CyclinderVAO.draw();
-    }
-
-    public static void drawPyramid() {
-        PyramidVAO.draw();
+        drawCyclinder(DEFAULT_NUM_SECTIONS);
     }
 
     public static void drawCircle() {
-        Circle.draw();
+        drawCircle(DEFAULT_NUM_SECTIONS);
+    }
+
+    public static void drawSphere(final int numSections) {
+        if (!SphereVAO.containsKey(numSections)) {
+            VAO missing = createSphere(numSections, numSections);
+            SphereVAO.put(numSections, missing);
+        }
+        SphereVAO.get(numSections).draw();
+    }
+
+    public static void drawCone(final int numSections) {
+        if (!ConeVAO.containsKey(numSections)) {
+            VAO missing = createCone(numSections);
+            ConeVAO.put(numSections, missing);
+        }
+        ConeVAO.get(numSections).draw();
+    }
+
+    public static void drawCyclinder(final int numSections) {
+        if (!CyclinderVAO.containsKey(numSections)) {
+            VAO missing = createCyclinder(numSections);
+            CyclinderVAO.put(numSections, missing);
+        }
+        CyclinderVAO.get(numSections).draw();
+    }
+
+    public static void drawCircle(final int numSections) {
+        if (!CircleVAO.containsKey(numSections)) {
+            VAO missing = createCircle(numSections);
+            CircleVAO.put(numSections, missing);
+        }
+        CircleVAO.get(numSections).draw();
     }
 
     ////////////////////
@@ -171,9 +201,9 @@ public class UnitGeometries {
         return vao;
     }
 
-    private static VAO createCircle() {
+    private static VAO createCircle(final int numSections) {
         VAO vao = new VAO();
-        final int numVerticies = 50;
+        final int numVerticies = numSections;
         FloatBuffer vertices = BufferUtils.createFloatBuffer(3 * numVerticies * 3);
         // x, y
         for (int i = 0; i < numVerticies; i++) {
@@ -190,10 +220,10 @@ public class UnitGeometries {
         return vao;
     }
 
-    private static VAO createCone() {
+    private static VAO createCone(final int numSections) {
         // TODO add uv
         final VAO vao = new VAO();
-        final int numCircleFragment = 16;
+        final int numCircleFragment = numSections;
         // double the circle since the normal is different
         final int numTriangles = numCircleFragment * 2;
         final int numVerticies = numCircleFragment * 2 + 2;
@@ -246,10 +276,10 @@ public class UnitGeometries {
         return vao;
     }
 
-    private static VAO createCyclinder() {
+    private static VAO createCyclinder(final int numSections) {
         // TODO add uv
         final VAO vao = new VAO();
-        final int numCircleFragment = 16;
+        final int numCircleFragment = numSections;
         // double the circle since the normal is different
         final int numTriangles = numCircleFragment * 4;
         final int numVerticies = numCircleFragment * 4 + 2;
@@ -311,6 +341,104 @@ public class UnitGeometries {
                 elements.put(triangleBase).put(triangleBase + 3).put(triangleBase + 2);
             }
         }
+
+        vertices.flip();
+        elements.flip();
+        vao.bufferVerticies(vertices);
+        vao.bufferIndices(elements);
+
+        vao.vertexAttribPointerF(0, 3, ATTR_SIZE, 0);
+        vao.vertexAttribPointerF(1, 3, ATTR_SIZE, 3);
+        vao.vertexAttribPointerF(2, 2, ATTR_SIZE, 6);
+
+        vao.setDrawFunction(() -> glDrawElements(GL_TRIANGLES, numTriangles * 3, GL_UNSIGNED_INT, 0));
+
+        return vao;
+    }
+
+    private static void addVertex(final FloatBuffer vertices, final Vector3f tmpV, final float sliceFraction) {
+        vertices.put(tmpV.x).put(tmpV.y).put(tmpV.z);
+        tmpV.normalize();
+        vertices.put(tmpV.x).put(tmpV.y).put(tmpV.z);
+        // uv
+        vertices.put(sliceFraction).put(tmpV.y);
+    }
+
+    private static VAO createSphere(final int numSlices, final int numLevels) {
+        // layout:: ring major
+        // TODO add uv
+        final VAO vao = new VAO();
+        // double the circle since the normal is different
+        final int numTriangles = numSlices * 2 + (numLevels - 2) * 2 * numSlices;
+        final int numVerticies = 2 + (numLevels - 1) * (numSlices + 1);
+
+        // +4 to make [start, end] meet
+        final FloatBuffer vertices = BufferUtils.createFloatBuffer(numVerticies * ATTR_SIZE);
+        final IntBuffer elements = BufferUtils.createIntBuffer(numTriangles * 3);
+        int baseIdx;
+
+        Func.p("num v " + numVerticies);
+
+        final Vector3f tmpV = new Vector3f();
+
+        final float sliceAngle = (float) Math.PI / numSlices;
+        float currSliceAngle = sliceAngle;
+        float levelRadius = (float) Math.sin(currSliceAngle) / 2;
+        float levelHeight = (float) Math.cos(currSliceAngle) / 2;
+
+        // the top level
+        vertices.put(0).put(0.5f).put(0).put(0).put(1).put(0).put(1).put(1);
+        baseIdx = vertices.position() / ATTR_SIZE - 1;
+        for (int i = 0; i < numSlices + 1; i++) {
+            final float x = (float) Math.sin(i * Math.PI * 2 / numSlices) * levelRadius;
+            final float y = (float) Math.cos(i * Math.PI * 2 / numSlices) * levelRadius;
+            tmpV.set(x, levelHeight, y);
+            addVertex(vertices, tmpV, (float) i / numSlices);
+            // last point does not have next triangle
+            if (i != numSlices) {
+                elements.put(baseIdx + i + 1).put(baseIdx).put(baseIdx + i + 2);
+            }
+        }
+
+        // the middle layers, previous layer is writter
+        for (int level = 0; level < numLevels - 2; level++) {
+            currSliceAngle += sliceAngle;
+            levelRadius = (float) Math.sin(currSliceAngle) / 2;
+            levelHeight = (float) Math.cos(currSliceAngle) / 2;
+            baseIdx = vertices.position() / ATTR_SIZE;
+            for (int i = 0; i < numSlices + 1; i++) {
+                final float x = (float) Math.sin(i * Math.PI * 2 / numSlices) * levelRadius;
+                final float y = (float) Math.cos(i * Math.PI * 2 / numSlices) * levelRadius;
+                tmpV.set(x, levelHeight, y);
+                Func.p("level " + level + " i " + i + " size " + vertices.position() / ATTR_SIZE);
+                addVertex(vertices, tmpV, (float) i / numSlices);
+                // last point does not have next triangle
+                if (i != numSlices) {
+                    elements.put(baseIdx + i)
+                            .put(baseIdx + i - (numSlices + 1))
+                            .put(baseIdx + i - (numSlices + 1) + 1);
+
+                    elements.put(baseIdx + i)
+                            .put(baseIdx + i - (numSlices + 1) + 1)
+                            .put(baseIdx + i + 1);
+                }
+            }
+        }
+
+        // the bottom level, previous level is written
+        currSliceAngle = (float) Math.PI - sliceAngle;
+        levelRadius = (float) Math.sin(currSliceAngle) / 2;
+        levelHeight = (float) Math.cos(currSliceAngle) / 2;
+        vertices.put(0).put(-0.5f).put(0).put(0).put(-1).put(0).put(1).put(1);
+        baseIdx = vertices.position() / ATTR_SIZE - 1;
+        for (int i = 0; i < numSlices + 1; i++) {
+            // last point does not have next triangle
+            if (i != numSlices) {
+                elements.put(baseIdx - i - 1).put(baseIdx).put(baseIdx - i - 2);
+            }
+        }
+
+        Func.p("vert " + vertices.remaining() + " elem " + elements.remaining());
 
         vertices.flip();
         elements.flip();

@@ -104,7 +104,7 @@ public class CameraControl {
             debugShader.uniformMatrix4fv(CONST.MODEL_MATRIX, modelBuffer);
             debugShader.uniform4f("color", ringColor[i]);
             debugShader.useProgram();
-            UnitGeometries.drawCircle();
+            UnitGeometries.drawCircle(40);
             debugShader.unuseProgram();
         }
 
@@ -281,7 +281,8 @@ public class CameraControl {
     }
 
     private void keyCallback(long window, int key, int code, int action, int mods) {
-        if (key == GLFW_KEY_SPACE && action == GLFW_RELEASE) {
+        if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
+            windowManager.stopPropagation();
             // reset camera
             cameraPosition.set(0, 0, 5);
             cameraTarget.set(0, 0, 0);
