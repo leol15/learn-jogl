@@ -71,8 +71,8 @@ public class Text {
      * Contains the glyphs for each char.
      */
     private final Map<Character, Glyph> glyphs = new HashMap<>();
-    private int fontHeight;
-    private VAO vao;
+    private final int fontHeight;
+    private final VAO vao;
     private int numChars;
     private float textWidth;
     private float textHeight;
@@ -159,6 +159,9 @@ public class Text {
     }
 
     public void draw() {
+        int oldPolygonMode = glGetInteger(GL_POLYGON_MODE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
         textShader.uniform4f("color", textColor);
 
         texture.bindTexture();
@@ -166,14 +169,13 @@ public class Text {
         vao.bind();
 
         // textShader.uniform("texcoord", 0);
-        int oldPolygonMode = glGetInteger(GL_POLYGON_MODE);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         glDrawElements(GL_TRIANGLES, numChars * 6, GL_UNSIGNED_INT, 0);
-        glPolygonMode(GL_FRONT_AND_BACK, oldPolygonMode);
 
         vao.unbind();
         textShader.unuseProgram();
         texture.unbindTexture();
+
+        glPolygonMode(GL_FRONT_AND_BACK, oldPolygonMode);
     }
 
     // coords in screen space

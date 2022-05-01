@@ -2,7 +2,7 @@
 
 in vec3 position;
 
-uniform vec4 color;
+uniform vec4 color = vec4(1);
 uniform mat4 UItoGL;
 
 out vec4 vertexColor;

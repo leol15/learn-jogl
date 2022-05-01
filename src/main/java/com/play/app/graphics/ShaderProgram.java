@@ -9,6 +9,7 @@ import com.play.app.utils.*;
 public class ShaderProgram {
 
     private int id;
+    private final FloatBuffer tmpMatrixBuffer = Func.newMatBuffer();
 
     public ShaderProgram() {
         id = glCreateProgram();
@@ -81,6 +82,11 @@ public class ShaderProgram {
         int uniformId = glGetUniformLocation(id, uniformName);
         glUniformMatrix4fv(uniformId, false, buffer);
         unuseProgram();
+    }
+
+    public void uniformMatrix4fv(String uniformName, final Matrix4f mat) {
+        mat.get(tmpMatrixBuffer);
+        uniformMatrix4fv(uniformName, tmpMatrixBuffer);
     }
 
     public void uniform2f(String uniformName, Vector2f v) {

@@ -59,6 +59,14 @@ public class WindowManager {
             windowSizeCallbacks.put(layer, new ArrayList<>());
             keyCallbacks.put(layer, new ArrayList<>());
         }
+
+        // some common callbacks
+        addKeyCallback(Layer.UI, (window2, key, scancode, action, mods) -> {
+            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
+                // We will detect this in the rendering loop
+                glfwSetWindowShouldClose(window, true);
+            }
+        });
     }
 
     // key and button have 2 related events

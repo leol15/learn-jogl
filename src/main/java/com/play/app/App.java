@@ -9,6 +9,7 @@ import java.nio.*;
 
 import com.play.app.graphics.Text;
 import com.play.app.graphics.UnitGeometries;
+import com.play.app.utils.Func;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -32,13 +33,15 @@ public class App {
 		System.out.println("OpenGL version: " + glGetString(GL_VERSION));
 		UnitGeometries.initStatic();
 
+		Func.p("running program");
+
 		// run the main class
 		// new GameTutorial(window);
 		// new Rendering(window);
 		// new Batching(window);
 		// new UseTexture(window);
-		// new Input(window);
-		new BatchRendering(window);
+		new Input(window);
+		// new BatchRendering(window);
 		// new DrawLines(window);
 
 		// Free the window callbacks and destroy the window

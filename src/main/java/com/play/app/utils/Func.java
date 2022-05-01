@@ -1,6 +1,7 @@
 package com.play.app.utils;
 
 import java.awt.Color;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import org.joml.Vector4f;
@@ -25,5 +26,9 @@ public class Func {
 
     public static Vector4f toVec4(Color c) {
         return new Vector4f(c.getRed(), c.getGreen(), c.getBlue(), c.getAlpha()).div(255);
+    }
+
+    public static FloatBuffer newMatBuffer() {
+        return BufferUtils.createFloatBuffer(16);
     }
 }

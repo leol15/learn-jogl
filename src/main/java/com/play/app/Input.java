@@ -16,21 +16,24 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
+import com.play.app.graphics.ShaderProgram;
+import com.play.app.graphics.Text;
 import com.play.app.ui.*;
 
 public class Input {
 
     public Input(long window) {
 
-        /* Enable blending */
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         WindowManager windowManager = new WindowManager(window);
 
-        Button button = new Button(windowManager, 0, 0, 100f, 100f);
-        button.setColor(Color.BLACK);
+        Text fpsCounter = new Text(windowManager, "FPS: 1", 200, 200);
+        fpsCounter.setColor(Color.RED);
+        double previousTime = 0;
+
+        Button button = new Button(windowManager, 600, 300, 100f, 100f);
+        button.setColor(Color.GREEN);
         Button button2 = new Button(windowManager, 100, 100, 100f, 100f);
         Button button3 = new Button(windowManager, 300, 300, "Yoooo");
 
@@ -45,9 +48,15 @@ public class Input {
 
         while (!glfwWindowShouldClose(window)) {
             // loop
-            double time = glfwGetTime();
             glfwSwapBuffers(window);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            double time = glfwGetTime();
+
+            float fps = (float) (1 / (time - previousTime));
+            fpsCounter.setText(String.format("FPS: %.2f", fps), 200, 200);
+            fpsCounter.draw();
+            previousTime = time;
 
             button.show();
             button2.show();

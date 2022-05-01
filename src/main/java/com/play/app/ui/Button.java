@@ -114,18 +114,16 @@ public class Button {
 
         uiShader.uniform4f("color", hovered ? hoveredColor : buttonColor);
 
-        vao.bind();
-        uiShader.useProgram();
-
         int oldPolygonMode = glGetInteger(GL_POLYGON_MODE);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+        uiShader.useProgram();
+        vao.bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        vao.unbind();
+        uiShader.unuseProgram();
 
         glPolygonMode(GL_FRONT_AND_BACK, oldPolygonMode);
-
-        uiShader.unuseProgram();
-        vao.unbind();
 
         glClear(GL_DEPTH_BUFFER_BIT);
         text.draw();

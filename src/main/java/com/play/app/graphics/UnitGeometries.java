@@ -40,14 +40,17 @@ public class UnitGeometries {
         CubeVAO = createCube();
         PlaneVAO = createPlane();
         SphereVAO = createCube();
-        ConeVAO = createCube();
-        CyclinderVAO = createCube();
+        ConeVAO = createCone();
+        CyclinderVAO = createCyclinder();
         PyramidVAO = createCube();
 
         // wireframe
         Circle = createCircle();
     }
 
+    ////////////////////
+    // draw functions
+    ////////////////////
     public static void drawCube() {
         CubeVAO.draw();
     }
@@ -76,6 +79,9 @@ public class UnitGeometries {
         Circle.draw();
     }
 
+    ////////////////////
+    // construct these unit shapes
+    ////////////////////
     private static VAO createCube() {
         VAO vao = new VAO();
         // 6 faces, each with 4 points
@@ -174,9 +180,6 @@ public class UnitGeometries {
             float x = (float) Math.sin(i * Math.PI * 2 / numVerticies);
             float y = (float) Math.cos(i * Math.PI * 2 / numVerticies);
             vertices.put(x).put(y).put(0);
-            if (i == 0) {
-                Func.p("x" + x + "y" + y);
-            }
         }
         vertices.flip();
         vao.bufferVerticies(vertices);
@@ -186,4 +189,141 @@ public class UnitGeometries {
 
         return vao;
     }
+
+    private static VAO createCone() {
+        // TODO add uv
+        final VAO vao = new VAO();
+        final int numCircleFragment = 16;
+        // double the circle since the normal is different
+        final int numTriangles = numCircleFragment * 2;
+        final int numVerticies = numCircleFragment * 2 + 2;
+
+        final FloatBuffer vertices = BufferUtils.createFloatBuffer((numVerticies + 2) * ATTR_SIZE);
+        final IntBuffer elements = BufferUtils.createIntBuffer(numCircleFragment * 2 * 3);
+
+        // the tip of cone: (0, 1, 0)
+        vertices.put(0).put(1).put(0).put(0).put(1).put(0).put(0.5f).put(1);
+        // the side circle
+        for (int i = 0; i < numCircleFragment + 1; i++) {
+            float x = (float) Math.sin(i * Math.PI * 2 / numCircleFragment) / 2;
+            float y = (float) Math.cos(i * Math.PI * 2 / numCircleFragment) / 2;
+            vertices.put(x).put(0).put(y);
+            vertices.put(x).put(0).put(y);
+            vertices.put((float) i / numCircleFragment).put(0);
+            // last point does not have next triangle
+            if (i != numCircleFragment) {
+                elements.put(i + 1).put(0).put(i + 2);
+            }
+        }
+
+        // the base center point
+        vertices.put(0).put(0).put(0).put(0).put(-1).put(0).put(0f).put(0);
+        final int baseIdx = vertices.position() / ATTR_SIZE - 1;
+        // the bottom circle
+        for (int i = 0; i < numCircleFragment + 1; i++) {
+            float x = (float) Math.sin(i * Math.PI * 2 / numCircleFragment) / 2;
+            float y = (float) Math.cos(i * Math.PI * 2 / numCircleFragment) / 2;
+            vertices.put(x).put(0).put(y);
+            vertices.put(0).put(-1).put(0);
+            vertices.put((float) i / numCircleFragment).put(0);
+            // last point does not have next triangle
+            if (i != numCircleFragment) {
+                elements.put(baseIdx + i + 1).put(baseIdx).put(baseIdx + i + 2);
+            }
+        }
+
+        vertices.flip();
+        elements.flip();
+        vao.bufferVerticies(vertices);
+        vao.bufferIndices(elements);
+
+        vao.vertexAttribPointerF(0, 3, ATTR_SIZE, 0);
+        vao.vertexAttribPointerF(1, 3, ATTR_SIZE, 3);
+        vao.vertexAttribPointerF(2, 2, ATTR_SIZE, 6);
+
+        vao.setDrawFunction(() -> glDrawElements(GL_TRIANGLES, numTriangles * 3, GL_UNSIGNED_INT, 0));
+
+        return vao;
+    }
+
+    private static VAO createCyclinder() {
+        // TODO add uv
+        final VAO vao = new VAO();
+        final int numCircleFragment = 16;
+        // double the circle since the normal is different
+        final int numTriangles = numCircleFragment * 4;
+        final int numVerticies = numCircleFragment * 4 + 2;
+
+        // +4 to make [start, end] meet
+        final FloatBuffer vertices = BufferUtils.createFloatBuffer((numVerticies + 4) * ATTR_SIZE);
+        final IntBuffer elements = BufferUtils.createIntBuffer(numCircleFragment * 4 * 3);
+        int baseIdx;
+
+        // the top circle
+        vertices.put(0).put(1).put(0).put(0).put(1).put(0).put(1).put(1);
+        baseIdx = vertices.position() / ATTR_SIZE - 1;
+        for (int i = 0; i < numCircleFragment + 1; i++) {
+            float x = (float) Math.sin(i * Math.PI * 2 / numCircleFragment) / 2;
+            float y = (float) Math.cos(i * Math.PI * 2 / numCircleFragment) / 2;
+            vertices.put(x).put(1).put(y);
+            vertices.put(x).put(1).put(y);
+            vertices.put((float) i / numCircleFragment).put(0);
+            // last point does not have next triangle
+            if (i != numCircleFragment) {
+                elements.put(baseIdx + i + 1).put(baseIdx).put(baseIdx + i + 2);
+            }
+        }
+
+        // the base circle
+        vertices.put(0).put(0).put(0).put(0).put(-1).put(0).put(0f).put(0);
+        baseIdx = vertices.position() / ATTR_SIZE - 1;
+        for (int i = 0; i < numCircleFragment + 1; i++) {
+            float x = (float) Math.sin(i * Math.PI * 2 / numCircleFragment) / 2;
+            float y = (float) Math.cos(i * Math.PI * 2 / numCircleFragment) / 2;
+            vertices.put(x).put(0).put(y);
+            vertices.put(0).put(-1).put(0);
+            vertices.put((float) i / numCircleFragment).put(0);
+            // last point does not have next triangle
+            if (i != numCircleFragment) {
+                elements.put(baseIdx + i + 1).put(baseIdx).put(baseIdx + i + 2);
+            }
+        }
+
+        // the side
+        baseIdx = vertices.position() / ATTR_SIZE;
+        for (int i = 0; i < numCircleFragment + 1; i++) {
+            float x = (float) Math.sin(i * Math.PI * 2 / numCircleFragment) / 2;
+            float y = (float) Math.cos(i * Math.PI * 2 / numCircleFragment) / 2;
+            // bottom
+            vertices.put(x).put(0).put(y);
+            vertices.put(x * 2).put(0).put(y * 2);
+            vertices.put((float) i / numCircleFragment).put(0);
+            // top
+            vertices.put(x).put(1).put(y);
+            vertices.put(x * 2).put(0).put(y * 2);
+            vertices.put((float) i / numCircleFragment).put(0);
+            // last point does not have next triangle
+            if (i != numCircleFragment) {
+                // 24
+                // 13
+                int triangleBase = baseIdx + i * 2;
+                elements.put(triangleBase).put(triangleBase + 1).put(triangleBase + 3);
+                elements.put(triangleBase).put(triangleBase + 3).put(triangleBase + 2);
+            }
+        }
+
+        vertices.flip();
+        elements.flip();
+        vao.bufferVerticies(vertices);
+        vao.bufferIndices(elements);
+
+        vao.vertexAttribPointerF(0, 3, ATTR_SIZE, 0);
+        vao.vertexAttribPointerF(1, 3, ATTR_SIZE, 3);
+        vao.vertexAttribPointerF(2, 2, ATTR_SIZE, 6);
+
+        vao.setDrawFunction(() -> glDrawElements(GL_TRIANGLES, numTriangles * 3, GL_UNSIGNED_INT, 0));
+
+        return vao;
+    }
+
 }

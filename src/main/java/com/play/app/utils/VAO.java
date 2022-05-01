@@ -26,12 +26,14 @@ public class VAO {
 
     public void bufferVerticies(FloatBuffer vertices) {
         bind();
+        glBindBuffer(GL_ARRAY_BUFFER, vboVertices);
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
         unbind();
     }
 
     public void bufferIndices(IntBuffer elements) {
         bind();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
         unbind();
     }
@@ -50,6 +52,8 @@ public class VAO {
 
     public void unbind() {
         glBindVertexArray(0);
+        // glBindBuffer(GL_ARRAY_BUFFER, 0);
+        // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
     public void delete() {
