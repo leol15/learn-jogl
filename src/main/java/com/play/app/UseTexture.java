@@ -1,6 +1,5 @@
 package com.play.app;
 
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
@@ -19,7 +18,7 @@ import java.nio.IntBuffer;
 
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.graphics.Texture;
-import com.play.app.utils.VAO;
+import com.play.app.graphics.VAO;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -88,7 +87,6 @@ public class UseTexture {
 
         while (!glfwWindowShouldClose(window)) {
             // loop
-            double time = glfwGetTime();
             glfwSwapBuffers(window);
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer

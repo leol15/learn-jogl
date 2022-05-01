@@ -1,10 +1,10 @@
-package com.play.app.utils;
-
-import org.lwjgl.*;
+package com.play.app.graphics;
 
 import static org.lwjgl.opengl.GL30.*;
 
 import java.nio.*;
+
+import com.play.app.utils.Func;
 
 public class VAO {
 
@@ -52,6 +52,7 @@ public class VAO {
 
     public void unbind() {
         glBindVertexArray(0);
+        // crashes
         // glBindBuffer(GL_ARRAY_BUFFER, 0);
         // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
@@ -83,39 +84,4 @@ public class VAO {
         unbind();
     }
 
-    public static VAO createCube() {
-        VAO vao = new VAO();
-
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(8 * (3 + 3));
-        vertices.put(0).put(0).put(0).put(0).put(0).put(0);
-        vertices.put(1).put(0).put(0).put(1).put(0).put(0);
-        vertices.put(0).put(1).put(0).put(0).put(1).put(0);
-        vertices.put(0).put(0).put(1).put(0).put(0).put(1);
-        vertices.put(1).put(1).put(0).put(1).put(1).put(0);
-        vertices.put(1).put(0).put(1).put(1).put(0).put(1);
-        vertices.put(0).put(1).put(1).put(0).put(1).put(1);
-        vertices.put(1).put(1).put(1).put(1).put(1).put(1);
-        vertices.flip();
-
-        IntBuffer elements = BufferUtils.createIntBuffer(6 * 6);
-        elements.put(0).put(4).put(1)
-                .put(0).put(2).put(4)
-                .put(0).put(5).put(1)
-                .put(0).put(3).put(5)
-                .put(0).put(6).put(2)
-                .put(0).put(3).put(6)
-
-                .put(7).put(5).put(1)
-                .put(7).put(1).put(4)
-                .put(7).put(3).put(5)
-                .put(7).put(6).put(3)
-                .put(7).put(4).put(2)
-                .put(7).put(2).put(6);
-        elements.flip();
-
-        vao.bufferVerticies(vertices);
-        vao.bufferIndices(elements);
-
-        return vao;
-    }
 }

@@ -1,6 +1,5 @@
 package com.play.app;
 
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
@@ -20,10 +19,11 @@ import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 import com.play.app.geometry.Plane;
 import com.play.app.graphics.ShaderProgram;
-import com.play.app.utils.VAO;
+import com.play.app.graphics.VAO;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -43,7 +43,7 @@ public class Rendering {
         shaderProgram.loadShaderFromPath("resources/shaders/Simple.frag", GL_FRAGMENT_SHADER);
         shaderProgram.linkProgram();
 
-        VAO cubeVao = VAO.createCube();
+        VAO cubeVao = createCube();
         cubeVao.vertexAttribPointerF(0, 3, 6, 0);
         cubeVao.vertexAttribPointerF(1, 3, 6, 3);
 
@@ -69,17 +69,12 @@ public class Rendering {
                 .linkProgram();
         planeShader.uniformMatrix4fv("view", fbView);
         planeShader.uniformMatrix4fv("projection", fbProjection);
-        Plane p = new Plane();
-        p.model
-                .rotate(0.5f, new Vector3f(1, 0, 0))
-                .translate(0, 0, -0.5f);
 
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
         model.scale(0.6f);
 
         while (!glfwWindowShouldClose(window)) {
             // loop
-            double time = glfwGetTime();
             glfwSwapBuffers(window);
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -94,11 +89,43 @@ public class Rendering {
             cubeVao.bind();
             glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
-            p.model.translate(0, 0, 0.001f);
-            p.draw(planeShader);
-
             glfwPollEvents();
         }
     }
 
+    public static VAO createCube() {
+        VAO vao = new VAO();
+
+        FloatBuffer vertices = BufferUtils.createFloatBuffer(8 * (3 + 3));
+        vertices.put(0).put(0).put(0).put(0).put(0).put(0);
+        vertices.put(1).put(0).put(0).put(1).put(0).put(0);
+        vertices.put(0).put(1).put(0).put(0).put(1).put(0);
+        vertices.put(0).put(0).put(1).put(0).put(0).put(1);
+        vertices.put(1).put(1).put(0).put(1).put(1).put(0);
+        vertices.put(1).put(0).put(1).put(1).put(0).put(1);
+        vertices.put(0).put(1).put(1).put(0).put(1).put(1);
+        vertices.put(1).put(1).put(1).put(1).put(1).put(1);
+        vertices.flip();
+
+        IntBuffer elements = BufferUtils.createIntBuffer(6 * 6);
+        elements.put(0).put(4).put(1)
+                .put(0).put(2).put(4)
+                .put(0).put(5).put(1)
+                .put(0).put(3).put(5)
+                .put(0).put(6).put(2)
+                .put(0).put(3).put(6)
+
+                .put(7).put(5).put(1)
+                .put(7).put(1).put(4)
+                .put(7).put(3).put(5)
+                .put(7).put(6).put(3)
+                .put(7).put(4).put(2)
+                .put(7).put(2).put(6);
+        elements.flip();
+
+        vao.bufferVerticies(vertices);
+        vao.bufferIndices(elements);
+
+        return vao;
+    }
 }

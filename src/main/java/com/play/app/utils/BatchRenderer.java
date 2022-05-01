@@ -9,17 +9,16 @@ import static org.lwjgl.opengl.GL30.*;
  */
 public class BatchRenderer {
 
-
     public BatchRenderer() {
         int vao = glGenVertexArrays();
         glBindVertexArray(vao);
-        
+
         int vboVertices = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboVertices);
-        
+
         int vboIndices = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices);
-        
+
         glBindVertexArray(0);
     }
 
@@ -30,5 +29,5 @@ public class BatchRenderer {
     public void draw() {
 
     }
-    
+
 }

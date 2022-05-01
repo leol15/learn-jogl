@@ -17,6 +17,7 @@ public class Texture {
     public Texture() {
         id = glGenTextures();
     }
+
     public Texture(int width, int height) {
         id = glGenTextures();
         this.width = width;
@@ -49,16 +50,23 @@ public class Texture {
         return texture;
     }
 
-    
     // getters
-    public int getId() { return id; }
-    public int getWidth() { return width; }
-    public int getHeight() { return height; }
+    public int getId() {
+        return id;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 
     public void bindTexture() {
         glBindTexture(GL_TEXTURE_2D, id);
-    }    
-    
+    }
+
     public void unbindTexture() {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
@@ -73,15 +81,17 @@ public class Texture {
             int format, ByteBuffer data) {
         bindTexture();
         glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0,
-            format, GL_UNSIGNED_BYTE, data);
+                format, GL_UNSIGNED_BYTE, data);
         unbindTexture();
     }
 
-    public void detele() { glDeleteTextures(id); }
+    public void detele() {
+        glDeleteTextures(id);
+    }
 
     private void loadTexture(String path) {
         ByteBuffer data;
-        
+
         IntBuffer w = BufferUtils.createIntBuffer(1);
         IntBuffer h = BufferUtils.createIntBuffer(1);
         IntBuffer comp = BufferUtils.createIntBuffer(1);
@@ -90,7 +100,7 @@ public class Texture {
         data = stbi_load(path, w, h, comp, 4);
         if (data == null) {
             throw new RuntimeException("Cannot load texture file: " +
-                path + "\n" + stbi_failure_reason());
+                    path + "\n" + stbi_failure_reason());
         }
         width = w.get();
         height = h.get();

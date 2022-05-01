@@ -24,11 +24,11 @@ import java.nio.FloatBuffer;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.graphics.Text;
 import com.play.app.graphics.UnitGeometries;
+import com.play.app.graphics.VAO;
 import com.play.app.ui.Button;
 import com.play.app.ui.CameraControl;
 import com.play.app.ui.WindowManager;
 import com.play.app.utils.CONST;
-import com.play.app.utils.VAO;
 
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;

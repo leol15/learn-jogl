@@ -1,13 +1,12 @@
 package com.play.app.geometry;
 
-
 import org.joml.*;
-
 
 public class Rect {
 
     private Vector2f topLeft;
     private Vector2f widthHeight;
+
     public Rect(final Vector2f topLeft, final Vector2f widthHeight) {
         this.topLeft = new Vector2f(topLeft);
         this.widthHeight = new Vector2f(widthHeight);
@@ -24,7 +23,6 @@ public class Rect {
 
     public boolean inside(float x, float y) {
         return x >= topLeft.x && x <= topLeft.x + widthHeight.x
-            && y >= topLeft.y && y <= topLeft.y + widthHeight.y; 
+                && y >= topLeft.y && y <= topLeft.y + widthHeight.y;
     }
 }
-

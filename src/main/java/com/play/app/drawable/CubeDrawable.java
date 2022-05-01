@@ -1,23 +1,22 @@
 package com.play.app.drawable;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import com.play.app.basics.Thing;
 import com.play.app.geometry.Cube;
 import com.play.app.graphics.UnitGeometries;
 
-import org.joml.Matrix4f;
+public class CubeDrawable extends ADrawable {
 
-public class CubeDrawable extends DrawableBase {
-
-    private final Cube cube = new Cube();
-
-    @Override
-    protected void drawSelf() {
-        UnitGeometries.drawCube();
-
+    public CubeDrawable() {
+        super();
+        addInstance(new Cube());
     }
 
     @Override
-    protected void getModelMatrix(Matrix4f out) {
-        cube.getModelMatrix(out);
+    protected void drawInstance() {
+        UnitGeometries.drawCube();
     }
 
 }

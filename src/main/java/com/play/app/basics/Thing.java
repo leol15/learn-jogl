@@ -1,4 +1,4 @@
-package com.play.app.utils;
+package com.play.app.basics;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;

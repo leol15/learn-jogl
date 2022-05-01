@@ -3,8 +3,8 @@ package com.play.app.scene;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.play.app.interfaces.Drawable;
-import com.play.app.utils.Thing;
+import com.play.app.basics.Drawable;
+import com.play.app.basics.Thing;
 
 import org.joml.Matrix4f;
 

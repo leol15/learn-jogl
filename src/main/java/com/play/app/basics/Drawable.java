@@ -1,4 +1,4 @@
-package com.play.app.interfaces;
+package com.play.app.basics;
 
 import org.joml.Matrix4f;
 
