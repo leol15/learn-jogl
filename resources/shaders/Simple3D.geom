@@ -7,7 +7,7 @@ layout (triangle_strip, max_vertices = 12) out;
 in VS_OUT {
     vec3 normal;
     vec4 color;
-    int isDebug;
+    int debug;
 } gs_in[];
 
 out vec4 fs_color;
@@ -27,7 +27,7 @@ void GenerateLine(int index) {
 }
 
 void main() {
-    if (gs_in[0].isDebug == 1) {
+    if (gs_in[0].debug == 1) {
         GenerateLine(0); // first vertex normal
         GenerateLine(1); // second vertex normal
         GenerateLine(2); // third vertex normal

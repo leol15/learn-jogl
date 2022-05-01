@@ -41,8 +41,9 @@ public class App {
 		// new Batching(window);
 		// new UseTexture(window);
 		// new Input(window);
-		new BatchRendering(window);
 		// new DrawLines(window);
+		// new BatchRendering(window);
+		new DrawAScene(window);
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);

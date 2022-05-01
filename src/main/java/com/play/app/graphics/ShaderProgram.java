@@ -111,10 +111,10 @@ public class ShaderProgram {
     }
 
     // sets the location of texture
-    public void uniform(String uniformName, int location) {
+    public void uniform(String uniformName, int v) {
         useProgram();
         int uniformId = glGetUniformLocation(id, uniformName);
-        glUniform1i(uniformId, location);
+        glUniform1i(uniformId, v);
         unuseProgram();
     }
 
