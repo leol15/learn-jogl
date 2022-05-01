@@ -296,7 +296,7 @@ public class UnitGeometries {
             float x = (float) Math.sin(i * Math.PI * 2 / numCircleFragment) / 2;
             float y = (float) Math.cos(i * Math.PI * 2 / numCircleFragment) / 2;
             vertices.put(x).put(1).put(y);
-            vertices.put(x).put(1).put(y);
+            vertices.put(0).put(1).put(0);
             vertices.put((float) i / numCircleFragment).put(0);
             // last point does not have next triangle
             if (i != numCircleFragment) {
@@ -377,8 +377,6 @@ public class UnitGeometries {
         final IntBuffer elements = BufferUtils.createIntBuffer(numTriangles * 3);
         int baseIdx;
 
-        Func.p("num v " + numVerticies);
-
         final Vector3f tmpV = new Vector3f();
 
         final float sliceAngle = (float) Math.PI / numSlices;
@@ -410,7 +408,6 @@ public class UnitGeometries {
                 final float x = (float) Math.sin(i * Math.PI * 2 / numSlices) * levelRadius;
                 final float y = (float) Math.cos(i * Math.PI * 2 / numSlices) * levelRadius;
                 tmpV.set(x, levelHeight, y);
-                Func.p("level " + level + " i " + i + " size " + vertices.position() / ATTR_SIZE);
                 addVertex(vertices, tmpV, (float) i / numSlices);
                 // last point does not have next triangle
                 if (i != numSlices) {
@@ -437,8 +434,6 @@ public class UnitGeometries {
                 elements.put(baseIdx - i - 1).put(baseIdx).put(baseIdx - i - 2);
             }
         }
-
-        Func.p("vert " + vertices.remaining() + " elem " + elements.remaining());
 
         vertices.flip();
         elements.flip();

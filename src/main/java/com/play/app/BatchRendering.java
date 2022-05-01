@@ -10,6 +10,7 @@ import java.awt.Color;
 import java.nio.*;
 
 import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL32.*;
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.system.MemoryStack.*;
@@ -35,6 +36,7 @@ public class BatchRendering {
 
         ShaderProgram simple3DShader = new ShaderProgram()
                 .withShader("resources/shaders/Simple3D.vert", GL_VERTEX_SHADER)
+                .withShader("resources/shaders/Simple3D.geom", GL_GEOMETRY_SHADER)
                 .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
                 .linkProgram();
 
