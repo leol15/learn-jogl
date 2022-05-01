@@ -19,10 +19,13 @@ import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 import java.awt.Color;
 
-import com.play.app.drawable.CubeDrawable;
+import com.play.app.basics.SpacialThing;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.graphics.Text;
+import com.play.app.mesh.CubeMesh;
+import com.play.app.mesh.Mesh;
 import com.play.app.scene.SceneNode;
+import com.play.app.scene.SceneObject;
 import com.play.app.ui.Button;
 import com.play.app.ui.CameraControl;
 import com.play.app.ui.WindowManager;
@@ -51,22 +54,31 @@ public class DrawAScene {
         double previousTime = 0;
 
         // scene
-        final SceneNode penTip = new SceneNode().setDrawable(
-                new CubeDrawable().setShader(simple3DShader));
-        penTip.scale.mul(0.5f);
-        penTip.translation.add(0, 2, 0);
-        final SceneNode penBody = new SceneNode().setDrawable(
-                new CubeDrawable().setShader(simple3DShader));
-        penBody.scale.mul(0.5f, 2, 0.5f);
+        final SceneNode penTip = new SceneNode().setSceneObject(
+                new SceneObject()
+                        .setMesh(Mesh.CUBE)
+                        .setShader(simple3DShader)
+                        .addInstance(new SpacialThing()));
+        penTip.modelInfo.scale.mul(0.5f);
+        penTip.modelInfo.translation.add(0, 2, 0);
+        final SceneNode penBody = new SceneNode().setSceneObject(
+                new SceneObject()
+                        .setMesh(Mesh.CUBE)
+                        .setShader(simple3DShader)
+                        .addInstance(new SpacialThing()));
+        penBody.modelInfo.scale.mul(0.5f, 2, 0.5f);
 
         final SceneNode pen = new SceneNode().addChild(penTip).addChild(penBody);
 
-        pen.rotation.setAngleAxis((float) Math.PI / 4, 0, 0, 1);
-        pen.translation.add(2, 0, 0);
-        pen.scale.set(0.5f);
+        pen.modelInfo.rotation.setAngleAxis((float) Math.PI / 4, 0, 0, 1);
+        pen.modelInfo.translation.add(2, 0, 0);
+        pen.modelInfo.scale.set(0.5f);
 
-        final SceneNode rootSceneNode = new SceneNode()
-                .setDrawable(new CubeDrawable().setShader(simple3DShader))
+        final SceneNode rootSceneNode = new SceneNode().setSceneObject(
+                new SceneObject()
+                        .setMesh(Mesh.CUBE)
+                        .setShader(simple3DShader)
+                        .addInstance(new SpacialThing()))
                 .addChild(pen);
 
         final Matrix4f identity = new Matrix4f();

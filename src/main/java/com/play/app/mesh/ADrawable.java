@@ -1,10 +1,10 @@
-package com.play.app.drawable;
+package com.play.app.mesh;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import com.play.app.basics.Drawable;
-import com.play.app.basics.Thing;
+import com.play.app.basics.SpacialThing;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.utils.CONST;
 import com.play.app.utils.Func;
@@ -23,15 +23,15 @@ public abstract class ADrawable implements Drawable {
     private final Matrix4f TMP_MATRIX = new Matrix4f();
     private final Matrix4f WORLD_TRANSFORM = new Matrix4f();
 
-    protected final Set<Thing> instances = new HashSet<>();
+    protected final Set<SpacialThing> instances = new HashSet<>();
     private ShaderProgram shader;
 
-    public ADrawable addInstance(final Thing instance) {
+    public ADrawable addInstance(final SpacialThing instance) {
         instances.add(instance);
         return this;
     }
 
-    public ADrawable removeInstance(final Thing instance) {
+    public ADrawable removeInstance(final SpacialThing instance) {
         instances.remove(instance);
         return this;
     }
@@ -39,7 +39,7 @@ public abstract class ADrawable implements Drawable {
     public void draw(final Matrix4f transform) {
         WORLD_TRANSFORM.set(transform);
 
-        for (final Thing instance : instances) {
+        for (final SpacialThing instance : instances) {
             instance.getModelMatrix(TMP_MATRIX);
             TMP_MATRIX.mulLocal(WORLD_TRANSFORM);
             shader.uniformMatrix4fv(CONST.MODEL_MATRIX, TMP_MATRIX);

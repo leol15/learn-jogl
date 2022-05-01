@@ -21,7 +21,6 @@ import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
-import com.play.app.geometry.Plane;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.graphics.VAO;
 

@@ -16,7 +16,7 @@ import org.lwjgl.BufferUtils;
 /**
  * Represent a drawable cube
  */
-public class Plane extends APhysicsObject {
+public class Plane {
 
     public Plane() {
 
