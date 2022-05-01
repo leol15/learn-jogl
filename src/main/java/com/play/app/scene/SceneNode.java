@@ -1,11 +1,9 @@
 package com.play.app.scene;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import com.play.app.drawable.Drawable;
+import com.play.app.interfaces.Drawable;
 import com.play.app.utils.Thing;
 
 import org.joml.Matrix4f;

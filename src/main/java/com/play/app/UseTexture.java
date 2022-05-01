@@ -1,22 +1,29 @@
 package com.play.app;
 
-import org.lwjgl.*;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
-import org.joml.*;
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glDrawElements;
+import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 
-import java.nio.*;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
-import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.glfw.Callbacks.*;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
-
-import com.play.app.graphics.*;
+import com.play.app.graphics.ShaderProgram;
+import com.play.app.graphics.Texture;
 import com.play.app.utils.VAO;
+
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.lwjgl.BufferUtils;
 
 public class UseTexture {
 
@@ -47,7 +54,8 @@ public class UseTexture {
         vao.vertexAttribPointerF(0, 3, 5, 0);
         vao.vertexAttribPointerF(1, 2, 5, 3);
         // shaderProgram.setVertexAttribPointer("position", 3, 6 * Float.BYTES, 0);
-        // shaderProgram.setVertexAttribPointer("color",    3, 6 * Float.BYTES, 3 * Float.BYTES);
+        // shaderProgram.setVertexAttribPointer("color", 3, 6 * Float.BYTES, 3 *
+        // Float.BYTES);
 
         // set uniform locations
         Matrix4f model = new Matrix4f();
@@ -72,7 +80,7 @@ public class UseTexture {
         // int uniTex = program.getUniformLocation("texImage");
         // program.setUniform(uniTex, 0);
 
-		glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
+        glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
 
         model.scale(0.5f);
 
@@ -80,21 +88,21 @@ public class UseTexture {
 
         while (!glfwWindowShouldClose(window)) {
             // loop
-            double time =glfwGetTime();
+            double time = glfwGetTime();
             glfwSwapBuffers(window);
 
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
             model.rotate(0.05f, rotateAxis);
             model.get(fbModel);
             shaderProgram.uniformMatrix4fv("model", fbModel);
-            
+
             vao.bind();
             shaderProgram.useProgram();
             texture.bindTexture();
 
             glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
-            
+
             vao.unbind();
             shaderProgram.unuseProgram();
             texture.unbindTexture();

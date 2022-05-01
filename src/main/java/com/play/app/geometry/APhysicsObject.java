@@ -2,8 +2,6 @@ package com.play.app.geometry;
 
 import com.play.app.utils.Thing;
 
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class APhysicsObject extends Thing {
