@@ -2,6 +2,8 @@ package com.play.app.ui;
 
 import java.awt.Color;
 import java.nio.FloatBuffer;
+
+import com.play.app.geometry.Ray;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.graphics.UnitGeometries;
 import com.play.app.ui.WindowManager.CallbackType;
@@ -38,7 +40,6 @@ public class CameraControl {
     private MouseButton activeMouseButton = MouseButton.NONE;
     private int mouseButtonMode;
     private double mouseX, mouseY;
-    private int[] windowSize;
 
     // marker related
     private float markerScale = 15;
@@ -70,9 +71,6 @@ public class CameraControl {
 
         view = new Matrix4f();
         projection = new Matrix4f();
-
-        windowSize = Func.getWindowSize(windowManager.window);
-        // windowSize = new int[2];
 
         windowManager.addMouseButtonCallback(Layer.SCENE, this::mouseButtonCallback);
         windowManager.addScrollCallback(Layer.SCENE, (GLFWScrollCallbackI) this::scrollCallback);
@@ -110,12 +108,48 @@ public class CameraControl {
 
     }
 
+    ////////////////////////
+    // cast ray into space
+    ////////////////////////
+    public Ray castRay(final float screenX, final float screenY) {
+        final int windowW = windowManager.windowSize[0];
+        final int windowH = windowManager.windowSize[1];
+        final float cx = screenX - windowW / 2 + 0.5f;
+        final float cy = screenY - windowH / 2 + 0.5f;
+        // find inverse
+        final Matrix4f inverseView = new Matrix4f();
+        view.invert(inverseView);
+
+        final double focal_length = windowH / (2 * Math.tan(fov * Math.PI / 360.f));
+        final Vector3f v0 = new Vector3f(cx, -cy, (float) -focal_length).normalize();
+        final Vector4f dir = new Vector4f(v0, 0).mul(inverseView);
+
+        return new Ray(new Vector3f(cameraPosition),
+                new Vector3f(dir.x, dir.y, dir.z).normalize());
+    }
+
+    public Vector3f getCameraPosition() {
+        return new Vector3f().set(cameraPosition);
+    }
+
+    public Vector3f getCameraTarget() {
+        return new Vector3f().set(cameraTarget);
+    }
+
+    public void getViewMatrix(final Matrix4f out) {
+        out.set(view);
+    }
+
+    public void getProjectionMatrix(final Matrix4f out) {
+        out.set(projection);
+    }
+
     ///////////////////
     // camera actions
     ///////////////////
     private void moveCamera(double dx, double dy) {
-        final float dxFraction = (float) dx / windowSize[0];
-        final float dyFraction = (float) dy / windowSize[1];
+        final float dxFraction = (float) dx / windowManager.windowSize[0];
+        final float dyFraction = (float) dy / windowManager.windowSize[1];
 
         final Vector3f cameraDir = new Vector3f();
         cameraTarget.sub(cameraPosition, cameraDir);
@@ -221,7 +255,8 @@ public class CameraControl {
 
     private void updateProjection() {
         projection.setPerspective(Math.toRadians(fov),
-                windowSize[0] / (float) windowSize[1], 0.1f, 100f);
+                windowManager.windowSize[0] / (float) windowManager.windowSize[1],
+                0.1f, 100f);
     }
 
     ///////////////////
@@ -275,8 +310,6 @@ public class CameraControl {
 
     private void windowSizeCallback(long window, int w, int h) {
         glViewport(0, 0, w, h);
-        windowSize[0] = w;
-        windowSize[1] = h;
         updateProjection();
     }
 

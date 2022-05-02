@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.play.app.utils.Func;
+
 import org.lwjgl.glfw.*;
 
 /**
@@ -16,7 +18,7 @@ import org.lwjgl.glfw.*;
 public class WindowManager {
 
     public enum Layer {
-        UI, SCENE,
+        ALWAYS, UI, SCENE,
     }
 
     public enum CallbackType {
@@ -28,7 +30,7 @@ public class WindowManager {
         Key,
     }
 
-    private static final Layer[] LAYER_ORDER = { Layer.UI, Layer.SCENE };
+    private static final Layer[] LAYER_ORDER = { Layer.ALWAYS, Layer.UI, Layer.SCENE };
 
     public final long window;
 
@@ -58,12 +60,17 @@ public class WindowManager {
         }
 
         // some common callbacks
-        addKeyCallback(Layer.UI, (window2, key, scancode, action, mods) -> {
+        addKeyCallback(Layer.ALWAYS, (window2, key, scancode, action, mods) -> {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE) {
                 // We will detect this in the rendering loop
                 glfwSetWindowShouldClose(window, true);
             }
         });
+        addCursorPosCallback(Layer.ALWAYS, this::updateCursorPos);
+        addWindowSizeCallback(Layer.ALWAYS, this::updateWindowSize);
+        final int[] tmp = Func.getWindowSize(window);
+        windowSize[0] = tmp[0];
+        windowSize[1] = tmp[1];
     }
 
     // key and button have 2 related events
@@ -79,6 +86,22 @@ public class WindowManager {
 
     private boolean shouldStopPropagation() {
         return stopPropagation;
+    }
+
+    ///////////////////////
+    // utils
+    ///////////////////////
+    public final int[] windowSize = new int[2];
+    public final float[] lastMousePos = new float[2];
+
+    private void updateWindowSize(long window, int w, int h) {
+        windowSize[0] = w;
+        windowSize[1] = h;
+    }
+
+    private void updateCursorPos(long window, double x, double y) {
+        lastMousePos[0] = (float) x;
+        lastMousePos[1] = (float) y;
     }
 
     ////////////////////////////////////

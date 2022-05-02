@@ -6,6 +6,8 @@ public class CONST {
     public static final String PROJECTION_MATRIX = "projection";
     public static final String MODEL_MATRIX = "model";
 
+    public static final String SHADER_COLOR = "color";
+
     public static final String SHADER_FOLDER = "resources/shaders/";
 
 }

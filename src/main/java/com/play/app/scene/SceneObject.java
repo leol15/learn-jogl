@@ -11,16 +11,25 @@ import com.play.app.mesh.Mesh;
 import com.play.app.utils.CONST;
 
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 /**
  * An object in the scene, that can be
  * drawn, selected
  */
+@Accessors(chain = true)
 public class SceneObject implements Drawable {
 
     private ShaderProgram shader;
     private Texture texture;
     private Mesh mesh;
+
+    @Setter
+    private Vector4f color;
 
     private final Set<SpacialThing> instances = new HashSet<>();
     private final Matrix4f localTransform = new Matrix4f();
@@ -58,6 +67,10 @@ public class SceneObject implements Drawable {
 
         if (texture != null) {
             texture.bindTexture();
+        }
+
+        if (color != null) {
+            shader.uniform4f(CONST.SHADER_COLOR, color);
         }
 
         for (final SpacialThing modelInfo : instances) {

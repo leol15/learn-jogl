@@ -1,5 +1,6 @@
 package com.play.app;
 
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
@@ -20,18 +21,22 @@ import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 import java.awt.Color;
 
 import com.play.app.basics.SpacialThing;
+import com.play.app.geometry.Ray;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.graphics.Text;
-import com.play.app.mesh.CubeMesh;
 import com.play.app.mesh.Mesh;
 import com.play.app.scene.SceneNode;
 import com.play.app.scene.SceneObject;
 import com.play.app.ui.Button;
 import com.play.app.ui.CameraControl;
 import com.play.app.ui.WindowManager;
+import com.play.app.ui.WindowManager.Layer;
+import com.play.app.utils.Func;
 
 import org.joml.Math;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 public class DrawAScene {
 
@@ -56,14 +61,14 @@ public class DrawAScene {
         // scene
         final SceneNode penTip = new SceneNode().setSceneObject(
                 new SceneObject()
-                        .setMesh(Mesh.CUBE)
+                        .setMesh(Mesh.CONE)
                         .setShader(simple3DShader)
                         .addInstance(new SpacialThing()));
         penTip.modelInfo.scale.mul(0.5f);
         penTip.modelInfo.translation.add(0, 2, 0);
         final SceneNode penBody = new SceneNode().setSceneObject(
                 new SceneObject()
-                        .setMesh(Mesh.CUBE)
+                        .setMesh(Mesh.CYCLINDER)
                         .setShader(simple3DShader)
                         .addInstance(new SpacialThing()));
         penBody.modelInfo.scale.mul(0.5f, 2, 0.5f);
@@ -82,6 +87,23 @@ public class DrawAScene {
                 .addChild(pen);
 
         final Matrix4f identity = new Matrix4f();
+
+        // add rays on click
+        SceneObject clickLines = new SceneObject()
+                .setMesh(Mesh.createCyclinderMesh(3))
+                .setShader(simple3DShader)
+                .setColor(Func.toVec4(Color.YELLOW));
+        SceneNode lineSceneNode = new SceneNode().setSceneObject(clickLines);
+        rootSceneNode.addChild(lineSceneNode);
+
+        windowManager.addMouseButtonCallback(Layer.SCENE, (window2, button, action, mods) -> {
+            if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE) {
+                windowManager.stopPropagation();
+                final Ray ray = camera.castRay(windowManager.lastMousePos[0],
+                        windowManager.lastMousePos[1]);
+                addLine(clickLines, ray.start, ray.direction.mul(50).add(ray.start));
+            }
+        });
 
         // ui
         final Button togglePolygonMode = new Button(windowManager, 0, 50, "Toggle Polygon Mode");
@@ -116,4 +138,16 @@ public class DrawAScene {
         }
     }
 
+    private void addLine(final SceneObject sceneObject, final Vector3f start, final Vector3f end) {
+        final SpacialThing model = new SpacialThing();
+        final Vector3f diff = new Vector3f();
+        start.sub(end, diff);
+        // set model to be diff, then translate
+        final float lineWidth = 0.03f;
+        model.scale.set(lineWidth, diff.length(), lineWidth);
+        model.rotation.rotateTo(new Vector3f(0, 1, 0), diff);
+        model.translation.set(end);
+
+        sceneObject.addInstance(model);
+    }
 }
