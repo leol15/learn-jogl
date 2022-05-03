@@ -10,7 +10,8 @@ run:
 
 # recursive development
 dev:
-	mvn compile exec:java -Dexec.mainClass="com.play.app.App"  
+	mvn compile exec:java -Dexec.mainClass="com.play.app.App" \
+		-Dlog4j2.configurationFile="target/log4j.properties"
 	make
 
 clean:

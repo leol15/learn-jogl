@@ -43,6 +43,16 @@
       <version>1.18.24</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.17.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.17.2</version>
+    </dependency>
     <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl</artifactId></dependency>
     <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-assimp</artifactId></dependency>
     <dependency><groupId>org.lwjgl</groupId><artifactId>lwjgl-bgfx</artifactId></dependency>
@@ -129,6 +139,10 @@
             <manifest>
               <mainClass>com.play.app.App</mainClass>
             </manifest>
+            <!-- supposingly log4j stuff -->
+            <manifestEntries>
+              <Class-Path>.</Class-Path>
+            </manifestEntries>
           </archive>
         </configuration>
         <executions>
@@ -154,5 +168,15 @@
         </configuration>
       </plugin>
     </plugins>
+    <!-- use log4j in dev, this copies the config file over -->
+    <resources>
+      <resource>
+          <directory>src/main/resources</directory>
+          <targetPath>${project.build.directory}</targetPath>
+          <includes>
+              <include>log4j.properties</include>
+          </includes>
+      </resource>
+  </resources>
   </build>
 </project>

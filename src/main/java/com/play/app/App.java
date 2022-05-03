@@ -42,7 +42,8 @@ public class App {
 		// new Input(window);
 		// new DrawLines(window);
 		// new BatchRendering(window);
-		new DrawAScene(window);
+		// new DrawAScene(window);
+		new SelectObject(window);
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);

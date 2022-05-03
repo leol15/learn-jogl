@@ -111,7 +111,7 @@ public class CameraControl {
     ////////////////////////
     // cast ray into space
     ////////////////////////
-    public Ray castRay(final float screenX, final float screenY) {
+    public Ray getRay(final float screenX, final float screenY) {
         final int windowW = windowManager.windowSize[0];
         final int windowH = windowManager.windowSize[1];
         final float cx = screenX - windowW / 2 + 0.5f;
