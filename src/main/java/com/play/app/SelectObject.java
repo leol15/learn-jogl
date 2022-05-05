@@ -65,24 +65,25 @@ public class SelectObject {
         final SceneNode rootSceneNode = new SceneNode();
 
         // pen
-        // final SceneNode penTip = new SceneNode().setSceneObject(
-        //         new SceneObject()
-        //                 .setMesh(Mesh.CONE)
-        //                 .setShader(simple3DShader)
-        //                 .addInstance(new SpacialThing()));
-        // penTip.modelInfo.scale.mul(0.5f);
-        // penTip.modelInfo.translation.add(0, 2, 0);
-        // final SceneNode penBody = new SceneNode().setSceneObject(
-        //         new SceneObject()
-        //                 .setMesh(Mesh.CYCLINDER)
-        //                 .setShader(simple3DShader)
-        //                 .addInstance(new SpacialThing()));
-        // penBody.modelInfo.scale.mul(0.5f, 2, 0.5f);
+        final SceneNode penTip = new SceneNode().setSceneObject(
+                new SceneObject()
+                        .setMesh(Mesh.CONE)
+                        .setShader(simple3DShader)
+                        .addInstance(new SpacialThing()));
+        penTip.modelInfo.scale.mul(0.5f);
+        penTip.modelInfo.translation.add(0, 2, 0);
+        final SceneNode penBody = new SceneNode().setSceneObject(
+                new SceneObject()
+                        .setMesh(Mesh.CYCLINDER)
+                        .setShader(simple3DShader)
+                        .addInstance(new SpacialThing()));
+        penBody.modelInfo.scale.mul(0.5f, 2, 0.5f);
 
-        // final SceneNode pen = new SceneNode().addChild(penTip).addChild(penBody);
-        // pen.modelInfo.rotation.setAngleAxis((float) Math.PI / 4, 0, 0, 1);
-        // pen.modelInfo.translation.add(2, 0, 0);
-        // pen.modelInfo.scale.set(0.5f);
+        final SceneNode pen = new SceneNode().addChild(penTip).addChild(penBody);
+        pen.modelInfo.rotation.setAngleAxis((float) Math.PI / 4, 0, 0, 1);
+        pen.modelInfo.translation.add(2, 0, 0);
+        pen.modelInfo.scale.set(0.5f);
+        rootSceneNode.addChild(pen);
 
         final SpacialThing cube1Transform = new SpacialThing();
         cube1Transform.translation.set(0, 0, 0);
