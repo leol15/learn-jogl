@@ -1,5 +1,6 @@
 package com.play.app.scene;
 
+import java.awt.Color;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,6 +13,7 @@ import com.play.app.graphics.ShaderProgram;
 import com.play.app.graphics.Texture;
 import com.play.app.mesh.Mesh;
 import com.play.app.utils.CONST;
+import com.play.app.utils.Func;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -29,29 +31,26 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class SceneObject implements Drawable {
 
-    private ShaderProgram shader;
-    private Texture texture;
-    private Mesh mesh;
-    private Collidable collidable = new Cube();
-
     @Setter
-    private Vector4f color;
+    private ShaderProgram shader;
+    @Setter
+    private Texture texture;
+    @Setter
+    private Mesh mesh;
+    @Setter
+    private Collidable collidable;
 
+    private final Vector4f color = new Vector4f(0.7f, 0.7f, 0.7f, 1);
     private final Set<SpacialThing> instances = new HashSet<>();
     private final Matrix4f tmpMatrix = new Matrix4f();
 
-    public SceneObject setMesh(final Mesh m) {
-        mesh = m;
+    public SceneObject setColor(final Color color) {
+        this.setColor(Func.toVec4(color));
         return this;
     }
 
-    public SceneObject setTexture(final Texture t) {
-        texture = t;
-        return this;
-    }
-
-    public SceneObject setShader(final ShaderProgram s) {
-        shader = s;
+    public SceneObject setColor(final Vector4f color) {
+        this.color.set(color);
         return this;
     }
 
@@ -103,12 +102,12 @@ public class SceneObject implements Drawable {
         if (collidable == null) {
             return null;
         }
-
+        final Matrix4f rayMat = new Matrix4f();
         final Matrix4f tmpMat = new Matrix4f();
         for (final SpacialThing model : instances) {
             model.getModelMatrix(tmpMat);
             tmpMat.mulLocal(transform);
-            final Vector3f intersect = collidable.collide(ray, tmpMat);
+            final Vector3f intersect = collidable.collide(ray, rayMat, tmpMat);
             if (intersect != null) {
                 return intersect;
             }

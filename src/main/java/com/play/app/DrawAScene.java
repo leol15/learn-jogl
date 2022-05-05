@@ -100,7 +100,9 @@ public class DrawAScene {
                 windowManager.stopPropagation();
                 final Ray ray = camera.getRay(windowManager.lastMousePos[0],
                         windowManager.lastMousePos[1]);
-                addLine(clickLines, ray.start, ray.direction.mul(50).add(ray.start));
+
+                SpacialThing lineTransform = Func.createLine(ray, 10, 0.03f);
+                clickLines.addInstance(lineTransform);
             }
         });
 
@@ -137,16 +139,4 @@ public class DrawAScene {
         }
     }
 
-    private void addLine(final SceneObject sceneObject, final Vector3f start, final Vector3f end) {
-        final SpacialThing model = new SpacialThing();
-        final Vector3f diff = new Vector3f();
-        start.sub(end, diff);
-        // set model to be diff, then translate
-        final float lineWidth = 0.03f;
-        model.scale.set(lineWidth, diff.length(), lineWidth);
-        model.rotation.rotateTo(new Vector3f(0, 1, 0), diff);
-        model.translation.set(end);
-
-        sceneObject.addInstance(model);
-    }
 }

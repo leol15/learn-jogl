@@ -11,20 +11,22 @@ import com.play.app.geometry.Ray;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
+@Accessors(chain = true)
 public class SceneNode implements Drawable {
 
     public final SpacialThing modelInfo = new SpacialThing();
 
     private Set<SceneNode> children = new HashSet<>();
-    private SceneObject sceneObject;
 
-    public SceneNode setSceneObject(SceneObject sceneObject) {
-        this.sceneObject = sceneObject;
-        return this;
-    }
+    @Getter
+    @Setter
+    private SceneObject sceneObject;
 
     public SceneNode addChild(final SceneNode child) {
         children.add(child);
@@ -46,11 +48,11 @@ public class SceneNode implements Drawable {
     }
 
     public SceneNode castRay(final Ray ray) {
-        final Matrix4f tmpMat = new Matrix4f();
+        final Matrix4f objMat = new Matrix4f();
         final SceneNode[] bestNode = { null };
         final float[] bestDist = { Float.POSITIVE_INFINITY };
 
-        treeTransformVisitor(this, tmpMat, (node, newTransoform) -> {
+        treeTransformVisitor(this, objMat, (node, newTransoform) -> {
             if (node.sceneObject == null) {
                 return;
             }

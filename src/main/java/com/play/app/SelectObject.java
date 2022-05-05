@@ -21,6 +21,7 @@ import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 import java.awt.Color;
 
 import com.play.app.basics.SpacialThing;
+import com.play.app.geometry.Cube;
 import com.play.app.geometry.Ray;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.graphics.Text;
@@ -35,6 +36,7 @@ import com.play.app.utils.Func;
 
 import org.joml.Math;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -60,54 +62,77 @@ public class SelectObject {
         double previousTime = 0;
 
         // scene
-        final SceneNode penTip = new SceneNode().setSceneObject(
+        final SceneNode rootSceneNode = new SceneNode();
+
+        // pen
+        // final SceneNode penTip = new SceneNode().setSceneObject(
+        //         new SceneObject()
+        //                 .setMesh(Mesh.CONE)
+        //                 .setShader(simple3DShader)
+        //                 .addInstance(new SpacialThing()));
+        // penTip.modelInfo.scale.mul(0.5f);
+        // penTip.modelInfo.translation.add(0, 2, 0);
+        // final SceneNode penBody = new SceneNode().setSceneObject(
+        //         new SceneObject()
+        //                 .setMesh(Mesh.CYCLINDER)
+        //                 .setShader(simple3DShader)
+        //                 .addInstance(new SpacialThing()));
+        // penBody.modelInfo.scale.mul(0.5f, 2, 0.5f);
+
+        // final SceneNode pen = new SceneNode().addChild(penTip).addChild(penBody);
+        // pen.modelInfo.rotation.setAngleAxis((float) Math.PI / 4, 0, 0, 1);
+        // pen.modelInfo.translation.add(2, 0, 0);
+        // pen.modelInfo.scale.set(0.5f);
+
+        final SpacialThing cube1Transform = new SpacialThing();
+        cube1Transform.translation.set(0, 0, 0);
+        final SceneNode cube1SceneNode = new SceneNode().setSceneObject(
                 new SceneObject()
-                        .setMesh(Mesh.CONE)
                         .setShader(simple3DShader)
-                        .addInstance(new SpacialThing()));
-        penTip.modelInfo.scale.mul(0.5f);
-        penTip.modelInfo.translation.add(0, 2, 0);
-        final SceneNode penBody = new SceneNode().setSceneObject(
-                new SceneObject()
-                        .setMesh(Mesh.CYCLINDER)
-                        .setShader(simple3DShader)
-                        .addInstance(new SpacialThing()));
-        penBody.modelInfo.scale.mul(0.5f, 2, 0.5f);
-
-        final SceneNode pen = new SceneNode().addChild(penTip).addChild(penBody);
-
-        pen.modelInfo.rotation.setAngleAxis((float) Math.PI / 4, 0, 0, 1);
-        pen.modelInfo.translation.add(2, 0, 0);
-        pen.modelInfo.scale.set(0.5f);
-
-        final SceneNode rootSceneNode = new SceneNode().setSceneObject(
-                new SceneObject()
                         .setMesh(Mesh.CUBE)
-                        .setShader(simple3DShader)
-                        .addInstance(new SpacialThing()))
-                .addChild(pen);
+                        .setCollidable(new Cube())
+                        .addInstance(cube1Transform));
+        rootSceneNode.addChild(cube1SceneNode);
 
         final Matrix4f identity = new Matrix4f();
 
         // add rays on click
-        SceneObject clickLines = new SceneObject()
+        SceneObject hitLines = new SceneObject()
+                .setMesh(Mesh.createCyclinderMesh(3))
+                .setShader(simple3DShader)
+                .setColor(Func.toVec4(Color.RED));
+        rootSceneNode.addChild(new SceneNode().setSceneObject(hitLines));
+        SceneObject missLines = new SceneObject()
                 .setMesh(Mesh.createCyclinderMesh(3))
                 .setShader(simple3DShader)
                 .setColor(Func.toVec4(Color.YELLOW));
-        SceneNode lineSceneNode = new SceneNode().setSceneObject(clickLines);
-        rootSceneNode.addChild(lineSceneNode);
+        rootSceneNode.addChild(new SceneNode().setSceneObject(missLines));
 
-        windowManager.addMouseButtonCallback(Layer.SCENE, (window2, button, action, mods) -> {
-            if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE) {
+        SceneNode[] selectedNode = { null };
+
+        windowManager.addKeyCallback(Layer.SCENE, (window2, key, code, action, mods) -> {
+            if (key == GLFW_KEY_A && action == GLFW_PRESS) {
                 windowManager.stopPropagation();
-                log.trace("selecting node");
                 final Ray ray = camera.getRay(windowManager.lastMousePos[0],
                         windowManager.lastMousePos[1]);
 
-                SceneNode selectedNode = rootSceneNode.castRay(ray);
-                log.debug("found node {}", selectedNode);
-                if (selectedNode != null) {
-                    selectedNode.modelInfo.scale.mul(0.2f);
+                // move ray forward a bit
+                final Vector3f tmp = new Vector3f();
+                ray.direction.mul(0.5f, tmp);
+                ray.start.add(tmp);
+
+                SpacialThing lineTransform = Func.createLine(ray, 10, 0.02f);
+                SceneNode newSelectedNode = rootSceneNode.castRay(ray);
+                if (newSelectedNode != null) {
+                    if (selectedNode[0] != null) {
+                        selectedNode[0].getSceneObject().setColor(Color.WHITE);
+                    }
+                    newSelectedNode.getSceneObject().setColor(Color.RED);
+                    // selectedNode.modelInfo.scale.mul(0.2f);
+                    selectedNode[0] = newSelectedNode;
+                    hitLines.addInstance(lineTransform);
+                } else {
+                    missLines.addInstance(lineTransform);
                 }
             }
         });
@@ -122,9 +147,23 @@ public class SelectObject {
             toggleState[0] = (toggleState[0] + 1) % polygonMode.length;
         });
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
+
+        // unselect thing when timeout
+        int unselectTimer = 0;
         while (!glfwWindowShouldClose(window)) {
             // loop
             double time = glfwGetTime();
+            if (selectedNode[0] != null) {
+                unselectTimer--;
+                if (unselectTimer == 0) {
+                    selectedNode[0].getSceneObject().setColor(Color.WHITE);
+                    selectedNode[0] = null;
+                } else if (unselectTimer == -1) {
+                    unselectTimer = 60;
+                }
+            }
+
+            // drawing
             glfwSwapBuffers(window);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
