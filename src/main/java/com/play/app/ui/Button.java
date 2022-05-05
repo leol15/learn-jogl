@@ -15,7 +15,7 @@ import com.play.app.graphics.*;
 import com.play.app.ui.WindowManager.Layer;
 import com.play.app.geometry.*;
 
-public class Button {
+public class Button extends UIBase {
 
     // state
     private Vector4f buttonColor = new Vector4f();
@@ -26,7 +26,6 @@ public class Button {
     // static things
     static ShaderProgram uiShader;
     static List<Button> buttons = new ArrayList<>();
-    static float windowWidth, windowHeight;
 
     // internal things
     private VAO vao;
@@ -37,6 +36,7 @@ public class Button {
 
     // coordinates are in screen space
     public Button(WindowManager windowManager, float x, float y, float width, float height) {
+        super(windowManager);
         this.windowManager = windowManager;
         if (uiShader == null) {
             initStatic(windowManager);
@@ -46,6 +46,7 @@ public class Button {
     }
 
     public Button(WindowManager windowManager, float x, float y, CharSequence label) {
+        super(windowManager);
         this.windowManager = windowManager;
         if (uiShader == null) {
             initStatic(windowManager);
@@ -82,10 +83,6 @@ public class Button {
 
     public void setAction(Runnable r) {
         action = r;
-    }
-
-    public void setVisible(boolean v) {
-        visible = v;
     }
 
     public void setColor(Color c) {
@@ -161,15 +158,6 @@ public class Button {
             cursorHover(xpos, ypos);
         });
 
-        // get window stats
-        IntBuffer windowWidthBuffer = BufferUtils.createIntBuffer(1);
-        IntBuffer windowHeightBuffer = BufferUtils.createIntBuffer(1);
-        // Get the window size passed to glfwCreateWindow
-        // TODO allow resize
-        glfwGetWindowSize(windowManager.window, windowWidthBuffer, windowHeightBuffer);
-        windowWidth = windowWidthBuffer.get();
-        windowHeight = windowHeightBuffer.get();
-
         // create one off shader
         uiShader = new ShaderProgram();
         uiShader.loadShaderFromPath("resources/shaders/UI.vert", GL_VERTEX_SHADER);
@@ -177,9 +165,16 @@ public class Button {
         uiShader.linkProgram();
 
         // setup projection matrix to screen space
+        onWindowSizeChanged(windowManager.window,
+                windowManager.windowSize[0],
+                windowManager.windowSize[1]);
+        windowManager.addWindowSizeCallback(Layer.ALWAYS, Button::onWindowSizeChanged);
+    }
+
+    private static void onWindowSizeChanged(long window, int width, int height) {
         Matrix4f projection = new Matrix4f();
-        projection.scale(2f / windowWidth, -2f / windowHeight, 1);
-        projection.translate(-windowWidth / 2, -windowHeight / 2, 0);
+        projection.scale(2f / width, -2f / height, 1);
+        projection.translate(-width / 2, -height / 2, 0);
         FloatBuffer screenToGLSpace = BufferUtils.createFloatBuffer(16);
         projection.get(screenToGLSpace);
         uiShader.uniformMatrix4fv("UItoGL", screenToGLSpace);
@@ -197,4 +192,5 @@ public class Button {
             Cursor.setCusor(windowManager.window, Cursor.CURSOR_ARROW);
         }
     }
+
 }

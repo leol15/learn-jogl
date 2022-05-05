@@ -49,7 +49,6 @@ public class SelectObject {
 
         WindowManager windowManager = new WindowManager(window);
         CameraControl camera = new CameraControl(windowManager);
-
         ShaderProgram simple3DShader = new ShaderProgram()
                 .withShader("resources/shaders/Simple3D.vert", GL_VERTEX_SHADER)
                 .withShader("resources/shaders/Simple3D.geom", GL_GEOMETRY_SHADER)

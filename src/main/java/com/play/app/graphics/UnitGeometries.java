@@ -130,9 +130,9 @@ public class UnitGeometries {
         final Vector3f G = new Vector3f(1, 1, 1);
         final Vector3f H = new Vector3f(1, 0, 1);
 
-        addRect(vertices, elements, A, B, C, D, new Vector3f(0, 0, 1));
+        addRect(vertices, elements, A, B, C, D, new Vector3f(0, 0, -1));
         addRect(vertices, elements, E, F, B, A, new Vector3f(-1, 0, 0));
-        addRect(vertices, elements, H, G, F, E, new Vector3f(0, 0, -1));
+        addRect(vertices, elements, H, G, F, E, new Vector3f(0, 0, 1));
         addRect(vertices, elements, D, C, G, H, new Vector3f(1, 0, 0));
         addRect(vertices, elements, B, F, G, C, new Vector3f(0, 1, 0));
         addRect(vertices, elements, A, E, H, D, new Vector3f(0, -1, 0));

@@ -39,11 +39,11 @@ public class App {
 		// new Rendering(window);
 		// new Batching(window);
 		// new UseTexture(window);
-		// new Input(window);
+		new Input(window);
 		// new DrawLines(window);
 		// new BatchRendering(window);
 		// new DrawAScene(window);
-		new SelectObject(window);
+		// new SelectObject(window);
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);
