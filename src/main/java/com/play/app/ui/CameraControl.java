@@ -6,7 +6,6 @@ import java.nio.FloatBuffer;
 import com.play.app.geometry.Ray;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.graphics.UnitGeometries;
-import com.play.app.ui.WindowManager.CallbackType;
 import com.play.app.ui.WindowManager.Layer;
 import com.play.app.utils.CONST;
 import com.play.app.utils.Func;
@@ -18,9 +17,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWCursorPosCallbackI;
-import org.lwjgl.glfw.GLFWMouseButtonCallbackI;
 import org.lwjgl.glfw.GLFWScrollCallbackI;
-import org.lwjgl.system.CallbackI;
 
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.glfw.GLFW.*;

@@ -73,8 +73,8 @@ public class Text {
     private final int fontHeight;
     private final VAO vao;
     private int numChars;
-    private float textWidth;
-    private float textHeight;
+    private float textWidth, textHeight;
+    private float textX, textY;
 
     public Text(WindowManager windowManager) {
         if (textShader == null) {
@@ -111,7 +111,18 @@ public class Text {
         textColor.set(r, g, b, a);
     }
 
+    public void setColor(Vector4f c) {
+        setColor(c.x, c.y, c.z, c.w);
+    }
+
+    public void setText(CharSequence text) {
+        setText(text, textX, textY);
+    }
+
     public void setText(CharSequence text, float x, float y) {
+        textX = x;
+        textY = y;
+
         // TODO bug, resetting text messes up GL
         numChars = 0;
         textWidth = 0;

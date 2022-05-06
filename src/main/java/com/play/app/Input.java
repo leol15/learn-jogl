@@ -1,5 +1,6 @@
 package com.play.app;
 
+import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
@@ -19,6 +20,7 @@ import java.awt.Color;
 
 import com.play.app.basics.SpacialThing;
 import com.play.app.geometry.Cube;
+import com.play.app.geometry.Ray;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.graphics.Text;
 import com.play.app.mesh.Mesh;
@@ -26,11 +28,15 @@ import com.play.app.scene.SceneNode;
 import com.play.app.scene.SceneObject;
 import com.play.app.ui.Button;
 import com.play.app.ui.CameraControl;
+import com.play.app.ui.SpacialThingEditor;
+import com.play.app.ui.TextInput;
+import com.play.app.ui.UIBase;
 import com.play.app.ui.WindowManager;
+import com.play.app.ui.WindowManager.Layer;
 import com.play.app.utils.CONST;
-import com.play.app.utils.Func;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class Input {
 
@@ -58,7 +64,7 @@ public class Input {
                         .addInstance(cube1Transform));
         rootNode.addChild(cube1);
 
-        Text fpsCounter = new Text(windowManager, "FPS: 1", 200, 200);
+        Text fpsCounter = new Text(windowManager, "FPS: 1", 0, 0);
         fpsCounter.setColor(Color.RED);
         double previousTime = 0;
 
@@ -74,6 +80,41 @@ public class Input {
             button.setColor(tmp[0] % 2 == 0 ? Color.RED : Color.GREEN);
         });
 
+        // work
+        final TextInput textInput = new TextInput(windowManager, 300, 600);
+        final SpacialThingEditor spacialThingEditor = new SpacialThingEditor(windowManager, 100, 600);
+
+        // select
+        SceneNode[] selectedNode = { null };
+        windowManager.addKeyCallback(Layer.SCENE, (window2, key, code, action, mods) -> {
+            if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+                windowManager.stopPropagation();
+                final Ray ray = cam.getRay(windowManager.lastMousePos[0],
+                        windowManager.lastMousePos[1]);
+
+                // move ray forward a bit
+                final Vector3f rayStartDiff = new Vector3f();
+                ray.direction.mul(0.5f, rayStartDiff);
+                ray.start.add(rayStartDiff);
+
+                // SpacialThing lineTransform = Func.createLine(ray, 10, 0.02f);
+                SceneNode newNode = rootNode.castRay(ray);
+                if (newNode == selectedNode[0]) {
+                    newNode = null;
+                }
+                if (selectedNode[0] != null) {
+                    selectedNode[0].getSceneObject().setColor(Color.WHITE);
+                    selectedNode[0] = null;
+                    spacialThingEditor.setSpacialThing(null);
+                }
+                if (newNode != null) {
+                    newNode.getSceneObject().setColor(Color.RED);
+                    selectedNode[0] = newNode;
+                    spacialThingEditor.setSpacialThing(newNode.modelInfo);
+                }
+            }
+        });
+
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
 
         while (!glfwWindowShouldClose(window)) {
@@ -84,6 +125,8 @@ public class Input {
 
             // draw
             cam.setViewAndProjection(simple3dShader);
+
+            // debug
             rootNode.draw(iden);
             cam.draw();
 
@@ -95,6 +138,9 @@ public class Input {
             button.show();
             button2.show();
             button3.show();
+
+            textInput.show();
+            spacialThingEditor.show();
 
             glfwPollEvents();
         }

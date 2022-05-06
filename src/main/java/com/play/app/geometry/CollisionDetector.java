@@ -55,8 +55,10 @@ public class CollisionDetector {
         // transform ray
         final Matrix4f cubeInverse = new Matrix4f();
         cubeTransform.invert(cubeInverse);
+
         final Vector4f rayStart = Func.toVec4(ray.start);
         rayStart.mul(rayTransform).mul(cubeInverse);
+
         final Vector4f rayDir = new Vector4f(ray.direction, 0);
         rayDir.mul(rayTransform).mul(cubeInverse);
 

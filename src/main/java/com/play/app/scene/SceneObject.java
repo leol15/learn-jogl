@@ -107,7 +107,7 @@ public class SceneObject implements Drawable {
         for (final SpacialThing model : instances) {
             model.getModelMatrix(tmpMat);
             tmpMat.mulLocal(transform);
-            final Vector3f intersect = collidable.collide(ray, rayMat, tmpMat);
+            final Vector3f intersect = collidable.collide(ray, tmpMat, rayMat);
             if (intersect != null) {
                 return intersect;
             }

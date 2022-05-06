@@ -17,179 +17,121 @@ import com.play.app.geometry.*;
 
 public class Button extends UIBase {
 
+    // static things
+    private static List<Button> buttons;
+
     // state
-    private Vector4f buttonColor = new Vector4f();
-    private boolean visible = true;
     private Runnable action = null;
     private Text text;
 
-    // static things
-    static ShaderProgram uiShader;
-    static List<Button> buttons = new ArrayList<>();
-
     // internal things
-    private VAO vao;
-    private Rect bounds; // in window space
-    private boolean hovered;
-    private Vector4f hoveredColor = new Vector4f(0.8f, 0.8f, 0.8f, 1f);
-    private final WindowManager windowManager;
+    private Vector4f hoverColor = new Vector4f(0.8f, 0.8f, 0.8f, 1f);
 
     // coordinates are in screen space
     public Button(WindowManager windowManager, float x, float y, float width, float height) {
         super(windowManager);
-        this.windowManager = windowManager;
-        if (uiShader == null) {
-            initStatic(windowManager);
-        }
         this.text = new Text(windowManager, "Button", x, y);
         init(x, y, width, height);
     }
 
     public Button(WindowManager windowManager, float x, float y, CharSequence label) {
         super(windowManager);
-        this.windowManager = windowManager;
-        if (uiShader == null) {
-            initStatic(windowManager);
-        }
         this.text = new Text(windowManager, label, x, y);
         init(x, y, text.getWidth(), text.getHeight());
     }
 
     private void init(float x, float y, float width, float height) {
-        bounds = new Rect(x, y, width, height);
-        vao = createSquare(x, y, width, height);
         setColor(0.8f, 0.8f, 0.8f, 1f);
+        setPosition(x, y);
+        setSize(width, height);
+
+        if (buttons == null) {
+            initStatic();
+        }
         buttons.add(this);
-    }
-
-    private VAO createSquare(float x, float y, float width, float height) {
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(4 * 3);
-        vertices.put(x).put(y).put(0);
-        vertices.put(x + width).put(y).put(0);
-        vertices.put(x + width).put(y + height).put(0);
-        vertices.put(x).put(y + height).put(0);
-        vertices.flip();
-        IntBuffer elements = BufferUtils.createIntBuffer(6 * 6);
-        elements.put(0).put(1).put(2)
-                .put(0).put(2).put(3);
-        elements.flip();
-
-        vao = new VAO();
-        vao.bufferVerticies(vertices);
-        vao.bufferIndices(elements);
-        vao.vertexAttribPointerF(0, 3, 3, 0);
-        return vao;
     }
 
     public void setAction(Runnable r) {
         action = r;
     }
 
-    public void setColor(Color c) {
-        setColor(c.getRed() / 255.0f,
-                c.getGreen() / 255.0f,
-                c.getBlue() / 255.0f,
-                c.getAlpha() / 255.0f);
+    public Button setColor(float r, float g, float b, float a) {
+        setBackgroundColor(r, g, b, a);
+        backgroundColorCopy.set(backgroundColor);
+        computeHoverAndTextColor();
+        return this;
     }
 
-    public void setColor(float r, float g, float b, float a) {
-        buttonColor.set(r, g, b, a);
-        if (buttonColor.length() < 1.01f) {
-            hoveredColor.set(0.2, 0.2, 0.2, 1);
+    private Vector4f backgroundColorCopy = new Vector4f();
+
+    private void setHovered(boolean hovered) {
+        if (hovered) {
+            // copy over background color
+            backgroundColorCopy.set(backgroundColor);
+            setBackgroundColor(hoverColor);
         } else {
-            buttonColor.mul(1.2f, hoveredColor);
+            setBackgroundColor(backgroundColorCopy);
         }
-        hoveredColor.mul(1, 1, 1, 0.7f);
-        text.setColor(1 - r, 1 - g, 1 - b, 1);
     }
 
-    public void show() {
-        if (!visible) {
-            return;
+    private void computeHoverAndTextColor() {
+        if (backgroundColor.length() < 1.01f) {
+            hoverColor.set(0.2, 0.2, 0.2, 1);
+        } else {
+            backgroundColor.mul(1.2f, hoverColor);
         }
+        hoverColor.mul(1, 1, 1, 0.7f);
+        text.setColor(1 - backgroundColor.x,
+                1 - backgroundColor.y,
+                1 - backgroundColor.z,
+                1);
+    }
 
-        uiShader.uniform4f("color", hovered ? hoveredColor : buttonColor);
-
-        int oldPolygonMode = glGetInteger(GL_POLYGON_MODE);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-        uiShader.useProgram();
-        vao.bind();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        vao.unbind();
-        uiShader.unuseProgram();
-
-        glPolygonMode(GL_FRONT_AND_BACK, oldPolygonMode);
-
-        glClear(GL_DEPTH_BUFFER_BIT);
+    @Override
+    public void showInternal() {
+        showBackground();
         text.draw();
     }
 
-    private boolean handleClick(double x, double y, int buttonAction) {
-        if (bounds.inside((float) x, (float) y)) {
-            windowManager.stopPropagation();
-            System.out.println("Button Clicked");
-            if (buttonAction == GLFW_PRESS) {
-                if (action != null) {
-                    action.run();
-                    return true;
-                }
+    private void handleClick(double x, double y, int buttonAction) {
+        System.out.println("Button Clicked");
+        if (buttonAction == GLFW_PRESS) {
+            if (action != null) {
+                action.run();
             }
         }
-        return false;
     }
 
-    private void initStatic(WindowManager windowManager) {
+    private void initStatic() {
+        buttons = new ArrayList<>();
         // setup one callback on mouse click
-        final DoubleBuffer mouseX = BufferUtils.createDoubleBuffer(1);
-        final DoubleBuffer mouseY = BufferUtils.createDoubleBuffer(1);
         windowManager.addMouseButtonCallback(Layer.UI, (window, button, action, mods) -> {
-            glfwGetCursorPos(window, mouseX, mouseY);
-            for (int i = 0; i < buttons.size(); i++) {
-                if (!buttons.get(i).visible)
+            final float mouseX = windowManager.lastMousePos[0];
+            final float mouseY = windowManager.lastMousePos[1];
+            for (final Button b : buttons) {
+                if (!b.inside(mouseX, mouseY)) {
                     continue;
-                if (buttons.get(i).handleClick(mouseX.get(0), mouseY.get(0), action)) {
-                    break;
                 }
+                // event is handled
+                windowManager.stopPropagation();
+                b.handleClick(mouseX, mouseY, action);
             }
         });
 
-        windowManager.addCursorPosCallback(Layer.UI, (window, xpos, ypos) -> {
-            cursorHover(xpos, ypos);
-        });
-
-        // create one off shader
-        uiShader = new ShaderProgram();
-        uiShader.loadShaderFromPath("resources/shaders/UI.vert", GL_VERTEX_SHADER);
-        uiShader.loadShaderFromPath("resources/shaders/UI.frag", GL_FRAGMENT_SHADER);
-        uiShader.linkProgram();
-
-        // setup projection matrix to screen space
-        onWindowSizeChanged(windowManager.window,
-                windowManager.windowSize[0],
-                windowManager.windowSize[1]);
-        windowManager.addWindowSizeCallback(Layer.ALWAYS, Button::onWindowSizeChanged);
+        windowManager.addCursorPosCallback(Layer.UI, Button::cursorHover);
     }
 
-    private static void onWindowSizeChanged(long window, int width, int height) {
-        Matrix4f projection = new Matrix4f();
-        projection.scale(2f / width, -2f / height, 1);
-        projection.translate(-width / 2, -height / 2, 0);
-        FloatBuffer screenToGLSpace = BufferUtils.createFloatBuffer(16);
-        projection.get(screenToGLSpace);
-        uiShader.uniformMatrix4fv("UItoGL", screenToGLSpace);
-    }
-
-    private void cursorHover(double x, double y) {
+    private static void cursorHover(long window, double x, double y) {
         boolean anyHover = false;
         for (Button b : buttons) {
-            b.hovered = b.bounds.inside((float) x, (float) y);
-            anyHover |= b.hovered;
+            final boolean isHovered = b.inside((float) x, (float) y);
+            b.setHovered(isHovered);
+            anyHover |= isHovered;
         }
         if (anyHover) {
-            Cursor.setCusor(windowManager.window, Cursor.CURSOR_POINTING_HAND);
+            Cursor.setCusor(window, Cursor.CURSOR_POINTING_HAND);
         } else {
-            Cursor.setCusor(windowManager.window, Cursor.CURSOR_ARROW);
+            Cursor.setCusor(window, Cursor.CURSOR_ARROW);
         }
     }
 

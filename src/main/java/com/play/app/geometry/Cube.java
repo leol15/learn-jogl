@@ -9,7 +9,6 @@ public class Cube implements Collidable {
 
     @Override
     public Vector3f collide(Collidable other, Matrix4f myTransform, Matrix4f otherTransform) {
-        // TODO transform
         return CollisionDetector.collide(this, other, myTransform, otherTransform);
     }
 

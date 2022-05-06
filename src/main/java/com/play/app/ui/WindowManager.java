@@ -21,15 +21,6 @@ public class WindowManager {
         ALWAYS, UI, SCENE,
     }
 
-    public enum CallbackType {
-        MouseButton,
-        Scroll,
-        CursorEnter,
-        CursorPos,
-        WindowSize,
-        Key,
-    }
-
     private static final Layer[] LAYER_ORDER = { Layer.ALWAYS, Layer.UI, Layer.SCENE };
 
     public final long window;
@@ -40,6 +31,7 @@ public class WindowManager {
     private final Map<Layer, List<GLFWCursorPosCallbackI>> cursorPosCallbacks = new TreeMap<>();
     private final Map<Layer, List<GLFWWindowSizeCallbackI>> windowSizeCallbacks = new TreeMap<>();
     private final Map<Layer, List<GLFWKeyCallbackI>> keyCallbacks = new TreeMap<>();
+    private final Map<Layer, List<GLFWCharCallbackI>> charCallbacks = new TreeMap<>();
 
     public WindowManager(long window) {
         this.window = window;
@@ -49,6 +41,7 @@ public class WindowManager {
         glfwSetCursorPosCallback(window, this::cursorPosCallback);
         glfwSetWindowSizeCallback(window, this::windowSizeCallback);
         glfwSetKeyCallback(window, this::keyCallback);
+        glfwSetCharCallback(window, this::charCallback);
 
         for (Layer layer : LAYER_ORDER) {
             mouseButtoncallbacks.put(layer, new ArrayList<>());
@@ -57,6 +50,7 @@ public class WindowManager {
             cursorPosCallbacks.put(layer, new ArrayList<>());
             windowSizeCallbacks.put(layer, new ArrayList<>());
             keyCallbacks.put(layer, new ArrayList<>());
+            charCallbacks.put(layer, new ArrayList<>());
         }
 
         // some common callbacks
@@ -129,6 +123,10 @@ public class WindowManager {
 
     public void addKeyCallback(Layer layer, GLFWKeyCallbackI callback) {
         keyCallbacks.get(layer).add(callback);
+    }
+
+    public void addCharCallback(Layer layer, GLFWCharCallbackI callback) {
+        charCallbacks.get(layer).add(callback);
     }
 
     ////////////////////////////////////
@@ -214,4 +212,16 @@ public class WindowManager {
         resetStopPropagation();
     }
 
+    private void charCallback(long window, int c) {
+        for (final Layer layer : LAYER_ORDER) {
+            for (final GLFWCharCallbackI callback : charCallbacks.get(layer)) {
+                callback.invoke(window, c);
+                if (shouldStopPropagation())
+                    break;
+            }
+            if (shouldStopPropagation())
+                break;
+        }
+        resetStopPropagation();
+    }
 }
