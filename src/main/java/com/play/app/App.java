@@ -21,8 +21,8 @@ public class App {
 	// The window handle
 	private long window;
 
-	int WINDOW_WIDTH = 1800;
-	int WINDOW_HEIGHT = 1200;
+	// int WINDOW_WIDTH = 1800;
+	// int WINDOW_HEIGHT = 1200;
 
 	public void run() {
 		System.out.println("Hello LWJGL " + Version.getVersion() + "!");
@@ -74,8 +74,12 @@ public class App {
 		glfwWindowHint(GLFW_SAMPLES, 4);
 		// glEnable(GL_MULTISAMPLE);
 
+		// full size
+		// Get the resolution of the primary monitor
+		GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+
 		// Create the window
-		window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Hello World!", NULL, NULL);
+		window = glfwCreateWindow(vidmode.width(), vidmode.height(), "Hello World!", NULL, NULL);
 		if (window == NULL)
 			throw new RuntimeException("Failed to create the GLFW window");
 
@@ -93,9 +97,6 @@ public class App {
 
 			// Get the window size passed to glfwCreateWindow
 			glfwGetWindowSize(window, pWidth, pHeight);
-
-			// Get the resolution of the primary monitor
-			GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
 			// Center the window
 			glfwSetWindowPos(

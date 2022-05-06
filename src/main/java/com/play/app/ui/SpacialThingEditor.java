@@ -28,6 +28,7 @@ public class SpacialThingEditor extends UIBase {
     private static final float COLUMN_SIZE = 100;
     private static final Vector4f DEFAULT_BG_COLOR = new Vector4f(0.4f, 0.4f, 0.4f, 0.75f);
     private static final Vector4f LABEL_COLOR = new Vector4f(0.9f, 0.9f, 0.9f, 1);
+    private static final String NUMBER_FORMAT = "%.1f";
 
     public SpacialThingEditor(WindowManager windowManager, float x, float y) {
         super(windowManager, x, y, 400, 200);
@@ -41,19 +42,19 @@ public class SpacialThingEditor extends UIBase {
         rotationLabel.setColor(LABEL_COLOR);
         // inputs
         x += COLUMN_SIZE + 30;
-        inPosX = new TextInput(windowManager, x, y);
-        inPosY = new TextInput(windowManager, x + COLUMN_SIZE, y);
-        inPosZ = new TextInput(windowManager, x + COLUMN_SIZE * 2, y);
+        inPosX = new TextInput(windowManager, x, y).setScrollable(true);
+        inPosY = new TextInput(windowManager, x + COLUMN_SIZE, y).setScrollable(true);
+        inPosZ = new TextInput(windowManager, x + COLUMN_SIZE * 2, y).setScrollable(true);
 
         y += ROW_HEIGHT;
-        inScaX = new TextInput(windowManager, x, y);
-        inScaY = new TextInput(windowManager, x + COLUMN_SIZE, y);
-        inScaZ = new TextInput(windowManager, x + COLUMN_SIZE * 2, y);
+        inScaX = new TextInput(windowManager, x, y).setScrollable(true);
+        inScaY = new TextInput(windowManager, x + COLUMN_SIZE, y).setScrollable(true);
+        inScaZ = new TextInput(windowManager, x + COLUMN_SIZE * 2, y).setScrollable(true);
 
         y += ROW_HEIGHT;
-        inRotX = new TextInput(windowManager, x, y);
-        inRotY = new TextInput(windowManager, x + COLUMN_SIZE, y);
-        inRotZ = new TextInput(windowManager, x + COLUMN_SIZE * 2, y);
+        inRotX = new TextInput(windowManager, x, y).setScrollable(true).setScrollDelta(5);
+        inRotY = new TextInput(windowManager, x + COLUMN_SIZE, y).setScrollable(true).setScrollDelta(5);
+        inRotZ = new TextInput(windowManager, x + COLUMN_SIZE * 2, y).setScrollable(true).setScrollDelta(5);
 
         // set bg size
         setSize(30 + COLUMN_SIZE * 4, ROW_HEIGHT * 2 + rotationLabel.getHeight());
@@ -75,18 +76,18 @@ public class SpacialThingEditor extends UIBase {
     public SpacialThingEditor setSpacialThing(final SpacialThing s) {
         spacialThing = s;
         if (spacialThing != null) {
-            inPosX.setText(String.format("%.2f", s.translation.x));
-            inPosY.setText(String.format("%.2f", s.translation.y));
-            inPosZ.setText(String.format("%.2f", s.translation.z));
+            inPosX.setText(String.format(NUMBER_FORMAT, s.translation.x));
+            inPosY.setText(String.format(NUMBER_FORMAT, s.translation.y));
+            inPosZ.setText(String.format(NUMBER_FORMAT, s.translation.z));
 
-            inScaX.setText(String.format("%.2f", s.scale.x));
-            inScaY.setText(String.format("%.2f", s.scale.y));
-            inScaZ.setText(String.format("%.2f", s.scale.z));
+            inScaX.setText(String.format(NUMBER_FORMAT, s.scale.x));
+            inScaY.setText(String.format(NUMBER_FORMAT, s.scale.y));
+            inScaZ.setText(String.format(NUMBER_FORMAT, s.scale.z));
 
             spacialThing.rotation.getEulerAnglesXYZ(eulerAngles);
-            inRotX.setText(String.format("%.2f", (float) Math.toDegrees(eulerAngles.x)));
-            inRotY.setText(String.format("%.2f", (float) Math.toDegrees(eulerAngles.y)));
-            inRotZ.setText(String.format("%.2f", (float) Math.toDegrees(eulerAngles.z)));
+            inRotX.setText(String.format(NUMBER_FORMAT, (float) Math.toDegrees(eulerAngles.x)));
+            inRotY.setText(String.format(NUMBER_FORMAT, (float) Math.toDegrees(eulerAngles.y)));
+            inRotZ.setText(String.format(NUMBER_FORMAT, (float) Math.toDegrees(eulerAngles.z)));
         } else {
             inPosX.setText("None");
             inPosY.setText("None");
@@ -139,18 +140,15 @@ public class SpacialThingEditor extends UIBase {
         }
         spacialThing.rotation.getEulerAnglesXYZ(eulerAngles);
         if (x != null) {
-            eulerAngles.x = (float) Math.toDegrees(x);
+            eulerAngles.x = (float) Math.toRadians(x);
         }
         if (y != null) {
-            eulerAngles.y = (float) Math.toDegrees(y);
+            eulerAngles.y = (float) Math.toRadians(y);
         }
         if (z != null) {
-            eulerAngles.z = (float) Math.toDegrees(z);
+            eulerAngles.z = (float) Math.toRadians(z);
         }
-        spacialThing.rotation.rotateXYZ(
-                (float) Math.toRadians(eulerAngles.x),
-                (float) Math.toRadians(eulerAngles.y),
-                (float) Math.toRadians(eulerAngles.z));
+        spacialThing.rotation.rotationXYZ(eulerAngles.x, eulerAngles.y, eulerAngles.z);
     }
 
     @Override

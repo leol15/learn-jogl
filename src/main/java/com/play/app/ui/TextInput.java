@@ -28,6 +28,10 @@ public class TextInput extends UIBase {
 
     private final Text input;
     private final List<Character> value;
+    @Setter
+    private boolean scrollable = false;
+    @Setter
+    private float scrollDelta = 0.1f;
     private boolean focused;
 
     @Setter
@@ -66,6 +70,9 @@ public class TextInput extends UIBase {
             onClick(mouseX, mouseY, action);
         });
 
+        windowManager.addScrollCallback(Layer.UI, (window, dx, dy) -> {
+            handleScroll(dx, dy);
+        });
     }
 
     public void setText(CharSequence text) {
@@ -158,9 +165,28 @@ public class TextInput extends UIBase {
         }
     }
 
+    private void handleScroll(double dx, double dy) {
+        // will scroll even if not focued
+        if (!visible || !scrollable) {
+            return;
+        }
+        if (!inside(windowManager.lastMousePos[0], windowManager.lastMousePos[1])) {
+            return;
+        }
+        windowManager.stopPropagation();
+        // is numeric?
+        try {
+            float v = Float.parseFloat(getAsString());
+            v += dy * scrollDelta;
+            setText(String.format("%.1f", v));
+        } catch (Exception e) {
+
+        }
+    }
+
     private void onClick(float mouseX, float mouseY, int action) {
         boolean inside = inside(mouseX, mouseY);
-        boolean shouldConsumeEvent = inside || focused;
+        boolean shouldConsumeEvent = inside;
         if (shouldConsumeEvent) {
             // event is handled
             windowManager.stopPropagation();
