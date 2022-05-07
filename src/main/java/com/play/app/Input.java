@@ -1,42 +1,22 @@
 package com.play.app;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
-import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11.GL_LINE;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glPolygonMode;
-import static org.lwjgl.opengl.GL33.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL32.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 import java.awt.Color;
 
 import com.play.app.basics.SpacialThing;
-import com.play.app.geometry.Cube;
-import com.play.app.geometry.Ray;
-import com.play.app.graphics.ShaderProgram;
-import com.play.app.graphics.Text;
+import com.play.app.geometry.*;
+import com.play.app.graphics.*;
 import com.play.app.mesh.Mesh;
-import com.play.app.scene.SceneNode;
-import com.play.app.scene.SceneObject;
-import com.play.app.ui.Button;
-import com.play.app.ui.CameraControl;
-import com.play.app.ui.SpacialThingEditor;
-import com.play.app.ui.TextInput;
-import com.play.app.ui.UIBase;
-import com.play.app.ui.WindowManager;
-import com.play.app.ui.WindowManager.Layer;
-import com.play.app.utils.CONST;
+import com.play.app.scene.*;
+import com.play.app.ui.*;
+import com.play.app.utils.*;
+import com.play.app.utils.WindowManager.Layer;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import org.joml.*;
 
 public class Input {
 
@@ -81,8 +61,11 @@ public class Input {
         });
 
         // work
-        final TextInput textInput = new TextInput(windowManager, 300, 600);
+        // final TextInput textInput = new TextInput(windowManager, 300, 600);
         final SpacialThingEditor spacialThingEditor = new SpacialThingEditor(windowManager, 100, 600);
+        final Vector3fEditor vector3fEditor = new Vector3fEditor(windowManager, 100, 1000);
+        final Vector3f testVec3f = new Vector3f().set(1, 2, 3);
+        vector3fEditor.setVector3f(testVec3f);
 
         // select
         SceneNode[] selectedNode = { null };
@@ -106,11 +89,13 @@ public class Input {
                     selectedNode[0].getSceneObject().setColor(Color.WHITE);
                     selectedNode[0] = null;
                     spacialThingEditor.setSpacialThing(null);
+                    spacialThingEditor.setVisible(false);
                 }
                 if (newNode != null) {
                     newNode.getSceneObject().setColor(Color.RED);
                     selectedNode[0] = newNode;
                     spacialThingEditor.setSpacialThing(newNode.modelInfo);
+                    spacialThingEditor.setVisible(true);
                 }
             }
         });
@@ -139,8 +124,9 @@ public class Input {
             button2.show();
             button3.show();
 
-            textInput.show();
+            // textInput.show();
             spacialThingEditor.show();
+            vector3fEditor.show();
 
             glfwPollEvents();
         }

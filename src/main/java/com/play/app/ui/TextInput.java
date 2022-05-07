@@ -1,33 +1,30 @@
 package com.play.app.ui;
 
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.glfw.GLFW.*;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 
 import com.play.app.graphics.Text;
-import com.play.app.ui.WindowManager.Layer;
+import com.play.app.utils.WindowManager;
+import com.play.app.utils.WindowManager.Layer;
+
+import org.joml.Vector4f;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import lombok.extern.log4j.Log4j2;
 
-import org.joml.Vector4f;
-import org.lwjgl.glfw.GLFW;
-import static org.lwjgl.glfw.GLFW.*;
-
-@Log4j2
 @Accessors(chain = true)
 public class TextInput extends UIBase {
 
+    public static final float TEXT_HEIGHT = 28;
     private static final String DEFAULT_INPUT = "input";
     private static final Vector4f DEFAULT_BACKGROUND_COLOR = new Vector4f(0.2f, 0.2f, 0.2f, 0.75f);
     private static final Vector4f DEFAULT_ACTIVE_BACKGROUND_COLOR = new Vector4f(0.35f, 0.35f, 0.35f, 1f);
 
-    private final Text input;
-    private final List<Character> value;
+    private final Text textDisplay;
+    private final List<Character> textContent;
     @Setter
     private boolean scrollable = false;
     @Setter
@@ -38,19 +35,19 @@ public class TextInput extends UIBase {
     private Consumer<TextInput> onChange;
 
     public TextInput(WindowManager windowManager, float x, float y) {
-        super(windowManager, x, y, 80, 25);
-        input = new Text(windowManager, "", x, y);
-        input.setColor(Color.WHITE);
+        super(windowManager);
+        textDisplay = new Text(windowManager, "", x, y);
+        textDisplay.setColor(Color.WHITE);
 
-        value = new ArrayList<>();
+        textContent = new ArrayList<>();
         for (int i = 0; i < DEFAULT_INPUT.length(); i++) {
-            value.add(DEFAULT_INPUT.charAt(i));
+            textContent.add(DEFAULT_INPUT.charAt(i));
         }
+        textContentUpdated();
 
-        updateText();
-        // bg
+        // configure
+        setBounds(x, y, 100, TEXT_HEIGHT);
         setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
-        setSize(100, input.getHeight());
 
         // for simlpicity, just add call back
         windowManager.addKeyCallback(Layer.UI, (window, key, code, action, mods) -> {
@@ -76,16 +73,17 @@ public class TextInput extends UIBase {
     }
 
     public void setText(CharSequence text) {
-        value.clear();
+        textContent.clear();
         for (int i = 0; i < text.length(); i++) {
-            value.add(text.charAt(i));
+            textContent.add(text.charAt(i));
         }
-        updateText();
+        // potential of infinite loop
+        textContentUpdated();
     }
 
     public String getAsString() {
         StringBuilder sb = new StringBuilder();
-        for (char c : value) {
+        for (char c : textContent) {
             sb.append(c);
         }
         return sb.toString();
@@ -99,57 +97,56 @@ public class TextInput extends UIBase {
         }
     }
 
-    private void updateText() {
-        input.setText(getAsString());
-        if (onChange != null) {
-            onChange.accept(this);
-        }
+    @Override
+    public UIBase setPosition(float x, float y) {
+        super.setPosition(x, y);
+        textDisplay.setText(getAsString(), x, y);
+        return this;
     }
 
-    private void setFocused(boolean inFocus) {
-        if (focused == inFocus) {
-            return;
-        }
-        focused = inFocus;
-        if (focused) {
-            input.setColor(Color.YELLOW);
-            setBackgroundColor(DEFAULT_ACTIVE_BACKGROUND_COLOR);
-        } else {
-            input.setColor(Color.WHITE);
-            setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+    @Override
+    public UIBase setBounds(float x, float y, float w, float h) {
+        super.setBounds(x, y, w, h);
+        return setPosition(x, y);
+    }
+
+    private void textContentUpdated() {
+        textDisplay.setText(getAsString());
+        if (onChange != null) {
+            onChange.accept(this);
         }
     }
 
     @Override
     public void showInternal() {
         showBackground();
-        input.draw();
+        textDisplay.draw();
     }
 
     private void addChar(int c) {
-        value.add((char) c);
-        updateText();
+        textContent.add((char) c);
+        textContentUpdated();
     }
 
     private void deleteChar(int mods) {
         if (mods == GLFW_MOD_CONTROL) {
             // delete word
-            while (value.size() > 0 && value.get(value.size() - 1) != ' ') {
-                value.remove(value.size() - 1);
+            while (textContent.size() > 0 && textContent.get(textContent.size() - 1) != ' ') {
+                textContent.remove(textContent.size() - 1);
             }
             // remove space
-            if (value.size() > 0) {
-                value.remove(value.size() - 1);
+            if (textContent.size() > 0) {
+                textContent.remove(textContent.size() - 1);
             }
         } else if (mods == GLFW_MOD_ALT) {
             // delete all
-            value.clear();
+            textContent.clear();
         } else {
-            if (value.size() > 0) {
-                value.remove(value.size() - 1);
+            if (textContent.size() > 0) {
+                textContent.remove(textContent.size() - 1);
             }
         }
-        updateText();
+        textContentUpdated();
     }
 
     // for none char inputs
@@ -181,6 +178,20 @@ public class TextInput extends UIBase {
             setText(String.format("%.1f", v));
         } catch (Exception e) {
 
+        }
+    }
+
+    private void setFocused(boolean inFocus) {
+        if (focused == inFocus) {
+            return;
+        }
+        focused = inFocus;
+        if (focused) {
+            textDisplay.setColor(Color.YELLOW);
+            setBackgroundColor(DEFAULT_ACTIVE_BACKGROUND_COLOR);
+        } else {
+            textDisplay.setColor(Color.WHITE);
+            setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
         }
     }
 

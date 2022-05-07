@@ -1,18 +1,14 @@
 package com.play.app.scene;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 
-import com.play.app.basics.Drawable;
-import com.play.app.basics.SpacialThing;
+import com.play.app.basics.*;
 import com.play.app.geometry.Ray;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import org.joml.*;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
 

@@ -1,19 +1,14 @@
 package com.play.app.ui;
 
-import org.lwjgl.*;
-import org.joml.*;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 
 import java.util.*;
-import java.util.List;
-import java.nio.*;
-import java.awt.*;
 
-import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.glfw.GLFW.*;
+import com.play.app.graphics.Text;
+import com.play.app.utils.WindowManager;
+import com.play.app.utils.WindowManager.Layer;
 
-import com.play.app.graphics.*;
-import com.play.app.ui.WindowManager.Layer;
-import com.play.app.geometry.*;
+import org.joml.Vector4f;
 
 public class Button extends UIBase {
 

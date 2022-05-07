@@ -1,13 +1,8 @@
-package com.play.app.ui;
+package com.play.app.utils;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import com.play.app.utils.Func;
+import java.util.*;
 
 import org.lwjgl.glfw.*;
 

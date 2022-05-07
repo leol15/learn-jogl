@@ -1,20 +1,20 @@
 package com.play.app;
 
-import org.lwjgl.*;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
-import java.nio.*;
+import java.nio.IntBuffer;
 
 import com.play.app.graphics.UnitGeometries;
 import com.play.app.utils.Func;
 
-import static org.lwjgl.glfw.Callbacks.*;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import org.lwjgl.Version;
+import org.lwjgl.glfw.*;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryStack;
 
 public class App {
 

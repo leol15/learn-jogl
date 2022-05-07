@@ -1,17 +1,15 @@
 package com.play.app.utils;
 
+import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
+
 import java.awt.Color;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import java.nio.*;
 
 import com.play.app.basics.SpacialThing;
 import com.play.app.geometry.Ray;
 
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 import org.lwjgl.BufferUtils;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 public class Func {
     public static void p(final String s) {

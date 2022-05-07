@@ -1,8 +1,9 @@
 package com.play.app.utils;
 
-import com.play.app.graphics.ShaderProgram;
-
+import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
+
+import com.play.app.graphics.ShaderProgram;
 
 /**
  * Renders a series of triangles with the same ShaderProgram

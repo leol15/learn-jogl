@@ -1,10 +1,11 @@
 package com.play.app;
 
-import org.lwjgl.*;
-
-import java.nio.*;
-
+import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
+
+import java.nio.FloatBuffer;
+
+import org.lwjgl.BufferUtils;
 
 public class Batching {
     public Batching(long window) {

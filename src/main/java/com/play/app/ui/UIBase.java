@@ -1,22 +1,22 @@
 package com.play.app.ui;
 
-import org.lwjgl.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
+
+import java.awt.Color;
+import java.nio.*;
+
+import com.play.app.geometry.Rect;
+import com.play.app.graphics.*;
+import com.play.app.utils.*;
+import com.play.app.utils.WindowManager.Layer;
+
+import org.joml.*;
+import org.lwjgl.BufferUtils;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
-
-import org.joml.*;
-
-import java.nio.*;
-import java.awt.*;
-
-import static org.lwjgl.opengl.GL30.*;
-
-import com.play.app.geometry.Rect;
-import com.play.app.graphics.*;
-import com.play.app.ui.WindowManager.Layer;
-import com.play.app.utils.CONST;
 
 /**
  * Every UI element should derive from UIBase
@@ -42,6 +42,7 @@ public class UIBase {
     protected final Vector4f backgroundColor = new Vector4f(0.3f, 0.3f, 0.3f, 1);
 
     // state
+    @Setter
     protected boolean visible = true;
 
     // coordinates are in screen space
@@ -107,11 +108,33 @@ public class UIBase {
         return this;
     }
 
+    public UIBase setBounds(float x, float y, float w, float h) {
+        bound.setX(x).setY(y).setW(w).setH(h);
+        computeProjectionMatrix();
+        return this;
+    }
+
     public void setColor(Color c) {
         setColor(c.getRed() / 255.0f,
                 c.getGreen() / 255.0f,
                 c.getBlue() / 255.0f,
                 c.getAlpha() / 255.0f);
+    }
+
+    public float getWidth() {
+        return bound.getW();
+    }
+
+    public float getHeight() {
+        return bound.getH();
+    }
+
+    public float getX() {
+        return bound.getX();
+    }
+
+    public float getY() {
+        return bound.getY();
     }
 
     //////////////////

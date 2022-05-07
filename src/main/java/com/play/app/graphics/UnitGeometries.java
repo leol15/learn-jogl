@@ -1,18 +1,12 @@
 package com.play.app.graphics;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.HashMap;
-import java.util.Map;
+import static org.lwjgl.opengl.GL11.*;
 
-import com.play.app.utils.Func;
+import java.nio.*;
+import java.util.*;
 
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
-
-import static org.lwjgl.opengl.GL30.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL30.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL30.*;
 
 /**
  * Represent unit shapes

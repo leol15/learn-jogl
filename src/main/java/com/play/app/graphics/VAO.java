@@ -24,6 +24,25 @@ public class VAO {
         unbind();
     }
 
+    // public VAO(boolean tobeignored) {
+    //     vao = glGenVertexArrays();
+    //     bind();
+
+    //     int[] buffer = new int[4];
+    //     glGenBuffers(buffer);
+    //     int positionVBO = buffer[0];
+    //     int normalVBO = buffer[1];
+    //     int uvVBO = buffer[2];
+    //     int elementVBO = buffer[3];
+
+    //     glBindBuffer(GL_ARRAY_BUFFER, positionVBO);
+    //     glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
+    //     glBindBuffer(GL_ARRAY_BUFFER, uvVBO);
+    //     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementVBO);
+
+    //     unbind();
+    // }
+
     public void bufferVerticies(FloatBuffer vertices) {
         bind();
         glBindBuffer(GL_ARRAY_BUFFER, vboVertices);
@@ -68,10 +87,6 @@ public class VAO {
 
     public void setDrawFunction(Runnable r) {
         drawFunction = r;
-    }
-
-    public void unsetDrawFunction() {
-        drawFunction = null;
     }
 
     public void draw() {

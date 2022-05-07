@@ -1,26 +1,21 @@
-package com.play.app.ui;
+package com.play.app.scene;
+
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL20.*;
 
 import java.awt.Color;
 import java.nio.FloatBuffer;
 
 import com.play.app.geometry.Ray;
-import com.play.app.graphics.ShaderProgram;
-import com.play.app.graphics.UnitGeometries;
-import com.play.app.ui.WindowManager.Layer;
-import com.play.app.utils.CONST;
-import com.play.app.utils.Func;
+import com.play.app.graphics.*;
+import com.play.app.utils.*;
+import com.play.app.utils.WindowManager.Layer;
 
+import org.joml.*;
 import org.joml.Math;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.glfw.GLFWCursorPosCallbackI;
-import org.lwjgl.glfw.GLFWScrollCallbackI;
-
-import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.glfw.GLFW.*;
+import org.lwjgl.glfw.*;
 
 public class CameraControl {
 
@@ -35,7 +30,6 @@ public class CameraControl {
     private float fov = 45;
 
     private MouseButton activeMouseButton = MouseButton.NONE;
-    private int mouseButtonMode;
     private double mouseX, mouseY;
 
     // marker related
@@ -266,7 +260,6 @@ public class CameraControl {
         } else {
             activeMouseButton = MouseButton.NONE;
         }
-        mouseButtonMode = mode;
     }
 
     private void cursorPosCallback(long window, double xpos, double ypos) {

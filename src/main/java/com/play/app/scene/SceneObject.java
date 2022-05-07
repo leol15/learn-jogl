@@ -1,23 +1,15 @@
 package com.play.app.scene;
 
 import java.awt.Color;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import com.play.app.basics.Collidable;
-import com.play.app.basics.Drawable;
-import com.play.app.basics.SpacialThing;
-import com.play.app.geometry.Cube;
+import com.play.app.basics.*;
 import com.play.app.geometry.Ray;
-import com.play.app.graphics.ShaderProgram;
-import com.play.app.graphics.Texture;
+import com.play.app.graphics.*;
 import com.play.app.mesh.Mesh;
-import com.play.app.utils.CONST;
-import com.play.app.utils.Func;
+import com.play.app.utils.*;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;

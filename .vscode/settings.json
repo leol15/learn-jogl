@@ -1,4 +1,18 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
-    "java.format.settings.url": "eclipse-formatter.xml"
+    "java.format.settings.url": "eclipse-formatter.xml",
+    "java.sources.organizeImports.starThreshold": 2,
+    "java.sources.organizeImports.staticStarThreshold": 2,
+    "java.completion.filteredTypes": [
+        "com.sun.*",
+        "sun.*",
+        "jdk.*",
+        "org.graalvm.*",
+        "io.micrometer.shaded.*",
+        "org.lwjgl.opengl.GL11.*",
+        "org.lwjgl.opengl.GL20.*",
+    ],
+    "java.completion.favoriteStaticMembers": [
+        "org.lwjgl.opengl.GL32",
+    ],
 }

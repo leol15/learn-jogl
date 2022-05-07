@@ -1,37 +1,26 @@
 package com.play.app.graphics;
 
-import static java.awt.Font.BOLD;
-import static java.awt.Font.MONOSPACED;
+import static java.awt.Font.*;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.GL_UNSIGNED_INT;
-import static org.lwjgl.opengl.GL11.glDrawElements;
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
-
 import static org.lwjgl.opengl.GL11.*;
-import org.lwjgl.opengl.*;
+import static org.lwjgl.opengl.GL20.*;
 
-import java.awt.Font;
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.HashMap;
-import java.util.Map;
+import java.awt.image.*;
+import java.lang.Math;
+import java.nio.*;
+import java.util.*;
 
-import com.play.app.ui.WindowManager;
+import com.play.app.graphics.*;
+import com.play.app.utils.WindowManager;
 
-import org.joml.Matrix4f;
-import org.joml.Vector4f;
+import org.joml.*;
 import org.lwjgl.BufferUtils;
 
+/**
+ * draw some text starting at x, y
+ */
 public class Text {
 
     public class Glyph {
@@ -80,7 +69,7 @@ public class Text {
         if (textShader == null) {
             initStatic(windowManager);
         }
-        texture = createFontTexture(new Font(MONOSPACED, BOLD, 20), true);
+        texture = createFontTexture(new Font(MONOSPACED, BOLD, 24), true);
         // textShader.uniform("texImage", 0); for multiple texture
 
         fontHeight = texture.getHeight();

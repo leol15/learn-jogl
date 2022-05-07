@@ -1,42 +1,23 @@
 package com.play.app;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
-import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_FILL;
-import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
-import static org.lwjgl.opengl.GL11.GL_LINE;
-import static org.lwjgl.opengl.GL11.GL_POINT;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glPolygonMode;
-import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
-import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 import java.awt.Color;
 
 import com.play.app.basics.SpacialThing;
-import com.play.app.geometry.Cube;
-import com.play.app.geometry.Ray;
-import com.play.app.graphics.ShaderProgram;
-import com.play.app.graphics.Text;
+import com.play.app.geometry.*;
+import com.play.app.graphics.*;
 import com.play.app.mesh.Mesh;
-import com.play.app.scene.SceneNode;
-import com.play.app.scene.SceneObject;
+import com.play.app.scene.*;
 import com.play.app.ui.Button;
-import com.play.app.ui.CameraControl;
-import com.play.app.ui.WindowManager;
-import com.play.app.ui.WindowManager.Layer;
-import com.play.app.utils.Func;
+import com.play.app.utils.*;
+import com.play.app.utils.WindowManager.Layer;
 
+import org.joml.*;
 import org.joml.Math;
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 import lombok.extern.log4j.Log4j2;
 
