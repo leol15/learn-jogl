@@ -1,13 +1,13 @@
-#version 150 core
+#version 450 core
 
-in vec3 position;
-in vec3 color;
+layout(location = 0) in vec3 position;
+layout(location = 1) in vec3 color;
 
 out vec3 vertexColor;
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 model = mat4(1);
+uniform mat4 view = mat4(1);
+uniform mat4 projection = mat4(1);
 
 void main() {
     vertexColor = color;

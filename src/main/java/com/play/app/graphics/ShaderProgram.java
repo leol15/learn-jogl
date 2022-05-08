@@ -27,6 +27,7 @@ public class ShaderProgram {
         return this;
     }
 
+    @Deprecated
     public void loadShaderFromPath(String path, int type) {
         System.out.println("loading shader from path: " + path);
 

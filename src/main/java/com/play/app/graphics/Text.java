@@ -12,8 +12,7 @@ import java.lang.Math;
 import java.nio.*;
 import java.util.*;
 
-import com.play.app.graphics.*;
-import com.play.app.utils.WindowManager;
+import com.play.app.utils.*;
 
 import org.joml.*;
 import org.lwjgl.BufferUtils;
@@ -121,7 +120,8 @@ public class Text {
          * 12 56
          * 43 87
          */
-        FloatBuffer fb = BufferUtils.createFloatBuffer(text.length() * 4 * (3 + 2));
+        FloatBuffer positions = BufferUtils.createFloatBuffer(text.length() * 4 * 3);
+        FloatBuffer uvs = BufferUtils.createFloatBuffer(text.length() * 4 * 2);
         IntBuffer ib = BufferUtils.createIntBuffer(text.length() * 6);
         float drawX = x;
         float drawY = y;
@@ -139,7 +139,7 @@ public class Text {
             }
             Glyph g = glyphs.get(ch);
 
-            addCharToBuffer(fb, drawX, drawY, g.x, g.y, g.width, g.height);
+            addCharToBuffer(positions, uvs, drawX, drawY, g.x, g.y, g.width, g.height);
             int indexBase = numChars * 4;
             ib.put(indexBase).put(indexBase + 1).put(indexBase + 2);
             ib.put(indexBase).put(indexBase + 2).put(indexBase + 3);
@@ -149,12 +149,12 @@ public class Text {
             textWidth = Math.max(textWidth, drawX - x);
             textHeight = Math.max(textHeight, drawY + g.height - y);
         }
-        fb.flip();
+        positions.flip();
+        uvs.flip();
         ib.flip();
-        vao.bufferVerticies(fb);
+        vao.bufferData(CONST.VERT_IN_POSITION, positions);
+        vao.bufferData(CONST.VERT_IN_UV, uvs);
         vao.bufferIndices(ib);
-        vao.vertexAttribPointerF(0, 3, 5, 0);
-        vao.vertexAttribPointerF(1, 2, 5, 3);
     }
 
     public void draw() {
@@ -178,7 +178,8 @@ public class Text {
     }
 
     // coords in screen space
-    private void addCharToBuffer(FloatBuffer fb, float x, float y, float tx, float ty, float tw, float th) {
+    private void addCharToBuffer(FloatBuffer positions, FloatBuffer UVs, float x, float y, float tx, float ty, float tw,
+            float th) {
         float w = tw;
         float h = th;
         tx = tx / texture.getWidth();
@@ -186,10 +187,14 @@ public class Text {
         tw = tw / texture.getWidth();
         th = th / texture.getHeight();
 
-        fb.put(x).put(y).put(0).put(tx).put(ty);
-        fb.put(x + w).put(y).put(0).put(tx + tw).put(ty);
-        fb.put(x + w).put(y + h).put(0).put(tx + tw).put(ty + th);
-        fb.put(x).put(y + h).put(0).put(tx).put(ty + th);
+        positions.put(x).put(y).put(0);
+        UVs.put(tx).put(ty);
+        positions.put(x + w).put(y).put(0);
+        UVs.put(tx + tw).put(ty);
+        positions.put(x + w).put(y + h).put(0);
+        UVs.put(tx + tw).put(ty + th);
+        positions.put(x).put(y + h).put(0);
+        UVs.put(tx).put(ty + th);
     }
 
     /**
@@ -306,9 +311,9 @@ public class Text {
         int windowWidth = windowWidthBuffer.get();
         int windowHeight = windowHeightBuffer.get();
 
-        textShader = new ShaderProgram();
-        textShader.loadShaderFromPath("resources/shaders/Text.vert", GL_VERTEX_SHADER);
-        textShader.loadShaderFromPath("resources/shaders/Text.frag", GL_FRAGMENT_SHADER);
+        textShader = new ShaderProgram()
+                .withShader("resources/shaders/Text.vert", GL_VERTEX_SHADER)
+                .withShader("resources/shaders/Text.frag", GL_FRAGMENT_SHADER);
         textShader.linkProgram();
 
         // screen to UI projection

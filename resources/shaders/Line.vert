@@ -1,6 +1,7 @@
-#version 150 core
+#version 450 core
 
-in vec3 position;
+// in vec3 position;
+layout(location = 0) in vec3 position;
 
 out vec4 vertColor;
 

@@ -3,10 +3,13 @@ package com.play.app;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 import java.nio.*;
 
 import com.play.app.graphics.*;
+import com.play.app.scene.CameraControl;
+import com.play.app.utils.*;
 
 import org.joml.*;
 import org.lwjgl.BufferUtils;
@@ -25,32 +28,19 @@ public class Rendering {
         shaderProgram.loadShaderFromPath("resources/shaders/Simple.frag", GL_FRAGMENT_SHADER);
         shaderProgram.linkProgram();
 
-        VAO cubeVao = createCube();
-        cubeVao.vertexAttribPointerF(0, 3, 6, 0);
-        cubeVao.vertexAttribPointerF(1, 3, 6, 3);
-
         // set uniform locations
+        final WindowManager windowManager = new WindowManager(window);
+        final CameraControl camera = new CameraControl(windowManager);
         Matrix4f model = new Matrix4f();
         FloatBuffer fbModel = BufferUtils.createFloatBuffer(16);
         model.get(fbModel);
         shaderProgram.uniformMatrix4fv("model", fbModel);
 
-        Matrix4f view = new Matrix4f();
-        FloatBuffer fbView = BufferUtils.createFloatBuffer(16);
-        view.get(fbView);
-        shaderProgram.uniformMatrix4fv("view", fbView);
-
-        Matrix4f projection = new Matrix4f().ortho(-1f, 1f, -1f, 1f, -1f, 1f);
-        FloatBuffer fbProjection = BufferUtils.createFloatBuffer(16);
-        projection.get(fbProjection);
-        shaderProgram.uniformMatrix4fv("projection", fbProjection);
-
-        ShaderProgram planeShader = new ShaderProgram()
-                .withShader("resources/shaders/Simple3D.vert", GL_VERTEX_SHADER)
-                .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
-                .linkProgram();
-        planeShader.uniformMatrix4fv("view", fbView);
-        planeShader.uniformMatrix4fv("projection", fbProjection);
+        // ShaderProgram planeShader = new ShaderProgram()
+        //         .withShader("resources/shaders/Simple3D.vert", GL_VERTEX_SHADER)
+        //         .withShader("resources/shaders/Simple3D.geom", GL_GEOMETRY_SHADER)
+        //         .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
+        //         .linkProgram();
 
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
         model.scale(0.6f);
@@ -61,53 +51,18 @@ public class Rendering {
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            camera.setViewAndProjection(shaderProgram);
             model.rotate(0.01f, new Vector3f(1, 1, 1));
             model.get(fbModel);
 
-            shaderProgram.uniformMatrix4fv("model", fbModel);
+            shaderProgram.uniformMatrix4fv(CONST.MODEL_MATRIX, fbModel);
 
             shaderProgram.useProgram();
-            // glDrawArrays(GL_TRIANGLES, 0, 3);
-            cubeVao.bind();
-            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+            UnitGeometries.drawCube();
+
+            camera.draw();
 
             glfwPollEvents();
         }
-    }
-
-    public static VAO createCube() {
-        VAO vao = new VAO();
-
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(8 * (3 + 3));
-        vertices.put(0).put(0).put(0).put(0).put(0).put(0);
-        vertices.put(1).put(0).put(0).put(1).put(0).put(0);
-        vertices.put(0).put(1).put(0).put(0).put(1).put(0);
-        vertices.put(0).put(0).put(1).put(0).put(0).put(1);
-        vertices.put(1).put(1).put(0).put(1).put(1).put(0);
-        vertices.put(1).put(0).put(1).put(1).put(0).put(1);
-        vertices.put(0).put(1).put(1).put(0).put(1).put(1);
-        vertices.put(1).put(1).put(1).put(1).put(1).put(1);
-        vertices.flip();
-
-        IntBuffer elements = BufferUtils.createIntBuffer(6 * 6);
-        elements.put(0).put(4).put(1)
-                .put(0).put(2).put(4)
-                .put(0).put(5).put(1)
-                .put(0).put(3).put(5)
-                .put(0).put(6).put(2)
-                .put(0).put(3).put(6)
-
-                .put(7).put(5).put(1)
-                .put(7).put(1).put(4)
-                .put(7).put(3).put(5)
-                .put(7).put(6).put(3)
-                .put(7).put(4).put(2)
-                .put(7).put(2).put(6);
-        elements.flip();
-
-        vao.bufferVerticies(vertices);
-        vao.bufferIndices(elements);
-
-        return vao;
     }
 }

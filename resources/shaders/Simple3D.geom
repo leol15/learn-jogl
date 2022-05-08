@@ -1,4 +1,4 @@
-#version 150 core
+#version 450 core
 
 layout (triangles) in;
 // 3 "lines", 1 triangle

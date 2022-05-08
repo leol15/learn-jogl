@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL20.*;
 import java.nio.*;
 
 import com.play.app.graphics.*;
+import com.play.app.utils.CONST;
 
 import org.joml.*;
 import org.lwjgl.BufferUtils;
@@ -15,33 +16,36 @@ public class UseTexture {
 
     public UseTexture(long window) {
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        VAO vao = new VAO();
+        final VAO vao = new VAO();
 
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(3 * (3 + 2));
-        vertices.put(0).put(0).put(0).put(0).put(0);
-        vertices.put(1).put(0).put(0).put(1).put(0);
-        vertices.put(0).put(1).put(0).put(0).put(1);
-        vertices.flip();
+        FloatBuffer positions = BufferUtils.createFloatBuffer(3 * 3);
+        FloatBuffer UVs = BufferUtils.createFloatBuffer(3 * 2);
+        positions.put(0).put(0).put(0);
+        UVs.put(0).put(0);
+
+        positions.put(1).put(0).put(0);
+        UVs.put(1).put(0);
+
+        positions.put(0).put(1).put(0);
+        UVs.put(0).put(1);
 
         IntBuffer elements = BufferUtils.createIntBuffer(3);
         elements.put(0).put(1).put(2);
+
+        positions.flip();
+        UVs.flip();
         elements.flip();
 
-        vao.bufferVerticies(vertices);
+        vao.bufferData(CONST.VERT_IN_POSITION, positions);
+        vao.bufferData(CONST.VERT_IN_UV, UVs);
         vao.bufferIndices(elements);
 
         // setup shader
-        ShaderProgram shaderProgram = new ShaderProgram();
-        shaderProgram.loadShaderFromPath("resources/shaders/Texture.vert", GL_VERTEX_SHADER);
-        shaderProgram.loadShaderFromPath("resources/shaders/Texture.frag", GL_FRAGMENT_SHADER);
+        ShaderProgram shaderProgram = new ShaderProgram()
+                .withShader("resources/shaders/Texture.vert", GL_VERTEX_SHADER)
+                .withShader("resources/shaders/Texture.frag", GL_FRAGMENT_SHADER);
         shaderProgram.linkProgram();
         shaderProgram.useProgram();
-
-        vao.vertexAttribPointerF(0, 3, 5, 0);
-        vao.vertexAttribPointerF(1, 2, 5, 3);
-        // shaderProgram.setVertexAttribPointer("position", 3, 6 * Float.BYTES, 0);
-        // shaderProgram.setVertexAttribPointer("color", 3, 6 * Float.BYTES, 3 *
-        // Float.BYTES);
 
         // set uniform locations
         Matrix4f model = new Matrix4f();

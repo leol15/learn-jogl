@@ -56,10 +56,10 @@ public class UIBase {
 
         if (uiShader == null) {
             // create one off shader
-            uiShader = new ShaderProgram();
-            uiShader.loadShaderFromPath("resources/shaders/UI.vert", GL_VERTEX_SHADER);
-            uiShader.loadShaderFromPath("resources/shaders/UI.frag", GL_FRAGMENT_SHADER);
-            uiShader.linkProgram();
+            uiShader = new ShaderProgram()
+                    .withShader("resources/shaders/UI.vert", GL_VERTEX_SHADER)
+                    .withShader("resources/shaders/UI.frag", GL_FRAGMENT_SHADER)
+                    .linkProgram();
         }
     }
 
@@ -76,10 +76,10 @@ public class UIBase {
 
         if (uiShader == null) {
             // create one off shader
-            uiShader = new ShaderProgram();
-            uiShader.loadShaderFromPath("resources/shaders/UI.vert", GL_VERTEX_SHADER);
-            uiShader.loadShaderFromPath("resources/shaders/UI.frag", GL_FRAGMENT_SHADER);
-            uiShader.linkProgram();
+            uiShader = new ShaderProgram()
+                    .withShader("resources/shaders/UI.vert", GL_VERTEX_SHADER)
+                    .withShader("resources/shaders/UI.frag", GL_FRAGMENT_SHADER)
+                    .linkProgram();
         }
     }
 
@@ -215,23 +215,22 @@ public class UIBase {
     private static VAO createUnitPlane() {
         // create a unit plane for all UI backgrouds
         final VAO vao = new VAO();
-        final FloatBuffer vertices = BufferUtils.createFloatBuffer(2 * 4);
-        vertices.put(0).put(0);
-        vertices.put(0).put(1);
-        vertices.put(1).put(1);
-        vertices.put(1).put(0);
+        final FloatBuffer positions = BufferUtils.createFloatBuffer(3 * 4);
+        positions.put(0).put(0).put(0);
+        positions.put(0).put(1).put(0);
+        positions.put(1).put(1).put(0);
+        positions.put(1).put(0).put(0);
 
         final IntBuffer elements = BufferUtils.createIntBuffer(2 * 3);
         elements.put(0).put(1).put(2);
         elements.put(0).put(2).put(3);
 
-        vertices.flip();
+        positions.flip();
         elements.flip();
 
-        vao.bufferVerticies(vertices);
+        vao.bufferData(CONST.VERT_IN_POSITION, positions);
         vao.bufferIndices(elements);
 
-        vao.vertexAttribPointerF(0, 2, 2, 0);
         vao.setDrawFunction(() -> glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0));
 
         return vao;

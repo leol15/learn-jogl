@@ -34,7 +34,7 @@ public class DrawAScene {
                 .withShader("resources/shaders/Simple3D.geom", GL_GEOMETRY_SHADER)
                 .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
                 .linkProgram();
-        simple3DShader.uniform("debug", 0);
+        simple3DShader.uniform("debug", 1);
 
         Text fpsCounter = new Text(windowManager, "FPS: 1", 0, 0);
         fpsCounter.setColor(Color.RED);
@@ -78,6 +78,52 @@ public class DrawAScene {
         SceneNode lineSceneNode = new SceneNode().setSceneObject(clickLines);
         rootSceneNode.addChild(lineSceneNode);
 
+        // add all shapes
+
+        final SpacialThing planeModel = new SpacialThing();
+        planeModel.translation.set(-2, 0, 0);
+        rootSceneNode.addChild(new SceneNode().setSceneObject(
+                new SceneObject()
+                        .setMesh(Mesh.PLANE)
+                        .setShader(simple3DShader)
+                        .addInstance(planeModel)));
+
+        final SpacialThing coneModel = new SpacialThing();
+        coneModel.translation.set(3, 0, 0);
+        rootSceneNode.addChild(new SceneNode().setSceneObject(
+                new SceneObject()
+                        .setMesh(Mesh.CONE)
+                        .setShader(simple3DShader)
+                        .addInstance(coneModel)));
+
+        final SpacialThing cyclinderModel = new SpacialThing();
+        cyclinderModel.translation.set(4.5f, 0, 0);
+        rootSceneNode.addChild(new SceneNode().setSceneObject(
+                new SceneObject()
+                        .setMesh(Mesh.CYCLINDER)
+                        .setShader(simple3DShader)
+                        .addInstance(cyclinderModel)));
+
+        final SpacialThing sphereModel = new SpacialThing();
+        sphereModel.translation.set(6, 0, 0);
+        rootSceneNode.addChild(new SceneNode().setSceneObject(
+                new SceneObject()
+                        .setMesh(Mesh.SPHERE)
+                        .setShader(simple3DShader)
+                        .addInstance(sphereModel)));
+
+        final ShaderProgram lineShader = new ShaderProgram()
+                .withShader("resources/shaders/Line.vert", GL_VERTEX_SHADER)
+                .withShader("resources/shaders/Line.frag", GL_FRAGMENT_SHADER)
+                .linkProgram();
+        final SpacialThing cicleModel = new SpacialThing();
+        cicleModel.translation.set(-3, 0, 0);
+        rootSceneNode.addChild(new SceneNode().setSceneObject(
+                new SceneObject()
+                        .setMesh(Mesh.CIRCLE)
+                        .setShader(lineShader)
+                        .addInstance(cicleModel)));
+
         windowManager.addMouseButtonCallback(Layer.SCENE, (window2, button, action, mods) -> {
             if (button == GLFW_MOUSE_BUTTON_MIDDLE && action == GLFW_RELEASE) {
                 windowManager.stopPropagation();
@@ -106,6 +152,7 @@ public class DrawAScene {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             camera.setViewAndProjection(simple3DShader);
+            camera.setViewAndProjection(lineShader);
             // scene
             rootSceneNode.draw(identity);
 

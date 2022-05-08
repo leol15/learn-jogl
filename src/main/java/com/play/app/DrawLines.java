@@ -3,13 +3,14 @@ package com.play.app;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 import java.awt.Color;
 import java.nio.FloatBuffer;
 
 import com.play.app.graphics.*;
 import com.play.app.scene.CameraControl;
-import com.play.app.ui.*;
+import com.play.app.ui.Button;
 import com.play.app.utils.*;
 
 import org.joml.Vector4f;
@@ -21,15 +22,14 @@ public class DrawLines {
 
         WindowManager windowManager = new WindowManager(window);
 
-        VAO lineVAO = new VAO();
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(3 * 4);
-        vertices.put(0).put(0).put(0);
-        vertices.put(0.5f).put(0.5f).put(0);
-        vertices.put(0).put(0.5f).put(0);
-        vertices.put(0).put(0.5f).put(0.5f);
-        vertices.flip();
-        lineVAO.bufferVerticies(vertices);
-        lineVAO.vertexAttribPointerF(0, 3, 3, 0);
+        final VAO lineVAO = new VAO();
+        FloatBuffer positions = BufferUtils.createFloatBuffer(3 * 4);
+        positions.put(0).put(0).put(0);
+        positions.put(0.5f).put(0.5f).put(0);
+        positions.put(0).put(0.5f).put(0);
+        positions.put(0).put(0.5f).put(0.5f);
+        positions.flip();
+        lineVAO.bufferData(CONST.VERT_IN_POSITION, positions);
         lineVAO.setDrawFunction(() -> glDrawArrays(GL_LINE_LOOP, 0, 4));
 
         ShaderProgram lineShader = new ShaderProgram()
@@ -41,6 +41,7 @@ public class DrawLines {
 
         ShaderProgram simple3DShader = new ShaderProgram()
                 .withShader("resources/shaders/Simple3D.vert", GL_VERTEX_SHADER)
+                .withShader("resources/shaders/Simple3D.geom", GL_GEOMETRY_SHADER)
                 .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
                 .linkProgram();
 

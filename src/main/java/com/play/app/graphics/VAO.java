@@ -4,59 +4,78 @@ import static org.lwjgl.opengl.GL30.*;
 
 import java.nio.*;
 
-import com.play.app.utils.Func;
+import com.play.app.utils.*;
 
 public class VAO {
 
-    private int vao;
-    private int vboVertices;
-    private int vboIndices;
+    private int vao = 0;
+    private int[] vertexShaderVBOs;
+    private int elementVBO = 0;
     private Runnable drawFunction;
 
     public VAO() {
         vao = glGenVertexArrays();
         bind();
-        vboVertices = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vboVertices);
 
-        vboIndices = glGenBuffers();
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices);
+        // vertex attributes
+        vertexShaderVBOs = new int[CONST.VERT_IN_ATTRS.length];
+        glGenBuffers(vertexShaderVBOs);
+
+        for (int i = 0; i < CONST.VERT_IN_ATTRS.length; i++) {
+            final int attrIndex = CONST.VERT_IN_ATTRS[i][0];
+            final int attrSize = CONST.VERT_IN_ATTRS[i][1];
+            glBindBuffer(GL_ARRAY_BUFFER, vertexShaderVBOs[attrIndex]);
+            glEnableVertexAttribArray(attrIndex);
+            glVertexAttribPointer(attrIndex, attrSize, GL_FLOAT, false, attrSize * Float.BYTES, 0);
+            glDisableVertexAttribArray(attrIndex);
+        }
+
+        // indices for draw
+        elementVBO = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementVBO);
+
         unbind();
     }
 
-    // public VAO(boolean tobeignored) {
-    //     vao = glGenVertexArrays();
-    //     bind();
+    public VAO bufferData(int attrIndex, final FloatBuffer data) {
+        bind();
+        glEnableVertexAttribArray(attrIndex);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexShaderVBOs[attrIndex]);
+        glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW);
+        unbind();
+        return this;
+    }
 
-    //     int[] buffer = new int[4];
-    //     glGenBuffers(buffer);
-    //     int positionVBO = buffer[0];
-    //     int normalVBO = buffer[1];
-    //     int uvVBO = buffer[2];
-    //     int elementVBO = buffer[3];
+    public VAO disableVertexAttribArray(int attrIndex) {
+        bind();
+        glDisableVertexAttribArray(attrIndex);
+        unbind();
+        return this;
+    }
 
-    //     glBindBuffer(GL_ARRAY_BUFFER, positionVBO);
-    //     glBindBuffer(GL_ARRAY_BUFFER, normalVBO);
-    //     glBindBuffer(GL_ARRAY_BUFFER, uvVBO);
-    //     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementVBO);
+    public VAO enableVertexAttribArray(int attrIndex) {
+        bind();
+        glEnableVertexAttribArray(attrIndex);
+        unbind();
+        return this;
+    }
 
-    //     unbind();
-    // }
-
+    @Deprecated
     public void bufferVerticies(FloatBuffer vertices) {
         bind();
-        glBindBuffer(GL_ARRAY_BUFFER, vboVertices);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexShaderVBOs[0]);
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
         unbind();
     }
 
     public void bufferIndices(IntBuffer elements) {
         bind();
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIndices);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementVBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
         unbind();
     }
 
+    @Deprecated
     public void vertexAttribPointerF(int index, int size, int stride, int offset) {
         bind();
         glEnableVertexAttribArray(index);
@@ -79,10 +98,12 @@ public class VAO {
     public void delete() {
         if (vao != 0)
             glDeleteVertexArrays(vao);
-        if (vboVertices != 0)
-            glDeleteBuffers(vboVertices);
-        if (vboIndices != 0)
-            glDeleteBuffers(vboIndices);
+        for (int i = 0; i < vertexShaderVBOs.length; i++) {
+            if (vertexShaderVBOs[i] != 0)
+                glDeleteBuffers(vertexShaderVBOs[i]);
+        }
+        if (elementVBO != 0)
+            glDeleteBuffers(elementVBO);
     }
 
     public void setDrawFunction(Runnable r) {
