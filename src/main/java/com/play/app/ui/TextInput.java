@@ -98,16 +98,10 @@ public class TextInput extends UIBase {
     }
 
     @Override
-    public UIBase setPosition(float x, float y) {
-        super.setPosition(x, y);
-        textDisplay.setText(getAsString(), x, y);
-        return this;
-    }
-
-    @Override
     public UIBase setBounds(float x, float y, float w, float h) {
         super.setBounds(x, y, w, h);
-        return setPosition(x, y);
+        textDisplay.setText(getAsString(), x, y);
+        return this;
     }
 
     private void textContentUpdated() {

@@ -5,6 +5,7 @@ import java.util.*;
 import com.play.app.basics.*;
 import com.play.app.geometry.Ray;
 import com.play.app.mesh.Mesh;
+import com.play.app.ui.PropertyEditor;
 import com.play.app.utils.CONST;
 
 import org.joml.*;
@@ -76,6 +77,24 @@ public class InstancingObject extends SOBase implements SceneObject {
         }
 
         return null;
+    }
+
+    @Override
+    public void select(PropertyEditor editor) {
+        // TODO Auto-generated method stub
+        editor.addProperty("color", color);
+        if (instances.size() > 0) {
+            for (SpacialThing s : instances) {
+                editor.addProperty("instance 0", s);
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void deselect() {
+        // TODO Auto-generated method stub
+
     }
 
 }

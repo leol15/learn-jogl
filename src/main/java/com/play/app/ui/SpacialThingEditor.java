@@ -21,6 +21,7 @@ public class SpacialThingEditor extends UIBase {
 
     private static final float ROW_HEIGHT = 40;
     private static final float LABEL_SIZE = 150;
+    private static final float INPUT_WIDTH = 300;
     private static final Vector4f DEFAULT_BG_COLOR = new Vector4f(0.3f, 0.3f, 0.3f, 0.95f);
     private static final Vector4f LABEL_COLOR = new Vector4f(0.9f, 0.9f, 0.9f, 1);
 
@@ -28,19 +29,19 @@ public class SpacialThingEditor extends UIBase {
         super(windowManager);
         setBackgroundColor(DEFAULT_BG_COLOR);
         // labels
-        positionLabel = new Text(windowManager, "position:", x, y);
-        scaleLabel = new Text(windowManager, "scale:", x, y + ROW_HEIGHT);
-        rotationLabel = new Text(windowManager, "rotation:", x, y + ROW_HEIGHT * 2);
+        positionLabel = new Text(windowManager);
+        scaleLabel = new Text(windowManager);
+        rotationLabel = new Text(windowManager);
         positionLabel.setColor(LABEL_COLOR);
         scaleLabel.setColor(LABEL_COLOR);
         rotationLabel.setColor(LABEL_COLOR);
         // inputs
-        posEditor = new Vector3fEditor(windowManager, x + LABEL_SIZE, y);
-        scaEditor = new Vector3fEditor(windowManager, x + LABEL_SIZE, y + ROW_HEIGHT);
-        rotEditor = new Vector3fEditor(windowManager, x + LABEL_SIZE, y + ROW_HEIGHT * 2).setScrollDelta(5);
+        posEditor = new Vector3fEditor(windowManager, 0, 0);
+        scaEditor = new Vector3fEditor(windowManager, 0, 0);
+        rotEditor = new Vector3fEditor(windowManager, 0, 0).setScrollDelta(5);
 
         // set bg size
-        setBounds(x, y, LABEL_SIZE + posEditor.getWidth(), ROW_HEIGHT * 2 + rotEditor.getHeight());
+        setBounds(x, y, LABEL_SIZE + 300, ROW_HEIGHT * 3);
 
         // configure callbacks
         // special handling for rotation, since need convert from vector3f to quat
@@ -87,6 +88,23 @@ public class SpacialThingEditor extends UIBase {
         posEditor.show();
         scaEditor.show();
         rotEditor.show();
+    }
+
+    @Override
+    public UIBase setBounds(float x, float y, float w, float h) {
+        // TODO Auto-generated method stub
+        super.setBounds(x, y, w, h);
+        // labels
+        final float rowHeight = h / 3;
+        final float inputWidht = w - LABEL_SIZE > 0 ? w - LABEL_SIZE : INPUT_WIDTH;
+        positionLabel.setText("position:", x, y);
+        scaleLabel.setText("scale:", x, y + rowHeight);
+        rotationLabel.setText("rotation:", x, y + rowHeight * 2);
+        // inputs
+        posEditor.setBounds(x + LABEL_SIZE, y, inputWidht, rowHeight);
+        scaEditor.setBounds(x + LABEL_SIZE, y + rowHeight, inputWidht, rowHeight);
+        rotEditor.setBounds(x + LABEL_SIZE, y + rowHeight * 2, inputWidht, rowHeight);
+        return this;
     }
 
 }

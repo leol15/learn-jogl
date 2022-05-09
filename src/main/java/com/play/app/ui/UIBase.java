@@ -96,18 +96,15 @@ public class UIBase {
         showInternal();
     }
 
-    public UIBase setPosition(float x, float y) {
-        bound.setX(x).setY(y);
-        computeProjectionMatrix();
-        return this;
+    final public UIBase setPosition(float x, float y) {
+        return setBounds(x, y, getWidth(), getHeight());
     }
 
-    public UIBase setSize(float width, float height) {
-        bound.setW(width).setH(height);
-        computeProjectionMatrix();
-        return this;
+    final public UIBase setSize(float width, float height) {
+        return setBounds(getX(), getY(), width, height);
     }
 
+    // subclass shoud override this for resizing
     public UIBase setBounds(float x, float y, float w, float h) {
         bound.setX(x).setY(y).setW(w).setH(h);
         computeProjectionMatrix();

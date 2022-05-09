@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Vector3fEditor extends UIBase {
     private static final float INPUT_WIDTH = 70f;
-    private static final String NUMBER_FORMAT = "%.1f";
+    public static final String NUMBER_FORMAT = "%.1f";
 
     private Vector3f vector3f;
     @Setter
@@ -54,16 +54,6 @@ public class Vector3fEditor extends UIBase {
             setDefaultLabel();
         }
         return this;
-    }
-
-    @Override
-    public UIBase setSize(float width, float height) {
-        return this.setBounds(getX(), getY(), width, height);
-    }
-
-    @Override
-    public UIBase setPosition(float x, float y) {
-        return this.setBounds(x, y, getWidth(), getHeight());
     }
 
     @Override

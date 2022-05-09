@@ -61,7 +61,7 @@ public class DrawAScene {
 
         final SceneNode rootSceneNode = new SceneNode().setSceneObject(
                 createInstancingObjectHelper(simple3DShader, Mesh.CUBE, new SpacialThing()));
-        // .addChild(pen);
+        rootSceneNode.addChild(pen);
 
         final Matrix4f identity = new Matrix4f();
 
@@ -130,7 +130,9 @@ public class DrawAScene {
         });
 
         // ui
-        final Button togglePolygonMode = new Button(windowManager, 0, 50, "Toggle Polygon Mode");
+        final Button togglePolygonMode = new Button(windowManager,
+                windowManager.windowSize[0] - 200, 50,
+                "Toggle Polygon Mode");
         togglePolygonMode.setColor(Color.RED);
         final int[] toggleState = new int[1];
         final int[] polygonMode = { GL_LINE, GL_FILL, GL_POINT };

@@ -68,10 +68,12 @@ public class SceneNode {
     }
 
     public void select(PropertyEditor editor) {
-        editor.setSpacialThing(modelInfo);
+        editor.addProperty("SceneNode", modelInfo);
+        sceneObject.select(editor);
     }
 
     public void deselect(PropertyEditor editor) {
+        sceneObject.deselect();
     }
 
     ///////////////
