@@ -88,7 +88,7 @@ public class UIBase {
 
     }
 
-    public void show() {
+    final public void show() {
         if (!visible) {
             return;
         }

@@ -5,6 +5,7 @@ import java.util.function.BiConsumer;
 
 import com.play.app.basics.*;
 import com.play.app.geometry.Ray;
+import com.play.app.ui.PropertyEditor;
 
 import org.joml.*;
 
@@ -14,7 +15,7 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Accessors(chain = true)
-public class SceneNode implements Drawable {
+public class SceneNode {
 
     public final SpacialThing modelInfo = new SpacialThing();
 
@@ -34,7 +35,6 @@ public class SceneNode implements Drawable {
         return this;
     }
 
-    @Override
     public void draw(final Matrix4f transform) {
         treeTransformVisitor(this, transform, (node, newTransform) -> {
             if (node.sceneObject != null) {
@@ -48,12 +48,11 @@ public class SceneNode implements Drawable {
         final SceneNode[] bestNode = { null };
         final float[] bestDist = { Float.POSITIVE_INFINITY };
 
-        treeTransformVisitor(this, objMat, (node, newTransoform) -> {
+        treeTransformVisitor(this, objMat, (node, newTransform) -> {
             if (node.sceneObject == null) {
                 return;
             }
-
-            final Vector3f intersect = node.sceneObject.castRay(ray, newTransoform);
+            final Vector3f intersect = node.sceneObject.intersectRay(ray, newTransform);
             if (intersect == null) {
                 return;
             }
@@ -68,6 +67,17 @@ public class SceneNode implements Drawable {
         return bestNode[0];
     }
 
+    public void select(PropertyEditor editor) {
+        editor.setSpacialThing(modelInfo);
+    }
+
+    public void deselect(PropertyEditor editor) {
+    }
+
+    ///////////////
+    // helper
+    ///////////////
+
     /**
      * traverse the scenenode tree from root, while updating transform matrix along
      * 
@@ -75,7 +85,7 @@ public class SceneNode implements Drawable {
      * @param transform starting transform matrix
      * @param process   the work of the visitor
      */
-    public static void treeTransformVisitor(final SceneNode node, final Matrix4f transform,
+    private static void treeTransformVisitor(final SceneNode node, final Matrix4f transform,
             BiConsumer<SceneNode, Matrix4f> process) {
 
         final Matrix4f tmpMat = new Matrix4f();

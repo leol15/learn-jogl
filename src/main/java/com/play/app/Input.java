@@ -36,12 +36,12 @@ public class Input {
         final SceneNode rootNode = new SceneNode();
         final SpacialThing cube1Transform = new SpacialThing();
 
-        SceneNode cube1 = new SceneNode().setSceneObject(
-                new SceneObject()
-                        .setShader(simple3dShader)
-                        .setCollidable(new Cube())
-                        .setMesh(Mesh.CUBE)
-                        .addInstance(cube1Transform));
+        InstancingObject cubes = new InstancingObject();
+        cubes.setShader(simple3dShader);
+        cubes.setCollidable(new Cube())
+                .setMesh(Mesh.CUBE)
+                .addInstance(cube1Transform);
+        SceneNode cube1 = new SceneNode().setSceneObject(cubes);
         rootNode.addChild(cube1);
 
         Text fpsCounter = new Text(windowManager, "FPS: 1", 0, 0);
@@ -86,13 +86,14 @@ public class Input {
                     newNode = null;
                 }
                 if (selectedNode[0] != null) {
-                    selectedNode[0].getSceneObject().setColor(Color.WHITE);
+                    // TODO edit
+                    // selectedNode[0].getSceneObject().setColor(Color.WHITE);
                     selectedNode[0] = null;
                     spacialThingEditor.setSpacialThing(null);
                     spacialThingEditor.setVisible(false);
                 }
                 if (newNode != null) {
-                    newNode.getSceneObject().setColor(Color.RED);
+                    // newNode.getSceneObject().setColor(Color.RED);
                     selectedNode[0] = newNode;
                     spacialThingEditor.setSpacialThing(newNode.modelInfo);
                     spacialThingEditor.setVisible(true);

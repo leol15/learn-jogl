@@ -40,9 +40,9 @@ public class App {
 		// new Batching(window);
 		// new BatchRendering(window);
 		// new UseTexture(window);
-		new Input(window);
+		// new Input(window);
 		// new DrawLines(window);
-		// new DrawAScene(window);
+		new DrawAScene(window);
 		// new SelectObject(window);
 
 		// Free the window callbacks and destroy the window
