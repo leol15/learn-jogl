@@ -24,14 +24,19 @@ public class PropertyEditor extends UIBase {
     private final List<SpacialThingEditor> spacialThingEditors = new ArrayList<>();
     private final List<Text> spacialThingEditorLabels = new ArrayList<>();
 
-    // temp
-    private final Text vector4fEditorLabel;
-    private final Vector4fEditor vector4fEditor;
+    public static int MAX_NUM_VECTORS = 10;
+    private int nextActiveV4Editor = 0;
+    private final List<Text> vector4fEditorLabels = new ArrayList<>();
+    private final List<Vector4fEditor> vector4fEditors = new ArrayList<>();
+
+    private int nextActiveV3Editor = 0;
+    private final List<Text> vector3fEditorLabels = new ArrayList<>();
+    private final List<Vector3fEditor> vector3fEditors = new ArrayList<>();
 
     public PropertyEditor(WindowManager windowManager) {
         super(windowManager);
         setBounds(0, 0, 400, 900);
-        setBackgroundColor(Color.RED);
+        setBackgroundColor(new Vector4f(0.5f, 0.5f, 0.5f, 1));
         spacialThingEditors.add(new SpacialThingEditor(windowManager, 0, 100));
         spacialThingEditors.add(new SpacialThingEditor(windowManager, 0, 100));
         for (int i = 0; i < spacialThingEditors.size(); i++) {
@@ -40,9 +45,17 @@ public class PropertyEditor extends UIBase {
         spacialThingEditorLabels.add(new Text(windowManager));
         spacialThingEditorLabels.add(new Text(windowManager));
 
-        vector4fEditorLabel = new Text(windowManager);
-        vector4fEditorLabel.setText("", 0, 550);
-        vector4fEditor = new Vector4fEditor(windowManager, 0, 600);
+        for (int i = 0; i < MAX_NUM_VECTORS; i++) {
+            vector4fEditorLabels.add(new Text(windowManager));
+            final Vector4fEditor v4Editor = new Vector4fEditor(windowManager, 0, 0);
+            v4Editor.setSize(400 - LABEL_WIDTH, 50);
+            vector4fEditors.add(v4Editor);
+
+            final Vector3fEditor v3Editor = new Vector3fEditor(windowManager, 0, 0);
+            v3Editor.setSize(400 - LABEL_WIDTH, 50);
+            vector3fEditorLabels.add(new Text(windowManager));
+            vector3fEditors.add(v3Editor);
+        }
     }
 
     public void addProperty(String name, final SpacialThing ref) {
@@ -64,12 +77,36 @@ public class PropertyEditor extends UIBase {
     }
 
     public void addProperty(String name, final Vector3f ref) {
+        if (nextActiveV3Editor >= vector3fEditors.size()) {
+            log.warn("maximum number of vec3 editor active");
+            return;
+        }
+        final Vector3fEditor editor = vector3fEditors.get(nextActiveV3Editor);
+        final Text label = vector3fEditorLabels.get(nextActiveV3Editor);
+        editor.setVector3f(ref);
+        editor.setPosition(LABEL_WIDTH, nextEditorY);
+        label.setText(name, 0, nextEditorY);
+
+        nextEditorY += editor.getHeight() + PROPERTY_GAP;
+        nextActiveV3Editor++;
+
         visible = true;
     }
 
     public void addProperty(String name, final Vector4f ref) {
-        vector4fEditorLabel.setText(name);
-        vector4fEditor.setVector4f(ref);
+        if (nextActiveV4Editor >= vector4fEditors.size()) {
+            log.warn("maximum number of vec4 editor active");
+            return;
+        }
+        final Vector4fEditor editor = vector4fEditors.get(nextActiveV4Editor);
+        final Text label = vector4fEditorLabels.get(nextActiveV4Editor);
+        editor.setVector4f(ref);
+        editor.setPosition(LABEL_WIDTH, nextEditorY);
+        label.setText(name, 0, nextEditorY);
+
+        nextEditorY += editor.getHeight() + PROPERTY_GAP;
+        nextActiveV4Editor++;
+
         visible = true;
     }
 
@@ -78,8 +115,14 @@ public class PropertyEditor extends UIBase {
             spacialThingEditors.get(i).setSpacialThing(null);
             spacialThingEditorLabels.get(i).setText("");
         }
-        vector4fEditor.setVector4f(null);
-        vector4fEditorLabel.setText("");
+        for (int i = 0; i < MAX_NUM_VECTORS; i++) {
+            vector3fEditorLabels.get(i).setText("");
+            vector4fEditorLabels.get(i).setText("");
+            vector3fEditors.get(i).setVector3f(null);
+            vector4fEditors.get(i).setVector4f(null);
+        }
+        nextActiveV3Editor = 0;
+        nextActiveV4Editor = 0;
         nextActiveSpacialThingEditor = 0;
         nextEditorY = 0;
         visible = false;
@@ -92,8 +135,14 @@ public class PropertyEditor extends UIBase {
             spacialThingEditorLabels.get(i).draw();
             spacialThingEditors.get(i).show();
         }
-        vector4fEditor.show();
-        vector4fEditorLabel.draw();
+        for (int i = 0; i < nextActiveV3Editor; i++) {
+            vector3fEditorLabels.get(i).draw();
+            vector3fEditors.get(i).show();
+        }
+        for (int i = 0; i < nextActiveV4Editor; i++) {
+            vector4fEditorLabels.get(i).draw();
+            vector4fEditors.get(i).show();
+        }
     }
 
 }
