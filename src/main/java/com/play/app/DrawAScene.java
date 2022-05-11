@@ -7,7 +7,7 @@ import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 import java.awt.Color;
 
-import com.play.app.basics.SpacialThing;
+import com.play.app.basics.*;
 import com.play.app.geometry.*;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.mesh.Mesh;
@@ -17,8 +17,8 @@ import com.play.app.utils.*;
 import com.play.app.utils.WindowManager.Layer;
 import com.play.app.graphics.*;
 
+import org.joml.*;
 import org.joml.Math;
-import org.joml.Matrix4f;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -46,11 +46,11 @@ public class DrawAScene {
 
         // scene
         final SceneNode penTip = new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.CONE, new SpacialThing()));
+                createInstancingObjectHelper(simple3DShader, Mesh.CONE, new SpacialThing(), new Cube()));
         penTip.modelInfo.scale.mul(0.5f);
         penTip.modelInfo.translation.add(0, 2, 0);
         final SceneNode penBody = new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.CYCLINDER, new SpacialThing()));
+                createInstancingObjectHelper(simple3DShader, Mesh.CYCLINDER, new SpacialThing(), new Cube()));
         penBody.modelInfo.scale.mul(0.5f, 2, 0.5f);
 
         final SceneNode pen = new SceneNode().addChild(penTip).addChild(penBody);
@@ -59,8 +59,7 @@ public class DrawAScene {
         pen.modelInfo.translation.add(2, 0, 0);
         pen.modelInfo.scale.set(0.5f);
 
-        final SceneNode rootSceneNode = new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.CUBE, new SpacialThing()));
+        final SceneNode rootSceneNode = new SceneNode();
         rootSceneNode.addChild(pen);
 
         final Matrix4f identity = new Matrix4f();
@@ -79,22 +78,28 @@ public class DrawAScene {
         final SpacialThing planeModel = new SpacialThing();
         planeModel.translation.set(-2, 0, 0);
         rootSceneNode.addChild(new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.PLANE, planeModel)));
+                createInstancingObjectHelper(simple3DShader, Mesh.PLANE, planeModel, new Plane())));
 
         final SpacialThing coneModel = new SpacialThing();
         coneModel.translation.set(3, 0, 0);
         rootSceneNode.addChild(new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.CONE, coneModel)));
+                createInstancingObjectHelper(simple3DShader, Mesh.CONE, coneModel, new Cube())));
 
         final SpacialThing cyclinderModel = new SpacialThing();
         cyclinderModel.translation.set(4.5f, 0, 0);
         rootSceneNode.addChild(new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.CYCLINDER, cyclinderModel)));
+                createInstancingObjectHelper(simple3DShader, Mesh.CYCLINDER, cyclinderModel, new Cube())));
 
         final SpacialThing sphereModel = new SpacialThing();
-        sphereModel.translation.set(6, 0, 0);
+        sphereModel.translation.set(0, 1, 0);
+        sphereModel.scale.set(1, 2, 1);
         rootSceneNode.addChild(new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.SPHERE, sphereModel)));
+                createInstancingObjectHelper(simple3DShader, Mesh.SPHERE, sphereModel, new Sphere())));
+
+        final SpacialThing cubeModel = new SpacialThing();
+        cubeModel.translation.set(6, 0, 0);
+        rootSceneNode.addChild(new SceneNode().setSceneObject(
+                createInstancingObjectHelper(simple3DShader, Mesh.CUBE, cubeModel, new Cube())));
 
         final ShaderProgram lineShader = new ShaderProgram()
                 .withShader("resources/shaders/Line.vert", GL_VERTEX_SHADER)
@@ -103,7 +108,7 @@ public class DrawAScene {
         final SpacialThing cicleModel = new SpacialThing();
         cicleModel.translation.set(-3, 0, 0);
         rootSceneNode.addChild(new SceneNode().setSceneObject(
-                createInstancingObjectHelper(lineShader, Mesh.CIRCLE, cicleModel)));
+                createInstancingObjectHelper(lineShader, Mesh.CIRCLE, cicleModel, new Cube())));
 
         SceneNode[] selectedNode = { null };
         windowManager.addCharCallback(Layer.SCENE, (window2, character) -> {
@@ -112,8 +117,8 @@ public class DrawAScene {
                 final Ray ray = camera.getRay(windowManager.lastMousePos[0],
                         windowManager.lastMousePos[1]);
 
-                SpacialThing lineTransform = Func.createLine(ray, 10, 0.03f);
-                clickLines.addInstance(lineTransform);
+                // SpacialThing lineTransform = Func.createLine(ray, 10, 0.03f);
+                // clickLines.addInstance(lineTransform);
 
                 // select
                 SceneNode node = rootSceneNode.castRay(ray);
@@ -125,6 +130,13 @@ public class DrawAScene {
                 if (node != null) {
                     selectedNode[0] = node;
                     selectedNode[0].select(propertyEditor);
+                    // draw a better line
+                    final Vector3f intersect = selectedNode[0].getSceneObject().intersectRay(ray, new Matrix4f());
+                    if (intersect == null) {
+                        log.error("could not find intersect of selected object");
+                    }
+                    SpacialThing toSelectLineModel = Func.createLine(camera.getCameraPosition(), intersect, 0.1f);
+                    clickLines.addInstance(toSelectLineModel);
                 }
             }
         });
@@ -166,11 +178,13 @@ public class DrawAScene {
         }
     }
 
-    private SceneObject createInstancingObjectHelper(ShaderProgram shader, Mesh mesh, SpacialThing spacialThing) {
+    private SceneObject createInstancingObjectHelper(
+            ShaderProgram shader, Mesh mesh, SpacialThing spacialThing,
+            Collidable collidable) {
         final InstancingObject o = new InstancingObject()
                 .addInstance(spacialThing)
                 .setMesh(mesh)
-                .setCollidable(new Cube());
+                .setCollidable(collidable);
         o.setShader(shader);
         return o;
     }

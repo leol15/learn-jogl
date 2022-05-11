@@ -388,7 +388,7 @@ public class UnitGeometries {
         return vHelper.modifyingVAO;
     }
 
-    private static class VAOHelper {
+    public static class VAOHelper {
 
         public final FloatBuffer positions, normals, uvs;
         public final IntBuffer elements;

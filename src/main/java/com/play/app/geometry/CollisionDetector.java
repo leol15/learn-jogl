@@ -1,7 +1,6 @@
 package com.play.app.geometry;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.play.app.basics.Collidable;
 import com.play.app.utils.Func;
@@ -29,6 +28,8 @@ public class CollisionDetector {
         ADD_ENTRY(Cube.class, Cube.class, CollisionDetector::cubeCubeCollision);
         ADD_ENTRY(Cube.class, Ray.class, CollisionDetector::cubeRayCollision);
         ADD_ENTRY(Ray.class, Ray.class, CollisionDetector::rayRayCollision);
+        ADD_ENTRY(Plane.class, Ray.class, CollisionDetector::planeRayCollision);
+        ADD_ENTRY(Sphere.class, Ray.class, CollisionDetector::sphereRayCollision);
     }
 
     public static Vector3f collide(Collidable a, Collidable b,
@@ -67,47 +68,57 @@ public class CollisionDetector {
         // intersect with unit cube
         final Vector3f origin = new Vector3f(0, 0, 0);
         final Vector3f otherCorner = new Vector3f(1, 1, 1);
+        final List<Vector3f> intersections = new ArrayList<>();
         Vector3f intersect = rayRectIntersection(rayStart3, rayDir3,
                 origin,
                 new Vector3f(1, 0, 0),
                 new Vector3f(0, 1, 0));
         if (intersect != null) {
-            return intersect;
+            intersections.add(intersect);
         }
         intersect = rayRectIntersection(rayStart3, rayDir3,
                 origin,
                 new Vector3f(1, 0, 0),
                 new Vector3f(0, 0, 1));
         if (intersect != null) {
-            return intersect;
+            intersections.add(intersect);
         }
         intersect = rayRectIntersection(rayStart3, rayDir3,
                 origin,
                 new Vector3f(0, 1, 0),
                 new Vector3f(0, 0, 1));
         if (intersect != null) {
-            return intersect;
+            intersections.add(intersect);
         }
         intersect = rayRectIntersection(rayStart3, rayDir3,
                 otherCorner,
                 new Vector3f(-1, 0, 0),
                 new Vector3f(0, -1, 0));
         if (intersect != null) {
-            return intersect;
+            intersections.add(intersect);
         }
         intersect = rayRectIntersection(rayStart3, rayDir3,
                 otherCorner,
                 new Vector3f(-1, 0, 0),
                 new Vector3f(0, 0, -1));
         if (intersect != null) {
-            return intersect;
+            intersections.add(intersect);
         }
         intersect = rayRectIntersection(rayStart3, rayDir3,
                 otherCorner,
                 new Vector3f(0, -1, 0),
                 new Vector3f(0, 0, -1));
         if (intersect != null) {
-            return intersect;
+            intersections.add(intersect);
+        }
+        // find the intersect closes to raystart
+        float closest = Float.MAX_VALUE;
+        for (final Vector3f i : intersections) {
+            final float dist = i.distance(rayStart3);
+            if (dist < closest) {
+                closest = dist;
+                intersect = Func.multMat(i, cubeTransform);
+            }
         }
         return intersect;
     }
@@ -116,6 +127,42 @@ public class CollisionDetector {
             final Matrix4f aTransform, final Matrix4f bTransform) {
         // no, rays don't collide
         return null;
+    }
+
+    private static Vector3f planeRayCollision(final Plane p, final Ray r,
+            final Matrix4f pTransform, final Matrix4f rTransform) {
+        final Matrix4f pInverse = new Matrix4f();
+        pTransform.invertAffine(pInverse);
+        final Ray newR = r.transform(pInverse.mul(rTransform));
+        final Vector3f intersect = rayRectIntersection(newR.start, newR.direction,
+                new Vector3f(0, 0, 0),
+                new Vector3f(1, 0, 0),
+                new Vector3f(0, 1, 0));
+        return intersect != null ? Func.multMat(intersect, pTransform) : null;
+    }
+
+    private static Vector3f sphereRayCollision(final Sphere s, final Ray r,
+            final Matrix4f sTransform, final Matrix4f rTransform) {
+        final float UNIT_RADIUS = 0.5f;
+        final Matrix4f sInverse = new Matrix4f();
+        sTransform.invertAffine(sInverse);
+        // a unit sphere
+        final Ray newR = r.transform(sInverse.mul(rTransform));
+        if (newR.start.equals(new Vector3f(0, 0, 0), 0.01f)) {
+            return Func.multMat(newR.direction, sTransform);
+        }
+        final Vector3f toOrigin = new Vector3f().sub(newR.start);
+        final float perpScaler = newR.direction.dot(toOrigin);
+        final Vector3f perpVecter = newR.direction.mul(perpScaler, new Vector3f(0, 0, 0));
+        final Vector3f distToOrigin = new Vector3f();
+        toOrigin.sub(perpVecter, distToOrigin);
+        if (distToOrigin.length() > UNIT_RADIUS) {
+            return null;
+        }
+        // there is intersection
+        final float dirScaler = (float) Math.sqrt(UNIT_RADIUS * UNIT_RADIUS - distToOrigin.lengthSquared());
+        distToOrigin.mul(-1).sub(newR.direction.mul(dirScaler));
+        return Func.multMat(distToOrigin, sTransform);
     }
 
     /////////////////////////

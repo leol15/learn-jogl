@@ -2,7 +2,6 @@ package com.play.app.ui;
 
 import java.util.function.Consumer;
 
-import com.play.app.Input;
 import com.play.app.utils.WindowManager;
 
 import org.joml.*;

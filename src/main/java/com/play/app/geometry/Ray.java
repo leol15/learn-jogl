@@ -33,7 +33,7 @@ public class Ray implements Collidable {
         src.mul(transform);
         newDirection.set(src.x, src.y, src.z);
 
-        return new Ray(newStart, newDirection);
+        return new Ray(newStart, newDirection.normalize());
     }
 
 }

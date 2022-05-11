@@ -9,6 +9,7 @@ import java.nio.FloatBuffer;
 
 import com.play.app.geometry.Ray;
 import com.play.app.graphics.*;
+import com.play.app.graphics.UnitGeometries.VAOHelper;
 import com.play.app.utils.*;
 import com.play.app.utils.WindowManager.Layer;
 
@@ -17,6 +18,10 @@ import org.joml.Math;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.*;
 
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
+@Accessors(chain = true)
 public class CameraControl {
 
     private final FloatBuffer viewBuffer;
@@ -24,7 +29,7 @@ public class CameraControl {
     private final Matrix4f view;
     private final Matrix4f projection;
 
-    private final Vector3f cameraPosition = new Vector3f(0, 0, 5);
+    private final Vector3f cameraPosition = new Vector3f(0, 4, 5);
     private final Vector3f cameraTarget = new Vector3f(0, 0, 0);
     private final Vector3f cameraUp = new Vector3f(0, 1, 0);
     private float fov = 45;
@@ -32,10 +37,16 @@ public class CameraControl {
     private MouseButton activeMouseButton = MouseButton.NONE;
     private double mouseX, mouseY;
 
+    // grid relate
+    @Setter
+    private boolean drawGrid = true;
+    private Matrix4f gridModelMat = new Matrix4f();
+    private final VAO gridVAO;
+
     // marker related
     private float markerScale = 15;
     private float drawMarkerFrame = 0;
-    private static final ShaderProgram debugShader = createLineShader();
+    private static final ShaderProgram lineShader = createLineShader();
     private static final FloatBuffer modelBuffer = BufferUtils.createFloatBuffer(16);
     private static final Vector4f[] ringColor = {
             Func.toVec4(Color.RED),
@@ -63,6 +74,8 @@ public class CameraControl {
         view = new Matrix4f();
         projection = new Matrix4f();
 
+        gridVAO = createBaseGrid();
+
         windowManager.addMouseButtonCallback(Layer.SCENE, this::mouseButtonCallback);
         windowManager.addScrollCallback(Layer.SCENE, (GLFWScrollCallbackI) this::scrollCallback);
         windowManager.addCursorEnterCallback(Layer.SCENE, this::cursorEnterCallback);
@@ -82,19 +95,28 @@ public class CameraControl {
     }
 
     public void draw() {
+        // grid
+        if (drawGrid) {
+            setViewAndProjection(lineShader);
+            lineShader.uniformMatrix4fv(CONST.MODEL_MATRIX, gridModelMat);
+            lineShader.uniform4f(CONST.SHADER_COLOR, new Vector4f(0, 0.6f, 0.6f, 1));
+            lineShader.useProgram();
+            gridVAO.draw();
+            lineShader.unuseProgram();
+        }
+
         // only draw marker when moving or rotating
         if (activeMouseButton == MouseButton.NONE && drawMarkerFrame <= 0) {
             return;
         }
         drawMarkerFrame--;
-        setViewAndProjection(debugShader);
         for (int i = 0; i < ringModelMatrix.length; i++) {
             ringModelMatrix[i].get(modelBuffer);
-            debugShader.uniformMatrix4fv(CONST.MODEL_MATRIX, modelBuffer);
-            debugShader.uniform4f("color", ringColor[i]);
-            debugShader.useProgram();
+            lineShader.uniformMatrix4fv(CONST.MODEL_MATRIX, modelBuffer);
+            lineShader.uniform4f(CONST.SHADER_COLOR, ringColor[i]);
+            lineShader.useProgram();
             UnitGeometries.drawCircle(40);
-            debugShader.unuseProgram();
+            lineShader.unuseProgram();
         }
 
     }
@@ -229,6 +251,26 @@ public class CameraControl {
         identityMatrix.get(identityMatrixBuffer);
         shaderProgram.uniformMatrix4fv(CONST.MODEL_MATRIX, identityMatrixBuffer);
         return shaderProgram;
+    }
+
+    // create am 9x9 grid
+    private static VAO createBaseGrid() {
+        final int HALF_SIZE = 6;
+        final VAOHelper vHelper = new VAOHelper((HALF_SIZE * 2 + 1) * 2 * 2, 0);
+        for (int d = -HALF_SIZE; d < HALF_SIZE + 1; d++) {
+            vHelper.positions.put(-HALF_SIZE).put(0).put(d);
+            vHelper.positions.put(HALF_SIZE).put(0).put(d);
+
+            vHelper.positions.put(d).put(0).put(-HALF_SIZE);
+            vHelper.positions.put(d).put(0).put(HALF_SIZE);
+        }
+
+        vHelper.done();
+        vHelper.modifyingVAO.disableVertexAttribArray(CONST.VERT_IN_NORMAL);
+        vHelper.modifyingVAO.disableVertexAttribArray(CONST.VERT_IN_UV);
+        vHelper.modifyingVAO.setDrawFunction(() -> glDrawArrays(GL_LINES, 0, (HALF_SIZE * 2 + 1) * 2 * 2));
+
+        return vHelper.modifyingVAO;
     }
 
     private void updateMarker() {

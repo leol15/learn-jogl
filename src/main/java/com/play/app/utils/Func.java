@@ -38,6 +38,12 @@ public class Func {
         return new Vector4f(v, 1);
     }
 
+    public static Vector3f multMat(final Vector3f v, final Matrix4f mat) {
+        final Vector4f tmp = new Vector4f(v, 1);
+        tmp.mul(mat);
+        return new Vector3f(tmp.x, tmp.y, tmp.z);
+    }
+
     public static FloatBuffer newMatBuffer() {
         return BufferUtils.createFloatBuffer(16);
     }
