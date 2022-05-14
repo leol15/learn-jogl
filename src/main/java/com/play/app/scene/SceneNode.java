@@ -35,6 +35,12 @@ public class SceneNode {
         return this;
     }
 
+    public SceneNode createChild() {
+        final SceneNode child = new SceneNode();
+        children.add(child);
+        return child;
+    }
+
     public void draw(final Matrix4f transform) {
         treeTransformVisitor(this, transform, (node, newTransform) -> {
             if (node.sceneObject != null) {

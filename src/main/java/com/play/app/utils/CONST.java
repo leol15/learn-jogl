@@ -9,6 +9,7 @@ public class CONST {
     public static final String SHADER_COLOR = "color";
 
     public static final String SHADER_FOLDER = "resources/shaders/";
+    public static final String SHADER_DEFAULT_FOLDER = SHADER_FOLDER + "essential/";
 
     public static final int VERT_IN_POSITION = 0;
     public static final int VERT_IN_NORMAL = 1;
@@ -17,4 +18,6 @@ public class CONST {
     // indexed by above constant
     // [location in shader, size of vertex attribute (in number of floats)]
     public static final int[][] VERT_IN_ATTRS = { { 0, 3 }, { 1, 3 }, { 2, 2 } };
+
+    public static final String UBO_ViewAndProjection = "ViewAndProjection";
 }

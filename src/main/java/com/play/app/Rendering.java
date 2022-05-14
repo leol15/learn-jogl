@@ -51,7 +51,6 @@ public class Rendering {
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            camera.setViewAndProjection(shaderProgram);
             model.rotate(0.01f, new Vector3f(1, 1, 1));
             model.get(fbModel);
 

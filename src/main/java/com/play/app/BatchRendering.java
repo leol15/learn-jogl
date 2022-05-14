@@ -56,8 +56,6 @@ public class BatchRendering {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // set uniform locations
-            camera.setViewAndProjection(simple3DShader);
-
             simple3DShader.uniformMatrix4fv(CONST.MODEL_MATRIX, cubeModel);
             simple3DShader.useProgram();
             UnitGeometries.drawCube();

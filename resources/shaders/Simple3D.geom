@@ -12,7 +12,11 @@ in VS_OUT {
 
 out vec4 fs_color;
 
-uniform mat4 projection = mat4(1);
+layout (std140, binding = 0) uniform ViewAndProjection
+{
+    mat4 view;
+    mat4 projection;
+};
 
 const float MAGNITUDE = 0.1;
 void GenerateLine(int index) {

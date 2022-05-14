@@ -60,7 +60,7 @@ public class InstancingObject extends SOBase implements SceneObject {
 
     // return the first point of intersection
     @Override
-    public Vector3f intersectRay(final Ray ray, final Matrix4f worldMat) {
+    public Vector3f intersectRay(final Ray ray, final Matrix4f worldMatrix) {
         if (collidable == null) {
             return null;
         }
@@ -68,7 +68,7 @@ public class InstancingObject extends SOBase implements SceneObject {
         final Matrix4f tmpMat = new Matrix4f();
         for (final SpacialThing model : instances) {
             model.getModelMatrix(tmpMat);
-            tmpMat.mulLocal(worldMat);
+            tmpMat.mulLocal(worldMatrix);
 
             final Vector3f intersect = collidable.collide(ray, tmpMat, rayMatIdentity);
             if (intersect != null) {

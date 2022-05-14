@@ -12,6 +12,7 @@ import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
 public class SOBase {
+    // TODO: this can be abtract to a material class
 
     @Setter
     protected ShaderProgram shader;
@@ -27,8 +28,11 @@ public class SOBase {
             texture.bindTexture();
         }
 
-        if (color != null) {
-            shader.uniform4f(CONST.SHADER_COLOR, color);
+        if (shader != null) {
+            if (color != null) {
+                shader.uniform4f(CONST.SHADER_COLOR, color);
+            }
+            shader.useProgram();
         }
     }
 

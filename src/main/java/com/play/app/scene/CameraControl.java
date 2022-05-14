@@ -3,9 +3,10 @@ package com.play.app.scene;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL45.*;
 
 import java.awt.Color;
-import java.nio.FloatBuffer;
+import java.nio.*;
 
 import com.play.app.geometry.Ray;
 import com.play.app.graphics.*;
@@ -24,13 +25,17 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class CameraControl {
 
-    private final FloatBuffer viewBuffer;
-    private final FloatBuffer projectionBuffer;
+    private static final Vector3f DEFAULT_CAM_POSITION = new Vector3f(3, 4, 5);
+    private static final Vector3f DEFAULT_CAM_TARGET = new Vector3f();
+
+    private final int viewProjectionUbo;
+    private final int UBO_SIZE = 2 * 4 * 4 * Float.BYTES;
+    private ByteBuffer uboBuffer = BufferUtils.createByteBuffer(UBO_SIZE);
     private final Matrix4f view;
     private final Matrix4f projection;
 
-    private final Vector3f cameraPosition = new Vector3f(0, 4, 5);
-    private final Vector3f cameraTarget = new Vector3f(0, 0, 0);
+    private final Vector3f cameraPosition = new Vector3f(DEFAULT_CAM_POSITION);
+    private final Vector3f cameraTarget = new Vector3f(DEFAULT_CAM_TARGET);
     private final Vector3f cameraUp = new Vector3f(0, 1, 0);
     private float fov = 45;
 
@@ -68,13 +73,14 @@ public class CameraControl {
 
     public CameraControl(WindowManager windowManager) {
         this.windowManager = windowManager;
-        viewBuffer = BufferUtils.createFloatBuffer(16);
-        projectionBuffer = BufferUtils.createFloatBuffer(16);
 
         view = new Matrix4f();
         projection = new Matrix4f();
 
         gridVAO = createBaseGrid();
+
+        // camera matrix is passed to shaders via UBO
+        viewProjectionUbo = UBO.createUboBuffer(CONST.UBO_ViewAndProjection);
 
         windowManager.addMouseButtonCallback(Layer.SCENE, this::mouseButtonCallback);
         windowManager.addScrollCallback(Layer.SCENE, (GLFWScrollCallbackI) this::scrollCallback);
@@ -87,17 +93,9 @@ public class CameraControl {
         updateView();
     }
 
-    public void setViewAndProjection(ShaderProgram program) {
-        view.get(viewBuffer);
-        projection.get(projectionBuffer);
-        program.uniformMatrix4fv(CONST.VIEW_MATRIX, viewBuffer);
-        program.uniformMatrix4fv(CONST.PROJECTION_MATRIX, projectionBuffer);
-    }
-
     public void draw() {
         // grid
         if (drawGrid) {
-            setViewAndProjection(lineShader);
             lineShader.uniformMatrix4fv(CONST.MODEL_MATRIX, gridModelMat);
             lineShader.uniform4f(CONST.SHADER_COLOR, new Vector4f(0, 0.6f, 0.6f, 1));
             lineShader.useProgram();
@@ -242,8 +240,8 @@ public class CameraControl {
     ///////////////////
     private static ShaderProgram createLineShader() {
         final ShaderProgram shaderProgram = new ShaderProgram()
-                .withShader("resources/shaders/Line.vert", GL_VERTEX_SHADER)
-                .withShader("resources/shaders/Line.frag", GL_FRAGMENT_SHADER)
+                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Line.vert", GL_VERTEX_SHADER)
+                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Default.frag", GL_FRAGMENT_SHADER)
                 .linkProgram();
 
         final Matrix4f identityMatrix = new Matrix4f();
@@ -284,12 +282,23 @@ public class CameraControl {
     private void updateView() {
         view.setLookAt(cameraPosition, cameraTarget, cameraUp);
         updateMarker();
+        updateViewAndProjectionUboData();
     }
 
     private void updateProjection() {
         projection.setPerspective(Math.toRadians(fov),
                 windowManager.windowSize[0] / (float) windowManager.windowSize[1],
                 0.1f, 100f);
+        updateViewAndProjectionUboData();
+    }
+
+    private void updateViewAndProjectionUboData() {
+        view.get(uboBuffer);
+        projection.get(UBO_SIZE / 2, uboBuffer);
+
+        glBindBuffer(GL_UNIFORM_BUFFER, viewProjectionUbo);
+        glBufferData(GL_UNIFORM_BUFFER, uboBuffer, GL_STATIC_DRAW);
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
     }
 
     ///////////////////
@@ -349,8 +358,8 @@ public class CameraControl {
         if (key == GLFW_KEY_SPACE && action == GLFW_PRESS) {
             windowManager.stopPropagation();
             // reset camera
-            cameraPosition.set(0, 0, 5);
-            cameraTarget.set(0, 0, 0);
+            cameraPosition.set(DEFAULT_CAM_POSITION);
+            cameraTarget.set(DEFAULT_CAM_TARGET);
             updateView();
         }
     }

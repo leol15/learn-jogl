@@ -33,8 +33,8 @@ public class DrawLines {
         lineVAO.setDrawFunction(() -> glDrawArrays(GL_LINE_LOOP, 0, 4));
 
         ShaderProgram lineShader = new ShaderProgram()
-                .withShader(CONST.SHADER_FOLDER + "Line.vert", GL_VERTEX_SHADER)
-                .withShader(CONST.SHADER_FOLDER + "Line.frag", GL_FRAGMENT_SHADER)
+                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Line.vert", GL_VERTEX_SHADER)
+                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Default.frag", GL_FRAGMENT_SHADER)
                 .linkProgram();
 
         CameraControl cam = new CameraControl(windowManager);
@@ -69,9 +69,6 @@ public class DrawLines {
             fpsCounter.setText(String.format("FPS: %.2f", fps), 0, 0);
             fpsCounter.draw();
             previousTime = time;
-
-            cam.setViewAndProjection(lineShader);
-            cam.setViewAndProjection(simple3DShader);
 
             lineShader.uniform4f("color", new Vector4f(0, 0, 1, 1));
             lineShader.useProgram();

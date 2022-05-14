@@ -110,7 +110,6 @@ public class Input {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // draw
-            cam.setViewAndProjection(simple3dShader);
 
             // debug
             rootNode.draw(iden);

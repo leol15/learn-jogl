@@ -312,8 +312,8 @@ public class Text {
         int windowHeight = windowHeightBuffer.get();
 
         textShader = new ShaderProgram()
-                .withShader("resources/shaders/Text.vert", GL_VERTEX_SHADER)
-                .withShader("resources/shaders/Text.frag", GL_FRAGMENT_SHADER);
+                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Text.vert", GL_VERTEX_SHADER)
+                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Text.frag", GL_FRAGMENT_SHADER);
         textShader.linkProgram();
 
         // screen to UI projection

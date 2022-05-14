@@ -4,6 +4,9 @@
 # TODO:
 
 - Learn about dynamic draw
+- try some inverse kinematics
+- springs
+- particle system
 
 
 

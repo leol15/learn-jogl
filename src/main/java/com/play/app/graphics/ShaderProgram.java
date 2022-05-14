@@ -1,11 +1,15 @@
 package com.play.app.graphics;
 
 import org.joml.*;
+
+import lombok.extern.log4j.Log4j2;
+
 import java.nio.*;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL45.*;
 
 import com.play.app.utils.*;
 
+@Log4j2
 public class ShaderProgram {
 
     private int id;
@@ -14,7 +18,7 @@ public class ShaderProgram {
     public ShaderProgram() {
         id = glCreateProgram();
         if (id == 0) {
-            System.err.println("Error creating shader program");
+            log.error("Error creating shader program");
         }
     }
 
@@ -27,9 +31,22 @@ public class ShaderProgram {
         return this;
     }
 
+    public ShaderProgram withShader(String path) {
+        if (path.endsWith(".frag")) {
+            return withShader(path, GL_FRAGMENT_SHADER);
+        } else if (path.endsWith(".geom")) {
+            return withShader(path, GL_GEOMETRY_SHADER);
+        } else if (path.endsWith(".vert")) {
+            return withShader(path, GL_VERTEX_SHADER);
+        } else {
+            log.warn("Unsupported shader file {}", path);
+            return this;
+        }
+    }
+
     @Deprecated
     public void loadShaderFromPath(String path, int type) {
-        System.out.println("loading shader from path: " + path);
+        log.info("loading shader from path: {}", path);
 
         int shaderId = glCreateShader(type);
         String source = AssetTools.loadTextFile(path);
@@ -58,6 +75,8 @@ public class ShaderProgram {
             throw new RuntimeException(glGetProgramInfoLog(id));
         }
 
+        // setup UBOs
+        UBO.configureShader(this);
         return this;
     }
 

@@ -57,30 +57,17 @@ public class UIBase {
         if (uiShader == null) {
             // create one off shader
             uiShader = new ShaderProgram()
-                    .withShader("resources/shaders/UI.vert", GL_VERTEX_SHADER)
-                    .withShader("resources/shaders/UI.frag", GL_FRAGMENT_SHADER)
+                    .withShader(CONST.SHADER_DEFAULT_FOLDER + "UI.vert", GL_VERTEX_SHADER)
+                    .withShader(CONST.SHADER_DEFAULT_FOLDER + "Default.frag", GL_FRAGMENT_SHADER)
                     .linkProgram();
         }
     }
 
     public UIBase(WindowManager windowManager, float x, float y, float w, float h) {
-        this.windowManager = windowManager;
-        windowManager.addWindowSizeCallback(Layer.ALWAYS, this::onWindowSizeChanged);
-
-        onWindowSizeChanged(windowManager.window,
-                windowManager.windowSize[0],
-                windowManager.windowSize[1]);
+        this(windowManager);
 
         setPosition(x, y);
         setSize(w, h);
-
-        if (uiShader == null) {
-            // create one off shader
-            uiShader = new ShaderProgram()
-                    .withShader("resources/shaders/UI.vert", GL_VERTEX_SHADER)
-                    .withShader("resources/shaders/UI.frag", GL_FRAGMENT_SHADER)
-                    .linkProgram();
-        }
     }
 
     // TODO is this needed?
