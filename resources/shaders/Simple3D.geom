@@ -12,10 +12,11 @@ in VS_OUT {
 
 out vec4 fs_color;
 
-layout (std140, binding = 0) uniform ViewAndProjection
+layout (std140) uniform ViewAndProjection
 {
     mat4 view;
     mat4 projection;
+    vec3 eyePos;
 };
 
 const float MAGNITUDE = 0.1;

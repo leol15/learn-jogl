@@ -1,4 +1,4 @@
-package com.play.app.scene;
+package com.play.app.scene.sceneobject;
 
 import java.awt.Color;
 

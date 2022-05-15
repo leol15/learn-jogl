@@ -73,6 +73,15 @@ public class SceneNode {
         return bestNode[0];
     }
 
+    public void accept(SceneVisitor sceneVisitor) {
+        final Matrix4f identity = new Matrix4f();
+        treeTransformVisitor(this, identity, (node, newTransform) -> {
+            if (node.sceneObject != null) {
+                node.sceneObject.accept(sceneVisitor, newTransform);
+            }
+        });
+    }
+
     public void select(PropertyEditor editor) {
         editor.addProperty("SceneNode", modelInfo);
         sceneObject.select(editor);

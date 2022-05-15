@@ -44,8 +44,8 @@ public class App {
 		// new Input(window);
 		// new DrawLines(window);
 		// new SelectObject(window);
-		new DrawAScene(window);
-		// new UseLights(window);
+		// new DrawAScene(window);
+		new UseLights(window);
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);

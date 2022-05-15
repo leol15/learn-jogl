@@ -21,16 +21,19 @@ import org.lwjgl.glfw.*;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.extern.log4j.Log4j2;
 
 @Accessors(chain = true)
+@Log4j2
 public class CameraControl {
 
     private static final Vector3f DEFAULT_CAM_POSITION = new Vector3f(3, 4, 5);
     private static final Vector3f DEFAULT_CAM_TARGET = new Vector3f();
 
-    private final int viewProjectionUbo;
-    private final int UBO_SIZE = 2 * 4 * 4 * Float.BYTES;
-    private ByteBuffer uboBuffer = BufferUtils.createByteBuffer(UBO_SIZE);
+    // camera matrix is passed to shaders via UBO
+    private static int viewProjectionUbo = -1;
+    private static final int UBO_SIZE = 2 * CONST.SIZE_MAT4 + CONST.SIZE_VEC3;
+    private static ByteBuffer uboBuffer = BufferUtils.createByteBuffer(UBO_SIZE);
     private final Matrix4f view;
     private final Matrix4f projection;
 
@@ -51,7 +54,7 @@ public class CameraControl {
     // marker related
     private float markerScale = 15;
     private float drawMarkerFrame = 0;
-    private static final ShaderProgram lineShader = createLineShader();
+    private final ShaderProgram lineShader;
     private static final FloatBuffer modelBuffer = BufferUtils.createFloatBuffer(16);
     private static final Vector4f[] ringColor = {
             Func.toVec4(Color.RED),
@@ -79,8 +82,10 @@ public class CameraControl {
 
         gridVAO = createBaseGrid();
 
-        // camera matrix is passed to shaders via UBO
-        viewProjectionUbo = UBO.createUboBuffer(CONST.UBO_ViewAndProjection);
+        lineShader = createLineShader();
+
+        updateProjection();
+        updateView();
 
         windowManager.addMouseButtonCallback(Layer.SCENE, this::mouseButtonCallback);
         windowManager.addScrollCallback(Layer.SCENE, (GLFWScrollCallbackI) this::scrollCallback);
@@ -89,8 +94,14 @@ public class CameraControl {
         windowManager.addWindowSizeCallback(Layer.SCENE, this::windowSizeCallback);
         windowManager.addKeyCallback(Layer.SCENE, this::keyCallback);
 
-        updateProjection();
-        updateView();
+        if (viewProjectionUbo == -1) {
+            log.warn("Light UBO not initialized, it should be before creating shaders");
+            initUBO();
+        }
+    }
+
+    public static void initUBO() {
+        viewProjectionUbo = UBO.createUboBuffer(CONST.UBO_ViewAndProjection);
     }
 
     public void draw() {
@@ -294,7 +305,8 @@ public class CameraControl {
 
     private void updateViewAndProjectionUboData() {
         view.get(uboBuffer);
-        projection.get(UBO_SIZE / 2, uboBuffer);
+        projection.get(CONST.SIZE_MAT4, uboBuffer);
+        cameraPosition.get(2 * CONST.SIZE_MAT4, uboBuffer);
 
         glBindBuffer(GL_UNIFORM_BUFFER, viewProjectionUbo);
         glBufferData(GL_UNIFORM_BUFFER, uboBuffer, GL_STATIC_DRAW);

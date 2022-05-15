@@ -9,13 +9,13 @@ import java.awt.Color;
 
 import com.play.app.basics.*;
 import com.play.app.geometry.*;
-import com.play.app.graphics.ShaderProgram;
+import com.play.app.graphics.*;
 import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
+import com.play.app.scene.sceneobject.*;
 import com.play.app.ui.*;
 import com.play.app.utils.*;
 import com.play.app.utils.WindowManager.Layer;
-import com.play.app.graphics.*;
 
 import org.joml.*;
 import org.joml.Math;

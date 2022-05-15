@@ -1,10 +1,11 @@
-package com.play.app.scene;
+package com.play.app.scene.sceneobject;
 
 import java.util.*;
 
 import com.play.app.basics.*;
 import com.play.app.geometry.Ray;
 import com.play.app.mesh.Mesh;
+import com.play.app.scene.*;
 import com.play.app.ui.PropertyEditor;
 import com.play.app.utils.CONST;
 
@@ -95,6 +96,11 @@ public class InstancingObject extends SOBase implements SceneObject {
     public void deselect() {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public void accept(SceneVisitor visitor, Matrix4f worldTransform) {
+        visitor.visitInstancingObject(this, worldTransform);
     }
 
 }

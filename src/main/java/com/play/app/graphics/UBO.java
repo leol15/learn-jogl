@@ -6,21 +6,25 @@ import java.util.*;
 
 import lombok.extern.log4j.Log4j2;
 
+/**
+ * Singleton, since UBOs are singleton for shaders
+ */
 @Log4j2
 public class UBO {
 
-    private static UBO instance = new UBO();
-    private static Map<String, Integer> ubos = new HashMap<>();
+    private static Map<String, Integer> ubBindingMap = new HashMap<>();
 
     private static Map<String, Integer> uboSizeCheck = new HashMap<>();
 
+    // register UBOs before shaders are created
     public static int createUboBuffer(String uniformBlockName) {
-        if (ubos.containsKey(uniformBlockName)) {
+        log.info("creating UBO: {}", uniformBlockName);
+        if (ubBindingMap.containsKey(uniformBlockName)) {
             log.warn("UBO exists for {}", uniformBlockName);
         }
 
-        int nextBlockBindingIdx = ubos.size();
-        ubos.put(uniformBlockName, nextBlockBindingIdx);
+        int nextBlockBindingIdx = ubBindingMap.size();
+        ubBindingMap.put(uniformBlockName, nextBlockBindingIdx);
 
         int bufferIdx = glGenBuffers();
         glBindBufferBase(GL_UNIFORM_BUFFER, nextBlockBindingIdx, bufferIdx);
@@ -35,17 +39,17 @@ public class UBO {
 
     public static void configureShader(ShaderProgram sp) {
         final int shaderId = sp.getId();
-        for (final String name : ubos.keySet()) {
+        for (final String name : ubBindingMap.keySet()) {
             final int uboIdx = glGetUniformBlockIndex(shaderId, name);
             if (uboIdx != -1) {
-                glUniformBlockBinding(shaderId, uboIdx, ubos.get(name));
+                glUniformBlockBinding(shaderId, uboIdx, ubBindingMap.get(name));
 
-                final int blockSize = glGetActiveUniformBlocki(shaderId, 0, GL_UNIFORM_BLOCK_DATA_SIZE);
+                final int blockSize = glGetActiveUniformBlocki(shaderId, uboIdx, GL_UNIFORM_BLOCK_DATA_SIZE);
                 if (!uboSizeCheck.containsKey(name)) {
                     uboSizeCheck.put(name, blockSize);
                 }
                 if (uboSizeCheck.get(name) != blockSize) {
-                    log.debug("block size differ for UBO {} [{} vs {}]", name, uboSizeCheck.get(name), blockSize);
+                    log.warn("block size differ for UBO {} [{} vs {}]", name, uboSizeCheck.get(name), blockSize);
                 }
             }
         }

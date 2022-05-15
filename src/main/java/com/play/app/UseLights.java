@@ -1,7 +1,10 @@
 package com.play.app;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL45.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL43.GL_MAX_UNIFORM_LOCATIONS;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL43.GL_MAX_UNIFORM_LOCATIONS;
 
 import java.util.*;
 
@@ -9,12 +12,13 @@ import com.play.app.geometry.Cube;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
-import com.play.app.scene.lights.*;
+import com.play.app.scene.lights.LightUBO;
+import com.play.app.scene.sceneobject.*;
 import com.play.app.utils.*;
 
 import org.joml.Matrix4f;
 
-import lombok.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -26,6 +30,10 @@ public class UseLights {
         log.debug("max num uniforms {}", max_uniform);
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+        // init UBOs before shaders
+        LightUBO.init();
+        CameraControl.initUBO();
 
         final WindowManager windowManager = new WindowManager(window);
         final CameraControl cameraControl = new CameraControl(windowManager);
@@ -61,6 +69,8 @@ public class UseLights {
         final LightSceneObject lightSO = new LightSceneObject(lineShader);
         final SceneNode lightNode = rootSceneNode.createChild().setSceneObject(lightSO);
         lightNode.modelInfo.translation.set(0, 2, 0);
+
+        LightUBO.addAllLights(rootSceneNode);
 
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
         while (!glfwWindowShouldClose(window)) {
