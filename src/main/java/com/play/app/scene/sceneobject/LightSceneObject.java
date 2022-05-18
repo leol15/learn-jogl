@@ -5,6 +5,7 @@ import com.play.app.graphics.ShaderProgram;
 import com.play.app.mesh.Mesh;
 import com.play.app.scene.SceneVisitor;
 import com.play.app.scene.lights.*;
+import com.play.app.ui.PropertyEditor;
 
 import org.joml.Matrix4f;
 
@@ -26,6 +27,13 @@ public class LightSceneObject extends SimpleSceneObject {
 
     public Light getLight() {
         return light;
+    }
+
+    @Override
+    public void select(PropertyEditor editor) {
+        super.select(editor);
+        // add light specific things
+        light.select(editor);
     }
 
     @Override

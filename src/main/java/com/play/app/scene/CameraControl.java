@@ -3,7 +3,6 @@ package com.play.app.scene;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL45.*;
 
 import java.awt.Color;
 import java.nio.*;
@@ -11,6 +10,7 @@ import java.nio.*;
 import com.play.app.geometry.Ray;
 import com.play.app.graphics.*;
 import com.play.app.graphics.UnitGeometries.VAOHelper;
+import com.play.app.scene.lights.LightUBO;
 import com.play.app.utils.*;
 import com.play.app.utils.WindowManager.Layer;
 
@@ -30,10 +30,6 @@ public class CameraControl {
     private static final Vector3f DEFAULT_CAM_POSITION = new Vector3f(3, 4, 5);
     private static final Vector3f DEFAULT_CAM_TARGET = new Vector3f();
 
-    // camera matrix is passed to shaders via UBO
-    private static int viewProjectionUbo = -1;
-    private static final int UBO_SIZE = 2 * CONST.SIZE_MAT4 + CONST.SIZE_VEC3;
-    private static ByteBuffer uboBuffer = BufferUtils.createByteBuffer(UBO_SIZE);
     private final Matrix4f view;
     private final Matrix4f projection;
 
@@ -94,14 +90,6 @@ public class CameraControl {
         windowManager.addWindowSizeCallback(Layer.SCENE, this::windowSizeCallback);
         windowManager.addKeyCallback(Layer.SCENE, this::keyCallback);
 
-        if (viewProjectionUbo == -1) {
-            log.warn("Light UBO not initialized, it should be before creating shaders");
-            initUBO();
-        }
-    }
-
-    public static void initUBO() {
-        viewProjectionUbo = UBO.createUboBuffer(CONST.UBO_ViewAndProjection);
     }
 
     public void draw() {
@@ -304,13 +292,7 @@ public class CameraControl {
     }
 
     private void updateViewAndProjectionUboData() {
-        view.get(uboBuffer);
-        projection.get(CONST.SIZE_MAT4, uboBuffer);
-        cameraPosition.get(2 * CONST.SIZE_MAT4, uboBuffer);
-
-        glBindBuffer(GL_UNIFORM_BUFFER, viewProjectionUbo);
-        glBufferData(GL_UNIFORM_BUFFER, uboBuffer, GL_STATIC_DRAW);
-        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+        CameraUBO.getInstance().setData(view, projection, cameraPosition);
     }
 
     ///////////////////

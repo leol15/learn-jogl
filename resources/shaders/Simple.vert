@@ -6,8 +6,13 @@ layout(location = 1) in vec3 color;
 out vec3 vertexColor;
 
 uniform mat4 model = mat4(1);
-uniform mat4 view = mat4(1);
-uniform mat4 projection = mat4(1);
+
+layout (std140) uniform ViewAndProjection
+{
+    mat4 view;
+    mat4 projection;
+    vec3 eyePos;
+};
 
 void main() {
     vertexColor = color;

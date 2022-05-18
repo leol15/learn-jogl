@@ -2,7 +2,7 @@ package com.play.app.ui;
 
 import java.util.function.Consumer;
 
-import com.play.app.utils.WindowManager;
+import com.play.app.utils.*;
 
 import org.joml.Vector3f;
 
@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Vector3fEditor extends UIBase {
     private static final float INPUT_WIDTH = 70f;
-    public static final String NUMBER_FORMAT = "%.1f";
+    public String NUMBER_FORMAT = "%.1f";
 
     private Vector3f vector3f;
     @Setter
@@ -24,9 +24,9 @@ public class Vector3fEditor extends UIBase {
 
     public Vector3fEditor(WindowManager windowManager, float x, float y) {
         super(windowManager);
-        xInput = new TextInput(windowManager, x, y).setScrollable(true).setScrollDelta(0.1f);
-        yInput = new TextInput(windowManager, x, y).setScrollable(true).setScrollDelta(0.1f);
-        zInput = new TextInput(windowManager, x, y).setScrollable(true).setScrollDelta(0.1f);
+        xInput = new TextInput(windowManager, 0, 0).setScrollable(true).setScrollDelta(0.1f);
+        yInput = new TextInput(windowManager, 0, 0).setScrollable(true).setScrollDelta(0.1f);
+        zInput = new TextInput(windowManager, 0, 0).setScrollable(true).setScrollDelta(0.1f);
 
         setBounds(x, y, INPUT_WIDTH * 3, xInput.getHeight());
         setDefaultLabel();
@@ -41,6 +41,10 @@ public class Vector3fEditor extends UIBase {
         xInput.setScrollDelta(delta);
         yInput.setScrollDelta(delta);
         zInput.setScrollDelta(delta);
+        // update the display format
+        final String deltaStr = String.valueOf(delta);
+        final int dotIdx = deltaStr.indexOf(".");
+        NUMBER_FORMAT = "%." + (dotIdx == -1 ? 0 : deltaStr.length() - dotIdx - 1) + "f";
         return this;
     }
 

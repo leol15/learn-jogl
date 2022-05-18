@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import com.play.app.graphics.Text;
-import com.play.app.utils.WindowManager;
+import com.play.app.utils.*;
 import com.play.app.utils.WindowManager.Layer;
 
 import org.joml.Vector4f;
@@ -25,10 +25,9 @@ public class TextInput extends UIBase {
 
     private final Text textDisplay;
     private final List<Character> textContent;
-    @Setter
     private boolean scrollable = false;
-    @Setter
     private float scrollDelta = 0.1f;
+    private String NUMBER_FORMAT = getNumberFormatFromDelta(scrollDelta);
     private boolean focused;
 
     @Setter
@@ -156,6 +155,17 @@ public class TextInput extends UIBase {
         }
     }
 
+    public TextInput setScrollable(boolean scrollable) {
+        this.scrollable = scrollable;
+        return this;
+    }
+
+    public TextInput setScrollDelta(float delta) {
+        scrollDelta = delta;
+        NUMBER_FORMAT = getNumberFormatFromDelta(delta);
+        return this;
+    }
+
     private void handleScroll(double dx, double dy) {
         // will scroll even if not focued
         if (!visible || !scrollable) {
@@ -169,7 +179,7 @@ public class TextInput extends UIBase {
         try {
             float v = Float.parseFloat(getAsString());
             v += dy * scrollDelta;
-            setText(String.format("%.1f", v));
+            setText(String.format(NUMBER_FORMAT, v));
         } catch (Exception e) {
 
         }
@@ -206,6 +216,12 @@ public class TextInput extends UIBase {
             // toggle
             setFocused(!focused);
         }
+    }
+
+    private static String getNumberFormatFromDelta(float delta) {
+        final String deltaStr = String.valueOf(delta);
+        final int dotIdx = deltaStr.indexOf(".");
+        return "%." + (dotIdx == -1 ? 0 : deltaStr.length() - dotIdx - 1) + "f";
     }
 
 }

@@ -12,12 +12,20 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class UBO {
 
-    private static Map<String, Integer> ubBindingMap = new HashMap<>();
+    private UBO() {}
 
-    private static Map<String, Integer> uboSizeCheck = new HashMap<>();
+    private static final UBO o = new UBO();
+
+    public static UBO instance() {
+        return o;
+    }
+
+    private Map<String, Integer> ubBindingMap = new HashMap<>();
+
+    private Map<String, Integer> uboSizeCheck = new HashMap<>();
 
     // register UBOs before shaders are created
-    public static int createUboBuffer(String uniformBlockName) {
+    public int createUboBuffer(String uniformBlockName) {
         log.info("creating UBO: {}", uniformBlockName);
         if (ubBindingMap.containsKey(uniformBlockName)) {
             log.warn("UBO exists for {}", uniformBlockName);
@@ -37,7 +45,7 @@ public class UBO {
         return bufferIdx;
     }
 
-    public static void configureShader(ShaderProgram sp) {
+    public void configureShader(ShaderProgram sp) {
         final int shaderId = sp.getId();
         for (final String name : ubBindingMap.keySet()) {
             final int uboIdx = glGetUniformBlockIndex(shaderId, name);
@@ -51,6 +59,7 @@ public class UBO {
                 if (uboSizeCheck.get(name) != blockSize) {
                     log.warn("block size differ for UBO {} [{} vs {}]", name, uboSizeCheck.get(name), blockSize);
                 }
+                log.debug("UBO size {} {}", name, uboSizeCheck.get(name));
             }
         }
     }

@@ -8,8 +8,10 @@ import org.joml.*;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
+import lombok.extern.log4j.Log4j2;
 
 @Accessors(chain = true)
+@Log4j2
 public class Vector4fEditor extends UIBase {
 
     @Setter
@@ -22,8 +24,6 @@ public class Vector4fEditor extends UIBase {
 
     public Vector4fEditor(WindowManager windowManager, float x, float y) {
         super(windowManager);
-        // wInput = new TextInput(windowManager, 0, 0);
-        //TODO Auto-generated constructor stub
         vector3fEditor = new Vector3fEditor(windowManager, x, y);
         wInput = new TextInput(windowManager, x, y).setScrollable(true).setScrollDelta(0.1f);
         setBounds(x, y, 400, 30);
@@ -45,7 +45,7 @@ public class Vector4fEditor extends UIBase {
         if (vector4f != null) {
             internalV3.set(vector4f.x, vector4f.y, vector4f.z);
             vector3fEditor.setVector3f(internalV3);
-            wInput.setText(String.format(Vector3fEditor.NUMBER_FORMAT, vector4f.w));
+            wInput.setText(String.format("%.1f", vector4f.w));
         } else {
             setDefaultLabel();
         }

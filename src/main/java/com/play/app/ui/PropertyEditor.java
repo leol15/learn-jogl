@@ -30,14 +30,15 @@ public class PropertyEditor extends UIBase {
 
     private int nextActiveV3Editor = 0;
     private final List<Text> vector3fEditorLabels = new ArrayList<>();
-    private final List<Vector3fEditor> vector3fEditors = new ArrayList<>();
+    private final List<VectorXfEditor> vector3fEditors = new ArrayList<>();
 
     public PropertyEditor(WindowManager windowManager) {
         super(windowManager);
         setBounds(0, 0, 400, 900);
         setBackgroundColor(new Vector4f(0.5f, 0.5f, 0.5f, 1));
-        spacialThingEditors.add(new SpacialThingEditor(windowManager, 0, 100));
-        spacialThingEditors.add(new SpacialThingEditor(windowManager, 0, 100));
+
+        spacialThingEditors.add(new SpacialThingEditor(windowManager, 0, -1000));
+        spacialThingEditors.add(new SpacialThingEditor(windowManager, 0, -1000));
         for (int i = 0; i < spacialThingEditors.size(); i++) {
             spacialThingEditors.get(i).setSize(400, 150);
         }
@@ -50,7 +51,7 @@ public class PropertyEditor extends UIBase {
             v4Editor.setSize(400 - LABEL_WIDTH, 50);
             vector4fEditors.add(v4Editor);
 
-            final Vector3fEditor v3Editor = new Vector3fEditor(windowManager, 0, 0);
+            final VectorXfEditor v3Editor = new VectorXfEditor(windowManager, 3, 0, 0);
             v3Editor.setSize(400 - LABEL_WIDTH, 50);
             vector3fEditorLabels.add(new Text(windowManager));
             vector3fEditors.add(v3Editor);
@@ -76,14 +77,19 @@ public class PropertyEditor extends UIBase {
     }
 
     public void addProperty(String name, final Vector3f ref) {
+        addProperty(name, ref, 0.1f);
+    }
+
+    public void addProperty(String name, final Vector3f ref, float scrollDelta) {
         if (nextActiveV3Editor >= vector3fEditors.size()) {
             log.warn("maximum number of vec3 editor active");
             return;
         }
-        final Vector3fEditor editor = vector3fEditors.get(nextActiveV3Editor);
+        final VectorXfEditor editor = vector3fEditors.get(nextActiveV3Editor);
         final Text label = vector3fEditorLabels.get(nextActiveV3Editor);
         editor.setVector3f(ref);
         editor.setPosition(LABEL_WIDTH, nextEditorY);
+        editor.setScrollDelta(scrollDelta);
         label.setText(name, 0, nextEditorY);
 
         nextEditorY += editor.getHeight() + PROPERTY_GAP;
@@ -93,6 +99,10 @@ public class PropertyEditor extends UIBase {
     }
 
     public void addProperty(String name, final Vector4f ref) {
+        addProperty(name, ref, 0.1f);
+    }
+
+    public void addProperty(String name, final Vector4f ref, final float scrollDelta) {
         if (nextActiveV4Editor >= vector4fEditors.size()) {
             log.warn("maximum number of vec4 editor active");
             return;
@@ -101,6 +111,7 @@ public class PropertyEditor extends UIBase {
         final Text label = vector4fEditorLabels.get(nextActiveV4Editor);
         editor.setVector4f(ref);
         editor.setPosition(LABEL_WIDTH, nextEditorY);
+        editor.setScrollDelta(scrollDelta);
         label.setText(name, 0, nextEditorY);
 
         nextEditorY += editor.getHeight() + PROPERTY_GAP;
@@ -112,6 +123,8 @@ public class PropertyEditor extends UIBase {
     public void clear() {
         for (int i = 0; i < spacialThingEditors.size(); i++) {
             spacialThingEditors.get(i).setSpacialThing(null);
+            // TODO, implement and use setVisible() 
+            spacialThingEditors.get(i).setPosition(0, -1000);
             spacialThingEditorLabels.get(i).setText("");
         }
         for (int i = 0; i < MAX_NUM_VECTORS; i++) {

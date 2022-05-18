@@ -8,15 +8,18 @@ import static org.lwjgl.opengl.GL43.GL_MAX_UNIFORM_LOCATIONS;
 
 import java.util.*;
 
-import com.play.app.geometry.Cube;
+import com.play.app.geometry.*;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
 import com.play.app.scene.lights.LightUBO;
 import com.play.app.scene.sceneobject.*;
+import com.play.app.ui.PropertyEditor;
 import com.play.app.utils.*;
+import com.play.app.utils.WindowManager.Layer;
 
-import org.joml.Matrix4f;
+import org.joml.*;
+import org.joml.Math;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -29,17 +32,17 @@ public class UseLights {
         int max_uniform = glGetInteger(GL_MAX_UNIFORM_LOCATIONS);
         log.debug("max num uniforms {}", max_uniform);
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // init UBOs before shaders
-        LightUBO.init();
-        CameraControl.initUBO();
+        LightUBO.instance();
+        CameraUBO.getInstance();
 
         final WindowManager windowManager = new WindowManager(window);
         final CameraControl cameraControl = new CameraControl(windowManager);
         final SceneNode rootSceneNode = new SceneNode();
         // test
-        final SceneManager sceneManager = new SceneManager(rootSceneNode, cameraControl);
+        final SceneManager sceneManager = new SceneManager(windowManager, rootSceneNode, cameraControl);
         // shaders needs to be with cameraControl
         final ShaderProgram simple3DShader = new ShaderProgram()
                 .withShader(CONST.SHADER_FOLDER + "simple3D.vert")
@@ -54,23 +57,22 @@ public class UseLights {
                 .withShader(CONST.SHADER_FOLDER + "BlinnPhong.vert")
                 .withShader(CONST.SHADER_FOLDER + "BlinnPhong.frag")
                 .linkProgram();
-        sceneManager.addShader(simple3DShader);
-        sceneManager.addShader(lineShader);
-        sceneManager.addShader(blinnPhong);
 
         // construct scene
 
         final SimpleSceneObject cubeObject = new SimpleSceneObject()
                 .setCollidable(new Cube())
                 .setMesh(Mesh.CUBE);
-        cubeObject.setShader(simple3DShader);
-        rootSceneNode.createChild().setSceneObject(cubeObject);
+
+        cubeObject.setShader(blinnPhong);
+        final SceneNode cubeSN = rootSceneNode.createChild().setSceneObject(cubeObject);
+        cubeSN.modelInfo.rotation.setAngleAxis(Math.toRadians(30f), 1, 1, 1);
+        cubeSN.modelInfo.translation.set(0, -2, 0);
+        cubeSN.modelInfo.scale.set(2, 2, 2);
 
         final LightSceneObject lightSO = new LightSceneObject(lineShader);
         final SceneNode lightNode = rootSceneNode.createChild().setSceneObject(lightSO);
         lightNode.modelInfo.translation.set(0, 2, 0);
-
-        LightUBO.addAllLights(rootSceneNode);
 
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
         while (!glfwWindowShouldClose(window)) {
@@ -85,24 +87,50 @@ public class UseLights {
 
     }
 
-    @RequiredArgsConstructor
     private class SceneManager {
         private final SceneNode root;
         private final CameraControl cam;
-        private final List<ShaderProgram> shaders = new ArrayList<>();
+
+        private final PropertyEditor editor;
         private final Matrix4f identity = new Matrix4f();
+
+        private SceneNode selectedNode;
+
+        public SceneManager(WindowManager windowManager, SceneNode root, CameraControl cam) {
+            this.root = root;
+            this.cam = cam;
+            // set up edit area
+            editor = new PropertyEditor(windowManager);
+            windowManager.addCharCallback(Layer.SCENE, (window2, character) -> {
+                if (character == 'a') {
+                    windowManager.stopPropagation();
+                    final Ray ray = cam.getRay(windowManager.lastMousePos[0], windowManager.lastMousePos[1]);
+
+                    // select
+                    SceneNode node = root.castRay(ray);
+                    editor.clear();
+                    if (selectedNode != null) {
+                        selectedNode.deselect(editor);
+                        editor.clear();
+                    }
+                    if (node != null) {
+                        selectedNode = node;
+                        selectedNode.select(editor);
+                    }
+                }
+            });
+        }
 
         public void render() {
             // prep
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            LightUBO.instance().addAllLights(root);
             // draw
             root.draw(identity);
+
             cam.draw();
+            editor.show();
         }
 
-        public SceneManager addShader(ShaderProgram sp) {
-            shaders.add(sp);
-            return this;
-        }
     }
 }

@@ -12,7 +12,9 @@ public class CONST {
     public static final String SHADER_DEFAULT_FOLDER = SHADER_FOLDER + "essential/";
 
     public static final int SIZE_MAT4 = 4 * 4 * Float.BYTES;
-    public static final int SIZE_VEC3 = 3 * Float.BYTES;
+    public static final int SIZE_VEC4 = 4 * Float.BYTES;
+    // vec3 is still 16 bytes in GLSL
+    public static final int SIZE_VEC3 = 4 * Float.BYTES;
 
     public static final int VERT_IN_POSITION = 0;
     public static final int VERT_IN_NORMAL = 1;

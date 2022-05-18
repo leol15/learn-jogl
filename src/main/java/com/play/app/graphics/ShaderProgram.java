@@ -76,7 +76,7 @@ public class ShaderProgram {
         }
 
         // setup UBOs
-        UBO.configureShader(this);
+        UBO.instance().configureShader(this);
         return this;
     }
 

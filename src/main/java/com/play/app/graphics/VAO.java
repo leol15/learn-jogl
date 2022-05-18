@@ -6,6 +6,9 @@ import java.nio.*;
 
 import com.play.app.utils.*;
 
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
 public class VAO {
 
     private int vao = 0;
@@ -112,7 +115,7 @@ public class VAO {
 
     public void draw() {
         if (drawFunction == null) {
-            Func.p("Drawing VAO without setting draw function");
+            log.warn("Drawing VAO without setting draw function");
             return;
         }
         bind();
