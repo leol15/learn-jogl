@@ -97,7 +97,7 @@ public class CameraControl {
         // grid
         if (drawGrid) {
             lineShader.uniformMatrix4fv(CONST.MODEL_MATRIX, gridModelMat);
-            lineShader.uniform4f(CONST.SHADER_COLOR, new Vector4f(0, 0.6f, 0.6f, 1));
+            lineShader.uniform4f(CONST.MATERIAL_COLOR, new Vector4f(0, 0.6f, 0.6f, 1));
             lineShader.useProgram();
             gridVAO.draw();
             lineShader.unuseProgram();
@@ -111,7 +111,7 @@ public class CameraControl {
         for (int i = 0; i < ringModelMatrix.length; i++) {
             ringModelMatrix[i].get(modelBuffer);
             lineShader.uniformMatrix4fv(CONST.MODEL_MATRIX, modelBuffer);
-            lineShader.uniform4f(CONST.SHADER_COLOR, ringColor[i]);
+            lineShader.uniform4f(CONST.MATERIAL_COLOR, ringColor[i]);
             lineShader.useProgram();
             UnitGeometries.drawCircle(40);
             lineShader.unuseProgram();

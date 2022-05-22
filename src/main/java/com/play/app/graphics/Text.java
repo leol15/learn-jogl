@@ -161,7 +161,7 @@ public class Text {
         int oldPolygonMode = glGetInteger(GL_POLYGON_MODE);
         glPolygonMode(GL_FRONT, GL_FILL);
 
-        textShader.uniform4f("color", textColor);
+        textShader.uniform4f(CONST.MATERIAL_COLOR, textColor);
 
         texture.bindTexture();
         textShader.useProgram();

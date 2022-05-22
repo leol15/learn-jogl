@@ -9,12 +9,12 @@ import com.play.app.utils.*;
 import org.joml.*;
 
 public class LightingMaterial {
-    public Vector4f color = new Vector4f(1, 1, 1, 1);
-    public Vector3f specularHardness = new Vector3f(100, 0, 0);
+    public final Vector4f color = new Vector4f(1, 1, 1, 1);
+    public final Vector3f specularHardness = new Vector3f(100, 0, 0);
 
     public void configureShader(ShaderProgram shader) {
-        shader.uniform4f(CONST.SHADER_COLOR, color);
-        shader.uniformf(CONST.SHADER_SPECULAR_HARDNESS, specularHardness.x);
+        shader.uniform4f(CONST.MATERIAL_COLOR, color);
+        shader.uniformf(CONST.MATERIAL_SPECULAR_HARDNESS, specularHardness.x);
     }
 
     public LightingMaterial setColor(final Color color) {

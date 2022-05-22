@@ -6,8 +6,6 @@ public class CONST {
     public static final String PROJECTION_MATRIX = "projection";
     public static final String MODEL_MATRIX = "model";
 
-    public static final String SHADER_COLOR = "color";
-
     public static final String SHADER_FOLDER = "resources/shaders/";
     public static final String SHADER_DEFAULT_FOLDER = SHADER_FOLDER + "essential/";
 
@@ -26,5 +24,8 @@ public class CONST {
 
     public static final String UBO_CAMERA_INFO = "CAMERA_INFO";
     public static final String UBO_LIGHTS = "ALL_THE_LIGHTS";
-    public static final String SHADER_SPECULAR_HARDNESS = "specularHardness";
+
+    // material info
+    public static final String MATERIAL_COLOR = "materialColor";
+    public static final String MATERIAL_SPECULAR_HARDNESS = "materialSpecularness";
 }

@@ -15,8 +15,8 @@ struct dir_light {
     vec3 intensity;
 };
 
-uniform float specularHardness = 5;
-uniform vec4 surfaceColor = vec4(1);
+uniform float materialSpecularness = 5;
+uniform vec4 materialColor = vec4(1);
 
 layout (std140) uniform ALL_THE_LIGHTS
 {
@@ -40,7 +40,7 @@ void capColor(inout vec4 color);
 
 void main() {
     // ambinent light
-    vec3 ambinent = surfaceColor.rgb * ambientColor;
+    vec3 ambinent = materialColor.rgb * ambientColor;
     // point light
     vec3 color = vec3(0);
     vec3 finalColor = vec3(0);
@@ -78,12 +78,12 @@ void calculatePointLight(in int index, out vec3 color) {
     // diffuse light
     vec3 diffuse = vec3(0);
     getDiffuse(L, PL[index].intensity, diffuse);
-    diffuse = diffuse * surfaceColor.rgb * distanceFallOff;
+    diffuse = diffuse * materialColor.rgb * distanceFallOff;
     // specular
     vec3 E = normalize(eyePos - surfacePos);
     vec3 specular = vec3(0);
     getSpecular(L, E, PL[index].intensity, specular);
-    specular = specular * surfaceColor.rgb * distanceFallOff;
+    specular = specular * materialColor.rgb * distanceFallOff;
     // combine
     color = diffuse + specular;
     capColor(color);
@@ -98,12 +98,12 @@ void calculateDirLight(in int index, out vec3 color) {
     // diffuse light
     vec3 diffuse = vec3(0);
     getDiffuse(L, DL[index].intensity, diffuse);
-    diffuse = diffuse * surfaceColor.rgb;
+    diffuse = diffuse * materialColor.rgb;
     // specular
     vec3 E = normalize(eyePos - surfacePos);
     vec3 specular = vec3(0);
     getSpecular(L, E, DL[index].intensity, specular);
-    specular = specular * surfaceColor.rgb;
+    specular = specular * materialColor.rgb;
     // combine
     color = diffuse + specular;
     capColor(color);
@@ -120,7 +120,7 @@ void getDiffuse(in vec3 L, in vec3 C, out vec3 diffuse) {
 void getSpecular(in vec3 L, in vec3 E, in vec3 C, out vec3 specular) {
     vec3 halfVec = normalize(normalize(L) + normalize(E));
     float NdotH = max(0, dot(surfaceNormal, halfVec));
-    specular = C * pow(NdotH, specularHardness);
+    specular = C * pow(NdotH, materialSpecularness);
 }
 
 void capColor(inout vec3 color) {

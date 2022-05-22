@@ -140,7 +140,7 @@ public class UIBase {
         glPolygonMode(GL_FRONT, GL_FILL);
 
         uiShader.uniformMatrix4fv("UItoGL", screenToGLSpace);
-        uiShader.uniform4f(CONST.SHADER_COLOR, backgroundColor);
+        uiShader.uniform4f(CONST.MATERIAL_COLOR, backgroundColor);
         // actual draw
         uiShader.useProgram();
         backgroundVAO.draw();
