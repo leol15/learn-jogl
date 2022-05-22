@@ -144,14 +144,14 @@ public class UnitGeometries {
         // 02
         for (int i : new int[] { 0, 1 }) {
             for (int j : new int[] { 0, 1 }) {
-                vHelper.positions.put(i).put(j).put(0);
-                vHelper.normals.put(0).put(0).put(1);
-                vHelper.uvs.put(i).put(j);
+                vHelper.addPosition(i, j, 0);
+                vHelper.addNormals(0, 0, 1);
+                vHelper.addUV(i, j);
             }
         }
 
-        vHelper.elements.put(0).put(1).put(3);
-        vHelper.elements.put(0).put(3).put(2);
+        vHelper.addElements(0, 1, 3);
+        vHelper.addElements(0, 3, 2);
 
         vHelper.done();
 

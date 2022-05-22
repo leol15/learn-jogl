@@ -52,14 +52,8 @@ public class SimpleSceneObject extends SOBase implements SceneObject {
     }
 
     @Override
-    public void select(PropertyEditor editor) {
-        editor.addProperty("color", color);
-    }
-
-    @Override
-    public void deselect() {
-        // TODO Auto-generated method stub
-
+    public void addToEditor(PropertyEditor editor) {
+        material.select(editor);
     }
 
     @Override

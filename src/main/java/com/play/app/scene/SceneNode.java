@@ -84,11 +84,11 @@ public class SceneNode {
 
     public void select(PropertyEditor editor) {
         editor.addProperty("SceneNode", modelInfo);
-        sceneObject.select(editor);
+        sceneObject.addToEditor(editor);
     }
 
     public void deselect(PropertyEditor editor) {
-        sceneObject.deselect();
+        // stub
     }
 
     ///////////////

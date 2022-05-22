@@ -81,21 +81,14 @@ public class InstancingObject extends SOBase implements SceneObject {
     }
 
     @Override
-    public void select(PropertyEditor editor) {
-        // TODO Auto-generated method stub
-        editor.addProperty("color", color);
+    public void addToEditor(PropertyEditor editor) {
+        material.select(editor);
         if (instances.size() > 0) {
             for (SpacialThing s : instances) {
                 editor.addProperty("instance 0", s);
                 break;
             }
         }
-    }
-
-    @Override
-    public void deselect() {
-        // TODO Auto-generated method stub
-
     }
 
     @Override

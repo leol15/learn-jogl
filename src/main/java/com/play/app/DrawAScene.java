@@ -69,7 +69,7 @@ public class DrawAScene {
         // add rays on click
         InstancingObject clickLines = new InstancingObject()
                 .setMesh(Mesh.createCyclinderMesh(3));
-        clickLines.setColor(Func.toVec4(Color.YELLOW));
+        // clickLines.setColor(Func.toVec4(Color.YELLOW));
         clickLines.setShader(simple3DShader);
 
         SceneNode lineSceneNode = new SceneNode().setSceneObject(clickLines);

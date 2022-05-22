@@ -30,10 +30,10 @@ public class LightSceneObject extends SimpleSceneObject {
     }
 
     @Override
-    public void select(PropertyEditor editor) {
-        super.select(editor);
+    public void addToEditor(PropertyEditor editor) {
+        super.addToEditor(editor);
         // add light specific things
-        light.select(editor);
+        light.addToEditor(editor);
     }
 
     @Override

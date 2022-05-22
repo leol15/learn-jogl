@@ -138,4 +138,10 @@ public class ShaderProgram {
         unuseProgram();
     }
 
+    public void uniformf(String uniformName, float v) {
+        useProgram();
+        int uniformId = glGetUniformLocation(id, uniformName);
+        glUniform1f(uniformId, v);
+        unuseProgram();
+    }
 }

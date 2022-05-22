@@ -26,4 +26,5 @@ public class CONST {
 
     public static final String UBO_ViewAndProjection = "ViewAndProjection";
     public static final String UBO_LIGHTS = "ALL_THE_LIGHTS";
+    public static final String SHADER_SPECULAR_HARDNESS = "specularHardness";
 }

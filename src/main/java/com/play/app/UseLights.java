@@ -63,16 +63,24 @@ public class UseLights {
         final SimpleSceneObject cubeObject = new SimpleSceneObject()
                 .setCollidable(new Cube())
                 .setMesh(Mesh.CUBE);
-
         cubeObject.setShader(blinnPhong);
         final SceneNode cubeSN = rootSceneNode.createChild().setSceneObject(cubeObject);
         cubeSN.modelInfo.rotation.setAngleAxis(Math.toRadians(30f), 1, 1, 1);
         cubeSN.modelInfo.translation.set(0, -2, 0);
         cubeSN.modelInfo.scale.set(2, 2, 2);
 
+        final SimpleSceneObject bottomPlane = new SimpleSceneObject()
+                .setCollidable(new Plane())
+                .setMesh(Mesh.PLANE);
+        bottomPlane.setShader(blinnPhong);
+        final SceneNode bottomPlaneSN = rootSceneNode.createChild().setSceneObject(bottomPlane);
+        bottomPlaneSN.modelInfo.rotation.setAngleAxis(Math.toRadians(30f), 1, 1, 1);
+        bottomPlaneSN.modelInfo.rotation.setAngleAxis(Math.toRadians(-90), 1, 0, 0);
+        bottomPlaneSN.modelInfo.scale.set(15, 15, 1);
+
         final LightSceneObject lightSO = new LightSceneObject(lineShader);
         final SceneNode lightNode = rootSceneNode.createChild().setSceneObject(lightSO);
-        lightNode.modelInfo.translation.set(0, 2, 0);
+        lightNode.modelInfo.translation.set(2, 2, -2);
 
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
         while (!glfwWindowShouldClose(window)) {
