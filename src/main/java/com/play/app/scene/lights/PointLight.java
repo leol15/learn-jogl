@@ -1,6 +1,6 @@
 package com.play.app.scene.lights;
 
-import com.play.app.geometry.Ray;
+import com.play.app.mesh.Mesh;
 import com.play.app.ui.PropertyEditor;
 
 import org.joml.*;
@@ -12,13 +12,18 @@ public class PointLight implements Light {
 
     @Override
     public void addToUBO(Matrix4f worldTransform) {
-        LightUBO.instance().acceptPointLight(this, worldTransform);
+        LightUBO.getInstance().acceptPointLight(this, worldTransform);
     }
 
     @Override
     public void addToEditor(PropertyEditor editor) {
         editor.addProperty("PL color", color);
-        editor.addProperty("attenuation", attenuation, 0.01f);
+        editor.addProperty("Falloff", attenuation, 0.01f);
+    }
+
+    @Override
+    public Mesh getDebugMesh() {
+        return Mesh.createSphereMesh(10);
     }
 
 }

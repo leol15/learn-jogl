@@ -12,11 +12,12 @@ in VS_OUT {
 
 out vec4 fs_color;
 
-layout (std140) uniform ViewAndProjection
+layout (std140) uniform CAMERA_INFO
 {
     mat4 view;
     mat4 projection;
     vec3 eyePos;
+    vec3 ambientColor;
 };
 
 const float MAGNITUDE = 0.1;

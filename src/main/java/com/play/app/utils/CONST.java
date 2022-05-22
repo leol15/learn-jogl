@@ -24,7 +24,7 @@ public class CONST {
     // [location in shader, size of vertex attribute (in number of floats)]
     public static final int[][] VERT_IN_ATTRS = { { 0, 3 }, { 1, 3 }, { 2, 2 } };
 
-    public static final String UBO_ViewAndProjection = "ViewAndProjection";
+    public static final String UBO_CAMERA_INFO = "CAMERA_INFO";
     public static final String UBO_LIGHTS = "ALL_THE_LIGHTS";
     public static final String SHADER_SPECULAR_HARDNESS = "specularHardness";
 }

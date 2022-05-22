@@ -7,11 +7,12 @@ layout(location = 2) in vec2 uv;
 uniform mat4 model = mat4(1);
 
 // camera
-layout (std140) uniform ViewAndProjection
+layout (std140) uniform CAMERA_INFO
 {
     mat4 view;
     mat4 projection;
     vec3 eyePos;
+    vec3 ambientColor;
 };
 
 out vec3 surfacePos;

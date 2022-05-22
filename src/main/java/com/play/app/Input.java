@@ -23,7 +23,7 @@ public class Input {
 
     public Input(long window) {
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glPolygonMode(GL_FRONT, GL_LINE);
 
         final WindowManager windowManager = new WindowManager(window);
         final CameraControl cam = new CameraControl(windowManager);

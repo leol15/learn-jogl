@@ -159,7 +159,7 @@ public class Text {
 
     public void draw() {
         int oldPolygonMode = glGetInteger(GL_POLYGON_MODE);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glPolygonMode(GL_FRONT, GL_FILL);
 
         textShader.uniform4f("color", textColor);
 
@@ -174,7 +174,7 @@ public class Text {
         textShader.unuseProgram();
         texture.unbindTexture();
 
-        glPolygonMode(GL_FRONT_AND_BACK, oldPolygonMode);
+        glPolygonMode(GL_FRONT, oldPolygonMode);
     }
 
     // coords in screen space

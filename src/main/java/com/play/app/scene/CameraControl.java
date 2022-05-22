@@ -33,6 +33,7 @@ public class CameraControl {
     private final Matrix4f view;
     private final Matrix4f projection;
 
+    private final Vector3f ambientColor = new Vector3f(0.2f, 0.2f, 0.2f);
     private final Vector3f cameraPosition = new Vector3f(DEFAULT_CAM_POSITION);
     private final Vector3f cameraTarget = new Vector3f(DEFAULT_CAM_TARGET);
     private final Vector3f cameraUp = new Vector3f(0, 1, 0);
@@ -281,18 +282,18 @@ public class CameraControl {
     private void updateView() {
         view.setLookAt(cameraPosition, cameraTarget, cameraUp);
         updateMarker();
-        updateViewAndProjectionUboData();
+        updateCameraUboData();
     }
 
     private void updateProjection() {
         projection.setPerspective(Math.toRadians(fov),
                 windowManager.windowSize[0] / (float) windowManager.windowSize[1],
                 0.1f, 100f);
-        updateViewAndProjectionUboData();
+        updateCameraUboData();
     }
 
-    private void updateViewAndProjectionUboData() {
-        CameraUBO.getInstance().setData(view, projection, cameraPosition);
+    private void updateCameraUboData() {
+        CameraUBO.getInstance().setData(view, projection, cameraPosition, ambientColor);
     }
 
     ///////////////////

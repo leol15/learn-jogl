@@ -1,7 +1,6 @@
 package com.play.app.scene.sceneobject;
 
 import com.play.app.geometry.Sphere;
-import com.play.app.graphics.ShaderProgram;
 import com.play.app.mesh.Mesh;
 import com.play.app.scene.SceneVisitor;
 import com.play.app.scene.lights.*;
@@ -9,20 +8,16 @@ import com.play.app.ui.PropertyEditor;
 
 import org.joml.Matrix4f;
 
-import lombok.Getter;
-
 public class LightSceneObject extends SimpleSceneObject {
 
     private Light light;
 
-    public LightSceneObject(ShaderProgram lineShader) {
+    public LightSceneObject(Light light) {
         super();
-        setMesh(Mesh.CIRCLE);
         setCollidable(new Sphere());
-        setShader(lineShader);
 
-        // debug
-        light = new PointLight();
+        this.light = light;
+        setMesh(light.getDebugMesh());
     }
 
     public Light getLight() {

@@ -3,16 +3,12 @@ package com.play.app;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL43.GL_MAX_UNIFORM_LOCATIONS;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL43.GL_MAX_UNIFORM_LOCATIONS;
-
-import java.util.*;
 
 import com.play.app.geometry.*;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
-import com.play.app.scene.lights.LightUBO;
+import com.play.app.scene.lights.*;
 import com.play.app.scene.sceneobject.*;
 import com.play.app.ui.PropertyEditor;
 import com.play.app.utils.*;
@@ -21,7 +17,6 @@ import com.play.app.utils.WindowManager.Layer;
 import org.joml.*;
 import org.joml.Math;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
@@ -32,10 +27,10 @@ public class UseLights {
         int max_uniform = glGetInteger(GL_MAX_UNIFORM_LOCATIONS);
         log.debug("max num uniforms {}", max_uniform);
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glPolygonMode(GL_FRONT, GL_FILL);
 
         // init UBOs before shaders
-        LightUBO.instance();
+        LightUBO.getInstance();
         CameraUBO.getInstance();
 
         final WindowManager windowManager = new WindowManager(window);
@@ -74,13 +69,26 @@ public class UseLights {
                 .setMesh(Mesh.PLANE);
         bottomPlane.setShader(blinnPhong);
         final SceneNode bottomPlaneSN = rootSceneNode.createChild().setSceneObject(bottomPlane);
-        bottomPlaneSN.modelInfo.rotation.setAngleAxis(Math.toRadians(30f), 1, 1, 1);
         bottomPlaneSN.modelInfo.rotation.setAngleAxis(Math.toRadians(-90), 1, 0, 0);
         bottomPlaneSN.modelInfo.scale.set(15, 15, 1);
 
-        final LightSceneObject lightSO = new LightSceneObject(lineShader);
-        final SceneNode lightNode = rootSceneNode.createChild().setSceneObject(lightSO);
+        final PointLight pointL = new PointLight();
+        pointL.color.set(0, 1, 0, 1);
+        final LightSceneObject lightSO1 = new LightSceneObject(pointL);
+        lightSO1.setShader(simple3DShader);
+        final SceneNode lightNode = rootSceneNode.createChild().setSceneObject(lightSO1);
         lightNode.modelInfo.translation.set(2, 2, -2);
+        lightNode.modelInfo.scale.set(0.5, 0.5, 0.5);
+
+        // directional light
+        final DirectionalLight dirL = new DirectionalLight();
+        dirL.color.set(1, 0, 0, 1);
+        final LightSceneObject lightSO2 = new LightSceneObject(dirL);
+        lightSO2.setShader(simple3DShader);
+        final SceneNode dirLightNode = rootSceneNode.createChild().setSceneObject(lightSO2);
+        dirLightNode.modelInfo.translation.set(2, 5, -2);
+        dirLightNode.modelInfo.scale.set(0.5, 1, 0.5);
+        dirLightNode.modelInfo.rotation.setAngleAxis(Math.toRadians(180f), 1, 0, 0);
 
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
         while (!glfwWindowShouldClose(window)) {
@@ -132,7 +140,7 @@ public class UseLights {
         public void render() {
             // prep
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            LightUBO.instance().addAllLights(root);
+            LightUBO.getInstance().addAllLights(root);
             // draw
             root.draw(identity);
 

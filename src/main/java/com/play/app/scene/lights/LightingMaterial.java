@@ -10,7 +10,7 @@ import org.joml.*;
 
 public class LightingMaterial {
     public Vector4f color = new Vector4f(1, 1, 1, 1);
-    public Vector3f specularHardness = new Vector3f(15, 0, 0);
+    public Vector3f specularHardness = new Vector3f(100, 0, 0);
 
     public void configureShader(ShaderProgram shader) {
         shader.uniform4f(CONST.SHADER_COLOR, color);
@@ -28,7 +28,7 @@ public class LightingMaterial {
     }
 
     public void select(PropertyEditor editor) {
-        editor.addProperty("Mat Color", color);
-        editor.addProperty("specular hardness", specularHardness);
+        editor.addProperty("Color", color);
+        editor.addProperty("Shiness", specularHardness);
     }
 }

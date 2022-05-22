@@ -8,11 +8,12 @@ out vec4 vertexColor;
 uniform mat4 model = mat4(1);
 uniform vec4 color = vec4(1, 1, 0, 1);
 
-layout (std140) uniform ViewAndProjection
+layout (std140) uniform CAMERA_INFO
 {
     mat4 view;
     mat4 projection;
     vec3 eyePos;
+    vec3 ambientColor;
 };
 
 

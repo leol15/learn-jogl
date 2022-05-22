@@ -10,37 +10,59 @@ struct point_light {
     vec3 intensity;
     vec3 attenuation;
 };
+struct dir_light {
+    vec3 direction;
+    vec3 intensity;
+};
+
 uniform float specularHardness = 5;
 uniform vec4 surfaceColor = vec4(1);
 
 layout (std140) uniform ALL_THE_LIGHTS
 {
     point_light PL[1];
+    dir_light DL[1];
 };
 
-layout (std140) uniform ViewAndProjection
+layout (std140) uniform CAMERA_INFO
 {
     mat4 view;
     mat4 projection;
     vec3 eyePos;
+    vec3 ambientColor;
 };
 
 
 void calculatePointLight(in int index, out vec3 color);
+void calculateDirLight(in int index, out vec3 color);
+void capColor(inout vec3 color);
+void capColor(inout vec4 color);
+
+void main() {
+    // ambinent light
+    vec3 ambinent = surfaceColor.rgb * ambientColor;
+    // point light
+    vec3 color = vec3(0);
+    vec3 finalColor = vec3(0);
+    calculatePointLight(0, color);
+    finalColor = finalColor + color;
+    // directional light
+    calculateDirLight(0, color);
+    finalColor = finalColor + color;
+    // debug
+    // finalColor = color;
+
+    fragColor = vec4(finalColor + ambinent, 1);
+    capColor(fragColor);
+}
+
+
+// helpers
+
 // L: normalized direction vector to Light
 // C: color vector
 void getDiffuse(in vec3 L, in vec3 C, out vec3 diffuse);
 void getSpecular(in vec3 L, in vec3 E, in vec3 C, out vec3 specular);
-
-void main() {
-    // fragColor = vec4(1, 1, 1, 1.0);
-    vec3 pl1 = vec3(0);
-    calculatePointLight(0, pl1);
-    fragColor = vec4(pl1, 1);
-    // debug
-    // fragColor = vec4(surfaceNormal.xyz, 1);
-}
-
 
 void calculatePointLight(in int index, out vec3 color) {
     vec3 L = PL[index].position - surfacePos;
@@ -53,8 +75,6 @@ void calculatePointLight(in int index, out vec3 color) {
     // distance fall off
     float distanceFallOff = 1 / dot(PL[index].attenuation, vec3(pow(lightDistance, 2), lightDistance, 1));
 
-    // TODO ambinent light
-    vec3 ambinent = surfaceColor.rgb * 0.1;
     // diffuse light
     vec3 diffuse = vec3(0);
     getDiffuse(L, PL[index].intensity, diffuse);
@@ -64,11 +84,31 @@ void calculatePointLight(in int index, out vec3 color) {
     vec3 specular = vec3(0);
     getSpecular(L, E, PL[index].intensity, specular);
     specular = specular * surfaceColor.rgb * distanceFallOff;
-    diffuse = vec3(0, 0, 0);
     // combine
-    // color = ambinent + diffuse + specular;
-    color = specular;
+    color = diffuse + specular;
+    capColor(color);
 }
+
+
+void calculateDirLight(in int index, out vec3 color) {
+    // is facing light?
+    vec3 L = -DL[index].direction;
+    if (dot(L, surfaceNormal) < 0) { return; }
+
+    // diffuse light
+    vec3 diffuse = vec3(0);
+    getDiffuse(L, DL[index].intensity, diffuse);
+    diffuse = diffuse * surfaceColor.rgb;
+    // specular
+    vec3 E = normalize(eyePos - surfacePos);
+    vec3 specular = vec3(0);
+    getSpecular(L, E, DL[index].intensity, specular);
+    specular = specular * surfaceColor.rgb;
+    // combine
+    color = diffuse + specular;
+    capColor(color);
+}
+
 
 // L: normalized direction vector to Light
 // C: light color
@@ -81,4 +121,11 @@ void getSpecular(in vec3 L, in vec3 E, in vec3 C, out vec3 specular) {
     vec3 halfVec = normalize(normalize(L) + normalize(E));
     float NdotH = max(0, dot(surfaceNormal, halfVec));
     specular = C * pow(NdotH, specularHardness);
+}
+
+void capColor(inout vec3 color) {
+    clamp(color, vec3(0, 0, 0), vec3(1, 1, 1));
+}
+void capColor(inout vec4 color) {
+    clamp(color, vec4(0, 0, 0, 0), vec4(1, 1, 1, 1));
 }

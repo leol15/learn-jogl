@@ -14,11 +14,12 @@ uniform int debug = 1;
 uniform vec4 color = vec4(0.7, 0.7, 0.7, 1);
 uniform mat4 model = mat4(1);
 
-layout (std140) uniform ViewAndProjection
+layout (std140) uniform CAMERA_INFO
 {
     mat4 view;
     mat4 projection;
     vec3 eyePos;
+    vec3 ambientColor;
 };
 
 

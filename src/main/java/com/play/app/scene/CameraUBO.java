@@ -19,17 +19,18 @@ public class CameraUBO {
     private static CameraUBO instance = new CameraUBO();
     // camera info is passed to shaders via UBO
     private final int viewProjectionUbo;
-    private final int UBO_SIZE = 2 * CONST.SIZE_MAT4 + CONST.SIZE_VEC3;
+    private final int UBO_SIZE = 2 * CONST.SIZE_MAT4 + 2 * CONST.SIZE_VEC3;
     private final ByteBuffer uboBuffer = BufferUtils.createByteBuffer(UBO_SIZE);
 
     private CameraUBO() {
-        viewProjectionUbo = UBO.instance().createUboBuffer(CONST.UBO_ViewAndProjection);
+        viewProjectionUbo = UBO.instance().createUboBuffer(CONST.UBO_CAMERA_INFO);
     }
 
-    public void setData(Matrix4f view, Matrix4f projection, Vector3f cameraPosition) {
+    public void setData(Matrix4f view, Matrix4f projection, Vector3f cameraPosition, Vector3f ambientColor) {
         view.get(uboBuffer);
         projection.get(CONST.SIZE_MAT4, uboBuffer);
         cameraPosition.get(2 * CONST.SIZE_MAT4, uboBuffer);
+        ambientColor.get(2 * CONST.SIZE_MAT4 + CONST.SIZE_VEC3, uboBuffer);
 
         glBindBuffer(GL_UNIFORM_BUFFER, viewProjectionUbo);
         glBufferData(GL_UNIFORM_BUFFER, uboBuffer, GL_STATIC_DRAW);

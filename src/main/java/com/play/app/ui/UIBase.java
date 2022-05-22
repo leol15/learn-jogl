@@ -137,7 +137,7 @@ public class UIBase {
 
     protected void showBackground() {
         int oldPolygonMode = glGetInteger(GL_POLYGON_MODE);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glPolygonMode(GL_FRONT, GL_FILL);
 
         uiShader.uniformMatrix4fv("UItoGL", screenToGLSpace);
         uiShader.uniform4f(CONST.SHADER_COLOR, backgroundColor);
@@ -146,7 +146,7 @@ public class UIBase {
         backgroundVAO.draw();
         uiShader.unuseProgram();
 
-        glPolygonMode(GL_FRONT_AND_BACK, oldPolygonMode);
+        glPolygonMode(GL_FRONT, oldPolygonMode);
 
         // so subsequent draw can appear, TODO maybe just disable it
         glClear(GL_DEPTH_BUFFER_BIT);

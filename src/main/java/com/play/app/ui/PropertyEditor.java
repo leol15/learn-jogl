@@ -87,9 +87,9 @@ public class PropertyEditor extends UIBase {
         }
         final VectorXfEditor editor = vector3fEditors.get(nextActiveV3Editor);
         final Text label = vector3fEditorLabels.get(nextActiveV3Editor);
-        editor.setVector3f(ref);
         editor.setPosition(LABEL_WIDTH, nextEditorY);
         editor.setScrollDelta(scrollDelta);
+        editor.setVector3f(ref);
         label.setText(name, 0, nextEditorY);
 
         nextEditorY += editor.getHeight() + PROPERTY_GAP;
