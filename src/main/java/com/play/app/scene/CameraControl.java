@@ -10,7 +10,6 @@ import java.nio.*;
 import com.play.app.geometry.Ray;
 import com.play.app.graphics.*;
 import com.play.app.graphics.UnitGeometries.VAOHelper;
-import com.play.app.scene.lights.LightUBO;
 import com.play.app.utils.*;
 import com.play.app.utils.WindowManager.Layer;
 
@@ -117,6 +116,13 @@ public class CameraControl {
             lineShader.unuseProgram();
         }
 
+    }
+
+    public void focusOn(Vector3f target) {
+        cameraPosition.sub(cameraTarget);
+        cameraTarget.set(target);
+        cameraPosition.add(cameraTarget);
+        updateView();
     }
 
     ////////////////////////

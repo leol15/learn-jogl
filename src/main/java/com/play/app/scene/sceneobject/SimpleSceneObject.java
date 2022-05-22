@@ -19,7 +19,7 @@ public class SimpleSceneObject extends SOBase implements SceneObject {
 
     // simple, only 2 fields
     @Setter
-    private Mesh mesh;
+    protected Mesh mesh;
     @Setter
     private Collidable collidable;
 

@@ -1,5 +1,7 @@
 package com.play.app.scene.lights;
 
+import com.play.app.basics.Collidable;
+import com.play.app.geometry.Cube;
 import com.play.app.mesh.Mesh;
 import com.play.app.ui.PropertyEditor;
 
@@ -14,7 +16,7 @@ public class DirectionalLight implements Light {
 
     @Override
     public void addToUBO(Matrix4f worldTransform) {
-        LightUBO.getInstance().accepDirectionalLight(this, worldTransform);
+        LightUBO.getInstance().acceptDirectionalLight(this, worldTransform);
     }
 
     @Override
@@ -27,8 +29,19 @@ public class DirectionalLight implements Light {
         return Mesh.createConeMesh(10);
     }
 
+    @Override
+    public Collidable getDebugCollidable() {
+        return new Cube();
+    }
+
     public Vector4f getDirection() {
         return DIRECTION;
+    }
+
+    @Override
+    public Vector4f getColor() {
+        // TODO use cone
+        return color;
     }
 
 }

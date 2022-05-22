@@ -2,6 +2,7 @@
 
 in vec3 surfacePos;
 in vec3 surfaceNormal;
+vec3 N = normalize(surfaceNormal);
 
 out vec4 fragColor;
 
@@ -14,6 +15,13 @@ struct dir_light {
     vec3 direction;
     vec3 intensity;
 };
+struct spot_light {
+    vec3 position;
+    vec3 intensity;
+    vec3 attenuation;
+    vec3 direction;
+    vec3 angle;
+};
 
 uniform float materialSpecularness = 5;
 uniform vec4 materialColor = vec4(1);
@@ -22,6 +30,7 @@ layout (std140) uniform ALL_THE_LIGHTS
 {
     point_light PL[1];
     dir_light DL[1];
+    spot_light SL[1];
 };
 
 layout (std140) uniform CAMERA_INFO
@@ -35,6 +44,7 @@ layout (std140) uniform CAMERA_INFO
 
 void calculatePointLight(in int index, out vec3 color);
 void calculateDirLight(in int index, out vec3 color);
+void calculateSpotLight(in int index, out vec3 color);
 void capColor(inout vec3 color);
 void capColor(inout vec4 color);
 
@@ -48,6 +58,9 @@ void main() {
     finalColor = finalColor + color;
     // directional light
     calculateDirLight(0, color);
+    finalColor = finalColor + color;
+    // spot light
+    calculateSpotLight(0, color);
     finalColor = finalColor + color;
     // debug
     // finalColor = color;
@@ -70,7 +83,7 @@ void calculatePointLight(in int index, out vec3 color) {
     L = L / lightDistance;
 
     // is facing light?
-    if (dot(L, surfaceNormal) < 0) { return; }
+    if (dot(L, N) < 0) { return; }
 
     // distance fall off
     float distanceFallOff = 1 / dot(PL[index].attenuation, vec3(pow(lightDistance, 2), lightDistance, 1));
@@ -93,7 +106,7 @@ void calculatePointLight(in int index, out vec3 color) {
 void calculateDirLight(in int index, out vec3 color) {
     // is facing light?
     vec3 L = -DL[index].direction;
-    if (dot(L, surfaceNormal) < 0) { return; }
+    if (dot(L, N) < 0) { return; }
 
     // diffuse light
     vec3 diffuse = vec3(0);
@@ -110,16 +123,51 @@ void calculateDirLight(in int index, out vec3 color) {
 }
 
 
+void calculateSpotLight(in int index, out vec3 color) {
+    vec3 L = SL[index].position - surfacePos;
+    float lightDistance = length(L);
+    L = L / lightDistance;
+
+    // is facing light?
+    if (dot(L, N) < 0) { return; }
+    // is within angle?
+    if (dot(L, -normalize(SL[index].direction)) < cos(radians(SL[index].angle.x))) {
+        return;
+    }
+
+    // distance fall off
+    float distanceFallOff = 1 / dot(SL[index].attenuation, vec3(pow(lightDistance, 2), lightDistance, 1));
+
+    // diffuse light
+    vec3 diffuse = vec3(0);
+    getDiffuse(L, SL[index].intensity, diffuse);
+    diffuse = diffuse * materialColor.rgb * distanceFallOff;
+    // specular
+    vec3 E = normalize(eyePos - surfacePos);
+    vec3 specular = vec3(0);
+    getSpecular(L, E, SL[index].intensity, specular);
+    specular = specular * materialColor.rgb * distanceFallOff;
+    // combine
+    color = diffuse + specular;
+    capColor(color);
+}
+
+
 // L: normalized direction vector to Light
 // C: light color
 void getDiffuse(in vec3 L, in vec3 C, out vec3 diffuse) {
-    float NdotL = max(0, dot(surfaceNormal, L));
+    float NdotL = max(0, dot(N, L));
     diffuse = NdotL * C;
 }
 
 void getSpecular(in vec3 L, in vec3 E, in vec3 C, out vec3 specular) {
+    if (materialSpecularness == 0) {
+        // no specular
+        specular = vec3(0);
+        return;
+    }
     vec3 halfVec = normalize(normalize(L) + normalize(E));
-    float NdotH = max(0, dot(surfaceNormal, halfVec));
+    float NdotH = max(0, dot(N, halfVec));
     specular = C * pow(NdotH, materialSpecularness);
 }
 

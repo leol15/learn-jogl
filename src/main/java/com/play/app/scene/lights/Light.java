@@ -8,6 +8,11 @@ import org.joml.*;
 public interface Light extends Editable {
     public void addToUBO(Matrix4f worldTransform);
 
+    public Vector4f getColor();
+
     // what is shown
     public Mesh getDebugMesh();
+
+    public Collidable getDebugCollidable();
+
 }

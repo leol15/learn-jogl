@@ -1,12 +1,7 @@
 package com.play.app.scene.sceneobject;
 
-import java.awt.Color;
-
 import com.play.app.graphics.*;
 import com.play.app.scene.lights.LightingMaterial;
-import com.play.app.utils.*;
-
-import org.joml.Vector4f;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -24,7 +19,7 @@ public class SOBase {
     @Setter
     protected Texture texture;
 
-    protected void bindAll() {
+    final protected void bindAll() {
         if (texture != null) {
             texture.bindTexture();
         }
@@ -35,7 +30,7 @@ public class SOBase {
         }
     }
 
-    protected void unbindAll() {
+    final protected void unbindAll() {
         if (shader != null) {
             shader.unuseProgram();
         }

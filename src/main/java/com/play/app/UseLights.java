@@ -72,6 +72,13 @@ public class UseLights {
         bottomPlaneSN.modelInfo.rotation.setAngleAxis(Math.toRadians(-90), 1, 0, 0);
         bottomPlaneSN.modelInfo.scale.set(15, 15, 1);
 
+        final SimpleSceneObject sphere = new SimpleSceneObject()
+                .setCollidable(new Sphere())
+                .setMesh(Mesh.createSphereMesh(20));
+        sphere.setShader(blinnPhong);
+        final SceneNode sphereSN = rootSceneNode.createChild().setSceneObject(sphere);
+        sphereSN.modelInfo.translation.set(5, 3, 5);
+
         final PointLight pointL = new PointLight();
         pointL.color.set(0, 1, 0, 1);
         final LightSceneObject lightSO1 = new LightSceneObject(pointL);
@@ -90,6 +97,15 @@ public class UseLights {
         dirLightNode.modelInfo.scale.set(0.5, 1, 0.5);
         dirLightNode.modelInfo.rotation.setAngleAxis(Math.toRadians(180f), 1, 0, 0);
 
+        // spot light
+        final SpotLight spotL = new SpotLight();
+        spotL.color.set(0, 0, 1, 1);
+        final LightSceneObject lightSO3 = new LightSceneObject(spotL);
+        lightSO3.setShader(simple3DShader);
+        final SceneNode spotLigtNode = rootSceneNode.createChild().setSceneObject(lightSO3);
+        spotLigtNode.modelInfo.translation.set(3, 3, -3);
+        spotLigtNode.modelInfo.scale.set(0.5, 0.5, 0.5);
+
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
         while (!glfwWindowShouldClose(window)) {
             // loop
@@ -99,53 +115,6 @@ public class UseLights {
             sceneManager.render();
 
             glfwPollEvents();
-        }
-
-    }
-
-    private class SceneManager {
-        private final SceneNode root;
-        private final CameraControl cam;
-
-        private final PropertyEditor editor;
-        private final Matrix4f identity = new Matrix4f();
-
-        private SceneNode selectedNode;
-
-        public SceneManager(WindowManager windowManager, SceneNode root, CameraControl cam) {
-            this.root = root;
-            this.cam = cam;
-            // set up edit area
-            editor = new PropertyEditor(windowManager);
-            windowManager.addCharCallback(Layer.SCENE, (window2, character) -> {
-                if (character == 'a') {
-                    windowManager.stopPropagation();
-                    final Ray ray = cam.getRay(windowManager.lastMousePos[0], windowManager.lastMousePos[1]);
-
-                    // select
-                    SceneNode node = root.castRay(ray);
-                    editor.clear();
-                    if (selectedNode != null) {
-                        selectedNode.deselect(editor);
-                        editor.clear();
-                    }
-                    if (node != null) {
-                        selectedNode = node;
-                        selectedNode.select(editor);
-                    }
-                }
-            });
-        }
-
-        public void render() {
-            // prep
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            LightUBO.getInstance().addAllLights(root);
-            // draw
-            root.draw(identity);
-
-            cam.draw();
-            editor.show();
         }
 
     }

@@ -18,8 +18,8 @@ import lombok.extern.log4j.Log4j2;
 public class SceneNode {
 
     public final SpacialThing modelInfo = new SpacialThing();
-
     private Set<SceneNode> children = new HashSet<>();
+    private SceneNode parent = null;
 
     @Getter
     @Setter
@@ -27,17 +27,19 @@ public class SceneNode {
 
     public SceneNode addChild(final SceneNode child) {
         children.add(child);
+        child.parent = this;
         return this;
     }
 
     public SceneNode removeChild(final SceneNode child) {
         children.remove(child);
+        child.parent = null;
         return this;
     }
 
     public SceneNode createChild() {
         final SceneNode child = new SceneNode();
-        children.add(child);
+        addChild(child);
         return child;
     }
 
@@ -71,6 +73,18 @@ public class SceneNode {
         });
 
         return bestNode[0];
+    }
+
+    public Vector3f getPosition(final Vector3f position) {
+        SceneNode n = this;
+        final Matrix4f transform = new Matrix4f();
+        final Vector4f position4 = new Vector4f(0, 0, 0, 1);
+        while (n != null) {
+            n.modelInfo.getModelMatrix(transform);
+            position4.mul(transform);
+            n = n.parent;
+        }
+        return position.set(position4.x, position4.y, position4.z);
     }
 
     public void accept(SceneVisitor sceneVisitor) {

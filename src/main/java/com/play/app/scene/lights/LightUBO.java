@@ -4,7 +4,6 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
 
 import java.nio.ByteBuffer;
-import java.util.*;
 
 import com.play.app.graphics.UBO;
 import com.play.app.scene.SceneNode;
@@ -21,30 +20,36 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class LightUBO {
     private static final LightUBO instance = new LightUBO();
-    private static final int NUM_LIGHTS = 1;
 
     // layout
-    private final int BUFFER_SIZE = struct_point_light.SIZE + struct_dir_light.SIZE; // TODO
+    private static final int NUM_LIGHTS = 1;
+    private final int BUFFER_SIZE = struct_point_light.SIZE +
+            struct_dir_light.SIZE + struct_spot_light.SIZE;
+
     private final int lightBufferObject;
     private final ByteBuffer buffer;
-    private final LightSceneVisitor visitor;
-    // collected lights
-    private int numPointLights;
-    private final List<struct_point_light> pointLights = new ArrayList<>(NUM_LIGHTS);
 
-    private int numDirectionalLights;
-    private final List<struct_dir_light> directionalLights = new ArrayList<>(NUM_LIGHTS);
+    private final LightSceneVisitor visitor;
+
+    // collected lights
+    private int numPointLight = 0;
+    private final struct_point_light[] pointLights = new struct_point_light[NUM_LIGHTS];
+
+    private int numDirectionalLight = 0;
+    private final struct_dir_light[] directionalLights = new struct_dir_light[NUM_LIGHTS];
+
+    private int numSpotLight = 0;
+    private final struct_spot_light[] spotLights = new struct_spot_light[NUM_LIGHTS];
 
     private LightUBO() {
         lightBufferObject = UBO.instance().createUboBuffer(CONST.UBO_LIGHTS);
         visitor = new LightSceneVisitor();
         buffer = BufferUtils.createByteBuffer(BUFFER_SIZE);
         for (int i = 0; i < NUM_LIGHTS; i++) {
-            pointLights.add(new struct_point_light());
-            directionalLights.add(new struct_dir_light());
+            pointLights[i] = new struct_point_light();
+            directionalLights[i] = new struct_dir_light();
+            spotLights[i] = new struct_spot_light();
         }
-        numPointLights = 0;
-        numDirectionalLights = 0;
     }
 
     public static LightUBO getInstance() {
@@ -52,50 +57,64 @@ public class LightUBO {
     }
 
     public void addAllLights(SceneNode root) {
+        // collect lights
         root.accept(visitor);
+
         // add collected lights
-        for (int i = 0; i < pointLights.size(); i++) {
-            final struct_point_light l = pointLights.get(i);
+        int baseOffset = 0;
+        for (int i = 0; i < pointLights.length; i++) {
             final int bufOffset = i * struct_point_light.SIZE;
-            // log.debug("adding point light to buffer {}, {}", i, l.intensity);
-            l.position.get(bufOffset, buffer);
-            l.intensity.get(bufOffset + CONST.SIZE_VEC3 * 1, buffer);
-            l.attenuation.get(bufOffset + CONST.SIZE_VEC3 * 2, buffer);
+            pointLights[i].get(bufOffset, buffer);
         }
-        for (int i = 0; i < directionalLights.size(); i++) {
-            final struct_dir_light l = directionalLights.get(i);
-            final int bufOffset = pointLights.size() * struct_point_light.SIZE + i * struct_dir_light.SIZE;
-            l.direction.get(bufOffset, buffer);
-            l.intensity.get(bufOffset + CONST.SIZE_VEC3, buffer);
+        baseOffset += pointLights.length * struct_point_light.SIZE;
+
+        for (int i = 0; i < directionalLights.length; i++) {
+            final int bufOffset = baseOffset + i * struct_dir_light.SIZE;
+            directionalLights[i].get(bufOffset, buffer);
         }
+        baseOffset += directionalLights.length * struct_dir_light.SIZE;
+
+        for (int i = 0; i < spotLights.length; i++) {
+            final int bufOffset = baseOffset + i * struct_spot_light.SIZE;
+            spotLights[i].get(bufOffset, buffer);
+        }
+
         // send to shader
         glBindBuffer(GL_UNIFORM_BUFFER, lightBufferObject);
         glBufferData(GL_UNIFORM_BUFFER, buffer, GL_STATIC_DRAW);
         glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
         // reset
-        numPointLights = 0;
-        numDirectionalLights = 0;
+        numPointLight = 0;
+        numDirectionalLight = 0;
+        numSpotLight = 0;
     }
 
     public void acceptPointLight(PointLight p, Matrix4f worldTransform) {
-        if (numPointLights >= pointLights.size()) {
-            log.warn("max number of point light exceeded: {}", numPointLights);
+        if (numPointLight >= pointLights.length) {
+            log.warn("max number of point light exceeded: {}", numPointLight);
             return;
         }
-        final struct_point_light struct = pointLights.get(numPointLights++);
-        struct.position.set(0, 0, 0, 1).mul(worldTransform);
-        struct.intensity.set(p.color);
-        struct.attenuation.set(p.attenuation.x, p.attenuation.y, p.attenuation.z, 1);
+        final struct_point_light struct = pointLights[numPointLight++];
+        struct.set(p, worldTransform);
     }
 
-    public void accepDirectionalLight(DirectionalLight d, Matrix4f worldTransform) {
-        if (numDirectionalLights >= directionalLights.size()) {
-            log.warn("max number of directional light exceeded: {}", numDirectionalLights);
+    public void acceptDirectionalLight(DirectionalLight d, Matrix4f worldTransform) {
+        if (numDirectionalLight >= directionalLights.length) {
+            log.warn("max number of directional light exceeded: {}", numDirectionalLight);
             return;
         }
-        final struct_dir_light struct = directionalLights.get(numDirectionalLights++);
-        struct.direction.set(d.getDirection()).mul(worldTransform).normalize();
-        struct.intensity.set(d.color);
+        final struct_dir_light struct = directionalLights[numDirectionalLight++];
+        struct.set(d, worldTransform);
+    }
+
+    public void acceptSpotLight(SpotLight s, Matrix4f worldTransform) {
+        if (numSpotLight >= spotLights.length) {
+            log.warn("max number of directional light exceeded: {}", numSpotLight);
+            return;
+        }
+        final struct_spot_light struct = spotLights[numSpotLight++];
+        struct.set(s, worldTransform);
     }
 
     // these mirrors the light objects used in shaders
@@ -105,6 +124,18 @@ public class LightUBO {
         Vector4f position = new Vector4f();
         Vector4f intensity = new Vector4f();
         Vector4f attenuation = new Vector4f();
+
+        public void get(int bufOffset, ByteBuffer buffer) {
+            position.get(bufOffset, buffer);
+            intensity.get(bufOffset + CONST.SIZE_VEC3 * 1, buffer);
+            attenuation.get(bufOffset + CONST.SIZE_VEC3 * 2, buffer);
+        }
+
+        public void set(PointLight p, Matrix4f worldTransform) {
+            position.set(0, 0, 0, 1).mul(worldTransform);
+            intensity.set(p.color);
+            attenuation.set(p.attenuation.x, p.attenuation.y, p.attenuation.z, 1);
+        }
     }
 
     private class struct_dir_light {
@@ -112,6 +143,42 @@ public class LightUBO {
 
         Vector4f direction = new Vector4f();
         Vector4f intensity = new Vector4f();
+
+        public void get(int bufOffset, ByteBuffer buffer) {
+            direction.get(bufOffset, buffer);
+            intensity.get(bufOffset + CONST.SIZE_VEC3, buffer);
+        }
+
+        public void set(DirectionalLight d, Matrix4f worldTransform) {
+            direction.set(d.getDirection()).mul(worldTransform).normalize();
+            intensity.set(d.color);
+        }
+    }
+
+    private class struct_spot_light {
+        public static final int SIZE = CONST.SIZE_VEC4 * 5;
+
+        Vector4f position = new Vector4f();
+        Vector4f intensity = new Vector4f();
+        Vector4f attenuation = new Vector4f();
+        Vector4f direction = new Vector4f();
+        Vector4f angle = new Vector4f();
+
+        public void get(int bufOffset, ByteBuffer buffer) {
+            position.get(bufOffset, buffer);
+            intensity.get(bufOffset + CONST.SIZE_VEC3 * 1, buffer);
+            attenuation.get(bufOffset + CONST.SIZE_VEC3 * 2, buffer);
+            direction.get(bufOffset + CONST.SIZE_VEC3 * 3, buffer);
+            angle.get(bufOffset + CONST.SIZE_VEC3 * 4, buffer);
+        }
+
+        public void set(SpotLight s, Matrix4f worldTransform) {
+            position.set(0, 0, 0, 1).mul(worldTransform);
+            intensity.set(s.color);
+            attenuation.set(s.attenuation.x, s.attenuation.y, s.attenuation.z, 1);
+            direction.set(s.getDirection()).mul(worldTransform).normalize();
+            angle.set(s.angle.x, s.angle.y, s.angle.z, 0);
+        }
     }
 
 }
