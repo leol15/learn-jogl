@@ -104,7 +104,6 @@ public class Button extends UIBase {
     }
 
     private void handleClick(double x, double y, int buttonAction) {
-        System.out.println("Button Clicked");
         if (buttonAction == GLFW_PRESS) {
             if (action != null) {
                 action.run();

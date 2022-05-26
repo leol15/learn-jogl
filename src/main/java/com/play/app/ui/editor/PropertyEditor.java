@@ -141,6 +141,7 @@ public class PropertyEditor extends UIBase {
         nextEditorY = 0;
         nextActiveSpacialThingEditor = 0;
         nextActiveVXEditor = 0;
+        nextActiveBooleanEditor = 0;
         visible = false;
     }
 
@@ -174,7 +175,7 @@ public class PropertyEditor extends UIBase {
             spacialThingEditors.get(i).show();
         }
 
-        final int numInlineLabelsUsed = nextActiveBooleanEditor + nextActiveVXEditor;
+        final int numInlineLabelsUsed = getNextInlineLabelIdx();
         for (int i = 0; i < numInlineLabelsUsed; i++) {
             inlineLabels.get(i).draw();
         }

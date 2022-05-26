@@ -2,7 +2,7 @@ package com.play.app.ui.editor;
 
 import com.play.app.ui.*;
 import com.play.app.ui.property.BooleanProperty;
-import com.play.app.utils.WindowManager;
+import com.play.app.utils.*;
 
 public class BooleanEditor extends UIBase {
 
@@ -14,6 +14,7 @@ public class BooleanEditor extends UIBase {
         stateButton = new Button(windowManager, x, y, "null");
         stateButton.setAction(() -> {
             if (booleanProperty != null) {
+                Func.p("updateing bool");
                 booleanProperty.setValue(!booleanProperty.getValue());
                 updateDisplay();
             }
