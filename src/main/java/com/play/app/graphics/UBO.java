@@ -4,6 +4,9 @@ import static org.lwjgl.opengl.GL45.*;
 
 import java.util.*;
 
+import com.play.app.scene.CameraUBO;
+import com.play.app.scene.lights.LightUBO;
+
 import lombok.extern.log4j.Log4j2;
 
 /**
@@ -46,6 +49,10 @@ public class UBO {
     }
 
     public void configureShader(ShaderProgram sp) {
+        // hack: these needs to be init'ed
+        LightUBO.getInstance();
+        CameraUBO.getInstance();
+
         final int shaderId = sp.getId();
         for (final String name : ubBindingMap.keySet()) {
             final int uboIdx = glGetUniformBlockIndex(shaderId, name);

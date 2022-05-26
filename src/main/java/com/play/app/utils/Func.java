@@ -39,7 +39,11 @@ public class Func {
     }
 
     public static Vector3f multMat(final Vector3f v, final Matrix4f mat) {
-        final Vector4f tmp = new Vector4f(v, 1);
+        return multMat(v, 1, mat);
+    }
+
+    public static Vector3f multMat(final Vector3f v, float w, final Matrix4f mat) {
+        final Vector4f tmp = new Vector4f(v, w);
         tmp.mul(mat);
         return new Vector3f(tmp.x, tmp.y, tmp.z);
     }

@@ -5,7 +5,7 @@ import java.util.function.BiConsumer;
 
 import com.play.app.basics.*;
 import com.play.app.geometry.Ray;
-import com.play.app.ui.PropertyEditor;
+import com.play.app.ui.editor.PropertyEditor;
 
 import org.joml.*;
 

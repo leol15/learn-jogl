@@ -88,6 +88,10 @@ public class Text {
         return textHeight;
     }
 
+    public float getFontHeight() {
+        return fontHeight;
+    }
+
     public void setColor(Color c) {
         setColor(c.getRed() / 255.0f,
                 c.getGreen() / 255.0f,

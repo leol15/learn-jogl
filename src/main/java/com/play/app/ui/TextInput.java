@@ -61,12 +61,18 @@ public class TextInput extends UIBase {
         });
 
         windowManager.addMouseButtonCallback(Layer.UI, (window, button, action, mods) -> {
+            // if (!visible) {
+            //     return;
+            // }
             final float mouseX = windowManager.lastMousePos[0];
             final float mouseY = windowManager.lastMousePos[1];
             onClick(mouseX, mouseY, action);
         });
 
         windowManager.addScrollCallback(Layer.UI, (window, dx, dy) -> {
+            // if (!visible) {
+            //     return;
+            // }
             handleScroll(dx, dy);
         });
     }
@@ -96,6 +102,17 @@ public class TextInput extends UIBase {
         }
     }
 
+    public TextInput setScrollable(boolean scrollable) {
+        this.scrollable = scrollable;
+        return this;
+    }
+
+    public TextInput setScrollDelta(float delta) {
+        scrollDelta = delta;
+        NUMBER_FORMAT = getNumberFormatFromDelta(delta);
+        return this;
+    }
+
     @Override
     public UIBase setBounds(float x, float y, float w, float h) {
         super.setBounds(x, y, w, h);
@@ -117,6 +134,7 @@ public class TextInput extends UIBase {
     }
 
     private void addChar(int c) {
+        windowManager.stopPropagation();
         textContent.add((char) c);
         textContentUpdated();
     }
@@ -153,17 +171,6 @@ public class TextInput extends UIBase {
                 deleteChar(mods);
             }
         }
-    }
-
-    public TextInput setScrollable(boolean scrollable) {
-        this.scrollable = scrollable;
-        return this;
-    }
-
-    public TextInput setScrollDelta(float delta) {
-        scrollDelta = delta;
-        NUMBER_FORMAT = getNumberFormatFromDelta(delta);
-        return this;
     }
 
     private void handleScroll(double dx, double dy) {

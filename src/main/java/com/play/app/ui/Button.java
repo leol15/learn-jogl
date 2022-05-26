@@ -18,6 +18,7 @@ public class Button extends UIBase {
     // state
     private Runnable action = null;
     private Text text;
+    private CharSequence label;
 
     // internal things
     private Vector4f hoverColor = new Vector4f(0.8f, 0.8f, 0.8f, 1f);
@@ -25,12 +26,14 @@ public class Button extends UIBase {
     // coordinates are in screen space
     public Button(WindowManager windowManager, float x, float y, float width, float height) {
         super(windowManager);
-        this.text = new Text(windowManager, "Button", x, y);
+        label = "Button";
+        this.text = new Text(windowManager, label, x, y);
         init(x, y, width, height);
     }
 
     public Button(WindowManager windowManager, float x, float y, CharSequence label) {
         super(windowManager);
+        this.label = label;
         this.text = new Text(windowManager, label, x, y);
         init(x, y, text.getWidth(), text.getHeight());
     }
@@ -46,6 +49,11 @@ public class Button extends UIBase {
         buttons.add(this);
     }
 
+    public void setLabel(String label) {
+        this.label = label;
+        text.setText(label);
+    }
+
     public void setAction(Runnable r) {
         action = r;
     }
@@ -54,6 +62,13 @@ public class Button extends UIBase {
         setBackgroundColor(r, g, b, a);
         backgroundColorCopy.set(backgroundColor);
         computeHoverAndTextColor();
+        return this;
+    }
+
+    @Override
+    public UIBase setBounds(float x, float y, float w, float h) {
+        super.setBounds(x, y, w, h);
+        text.setText(label, x, y);
         return this;
     }
 

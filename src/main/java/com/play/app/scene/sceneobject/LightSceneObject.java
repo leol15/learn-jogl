@@ -2,8 +2,8 @@ package com.play.app.scene.sceneobject;
 
 import com.play.app.scene.SceneVisitor;
 import com.play.app.scene.lights.*;
-import com.play.app.ui.PropertyEditor;
-import com.play.app.utils.CONST;
+import com.play.app.ui.editor.PropertyEditor;
+import com.play.app.utils.*;
 
 import org.joml.Matrix4f;
 
@@ -17,6 +17,7 @@ public class LightSceneObject extends SimpleSceneObject {
         this.light = light;
         setMesh(light.getDebugMesh());
         setCollidable(light.getDebugCollidable());
+        setShader(ShaderUtils.getShader("Simple3D"));
     }
 
     public Light getLight() {

@@ -4,7 +4,7 @@ import com.play.app.basics.*;
 import com.play.app.geometry.Ray;
 import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
-import com.play.app.ui.PropertyEditor;
+import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.utils.CONST;
 
 import org.joml.*;
@@ -17,7 +17,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class SimpleSceneObject extends SOBase implements SceneObject {
 
-    // simple, only 2 fields
+    // simple, only 2 fields, no transformation info (provided by SceneNode)
     @Setter
     protected Mesh mesh;
     @Setter

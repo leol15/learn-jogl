@@ -21,13 +21,13 @@ import lombok.extern.log4j.Log4j2;
 public class LightUBO {
     private static final LightUBO instance = new LightUBO();
 
-    // layout
     private static final int NUM_LIGHTS = 1;
-    private final int BUFFER_SIZE = struct_point_light.SIZE +
-            struct_dir_light.SIZE + struct_spot_light.SIZE;
-
+    // layout
     private final int lightBufferObject;
     private final ByteBuffer buffer;
+    private final int BUFFER_SIZE = NUM_LIGHTS * (struct_point_light.SIZE +
+            struct_dir_light.SIZE + struct_spot_light.SIZE) + CONST.SIZE_VEC4;
+    private final Vector4f numActiveLights = new Vector4f();
 
     private final LightSceneVisitor visitor;
 
@@ -62,22 +62,24 @@ public class LightUBO {
 
         // add collected lights
         int baseOffset = 0;
-        for (int i = 0; i < pointLights.length; i++) {
-            final int bufOffset = i * struct_point_light.SIZE;
-            pointLights[i].get(bufOffset, buffer);
+        for (int i = 0; i < numPointLight; i++) {
+            pointLights[i].get(baseOffset + i * struct_point_light.SIZE, buffer);
         }
         baseOffset += pointLights.length * struct_point_light.SIZE;
 
-        for (int i = 0; i < directionalLights.length; i++) {
-            final int bufOffset = baseOffset + i * struct_dir_light.SIZE;
-            directionalLights[i].get(bufOffset, buffer);
+        for (int i = 0; i < numDirectionalLight; i++) {
+            directionalLights[i].get(baseOffset + i * struct_dir_light.SIZE, buffer);
         }
         baseOffset += directionalLights.length * struct_dir_light.SIZE;
 
-        for (int i = 0; i < spotLights.length; i++) {
-            final int bufOffset = baseOffset + i * struct_spot_light.SIZE;
-            spotLights[i].get(bufOffset, buffer);
+        for (int i = 0; i < numSpotLight; i++) {
+            spotLights[i].get(baseOffset + i * struct_spot_light.SIZE, buffer);
         }
+        baseOffset += spotLights.length * struct_spot_light.SIZE;
+
+        // write num lights
+        numActiveLights.set(numPointLight, numDirectionalLight, numSpotLight, 0);
+        numActiveLights.get(baseOffset, buffer);
 
         // send to shader
         glBindBuffer(GL_UNIFORM_BUFFER, lightBufferObject);

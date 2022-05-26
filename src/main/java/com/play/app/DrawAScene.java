@@ -14,6 +14,7 @@ import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
 import com.play.app.scene.sceneobject.*;
 import com.play.app.ui.*;
+import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.utils.*;
 import com.play.app.utils.WindowManager.Layer;
 

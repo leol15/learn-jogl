@@ -31,6 +31,7 @@ layout (std140) uniform ALL_THE_LIGHTS
     point_light PL[1];
     dir_light DL[1];
     spot_light SL[1];
+    vec4 numActiveLights;
 };
 
 layout (std140) uniform CAMERA_INFO
@@ -51,22 +52,29 @@ void capColor(inout vec4 color);
 void main() {
     // ambinent light
     vec3 ambinent = materialColor.rgb * ambientColor;
-    // point light
     vec3 color = vec3(0);
     vec3 finalColor = vec3(0);
-    calculatePointLight(0, color);
-    finalColor = finalColor + color;
+    // point light
+    for (int i = 0; i < numActiveLights.x; i++) {
+        calculatePointLight(i, color);
+        finalColor = finalColor + color;
+    }
     // directional light
-    calculateDirLight(0, color);
-    finalColor = finalColor + color;
+    for (int i = 0; i < numActiveLights.y; i++) {
+        calculateDirLight(i, color);
+        finalColor = finalColor + color;
+    }
     // spot light
-    calculateSpotLight(0, color);
-    finalColor = finalColor + color;
-    // debug
-    // finalColor = color;
+    for (int i = 0; i < numActiveLights.z; i++) {
+        calculateSpotLight(i, color);
+        finalColor = finalColor + color;
+    }
 
     fragColor = vec4(finalColor + ambinent, 1);
     capColor(fragColor);
+
+    // debug
+    // fragColor = vec4(numActiveLights.xyz, 1);
 }
 
 

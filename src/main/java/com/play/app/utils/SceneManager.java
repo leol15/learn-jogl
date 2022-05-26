@@ -5,11 +5,14 @@ import static org.lwjgl.opengl.GL11.*;
 import com.play.app.geometry.Ray;
 import com.play.app.scene.*;
 import com.play.app.scene.lights.LightUBO;
-import com.play.app.ui.PropertyEditor;
+import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.utils.WindowManager.Layer;
 
 import org.joml.*;
 
+/**
+ * manages a window, a camera, a root scene node
+ */
 public class SceneManager {
     private final SceneNode root;
     private final CameraControl cam;
@@ -20,6 +23,10 @@ public class SceneManager {
     private SceneNode selectedNode;
 
     public SceneManager(WindowManager windowManager, SceneNode root, CameraControl cam) {
+        // static inits
+        LightUBO.getInstance();
+        CameraUBO.getInstance();
+
         this.root = root;
         this.cam = cam;
         // set up edit area
@@ -48,6 +55,9 @@ public class SceneManager {
                 }
             }
         });
+
+        // set background color
+        glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
     }
 
     public void render() {

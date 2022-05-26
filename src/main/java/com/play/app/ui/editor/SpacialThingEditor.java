@@ -1,9 +1,10 @@
-package com.play.app.ui;
+package com.play.app.ui.editor;
 
 import java.lang.Math;
 
 import com.play.app.basics.SpacialThing;
 import com.play.app.graphics.Text;
+import com.play.app.ui.*;
 import com.play.app.utils.WindowManager;
 
 import org.joml.*;
@@ -17,7 +18,7 @@ public class SpacialThingEditor extends UIBase {
     private final Vector3f eulerAngles = new Vector3f();
 
     private final Text positionLabel, rotationLabel, scaleLabel;
-    private final Vector3fEditor posEditor, scaEditor, rotEditor;
+    private final VectorXfEditor posEditor, scaEditor, rotEditor;
 
     private static final float ROW_HEIGHT = 40;
     private static final float LABEL_SIZE = 150;
@@ -36,9 +37,9 @@ public class SpacialThingEditor extends UIBase {
         scaleLabel.setColor(LABEL_COLOR);
         rotationLabel.setColor(LABEL_COLOR);
         // inputs
-        posEditor = new Vector3fEditor(windowManager, 0, 0);
-        scaEditor = new Vector3fEditor(windowManager, 0, 0);
-        rotEditor = new Vector3fEditor(windowManager, 0, 0).setScrollDelta(5);
+        posEditor = new VectorXfEditor(windowManager, 0, 0);
+        scaEditor = new VectorXfEditor(windowManager, 0, 0);
+        rotEditor = new VectorXfEditor(windowManager, 0, 0).setScrollDelta(5);
 
         // set bg size
         setBounds(x, y, LABEL_SIZE + 300, ROW_HEIGHT * 3);
@@ -51,18 +52,18 @@ public class SpacialThingEditor extends UIBase {
     public SpacialThingEditor setSpacialThing(final SpacialThing s) {
         spacialThing = s;
         if (spacialThing != null) {
-            posEditor.setVector3f(s.translation);
-            scaEditor.setVector3f(s.scale);
+            posEditor.setVector(s.translation);
+            scaEditor.setVector(s.scale);
 
             spacialThing.rotation.getEulerAnglesXYZ(eulerAngles);
             eulerAngles.set(Math.toDegrees(eulerAngles.x),
                     Math.toDegrees(eulerAngles.y),
                     Math.toDegrees(eulerAngles.z));
-            rotEditor.setVector3f(eulerAngles);
+            rotEditor.setVector(eulerAngles);
         } else {
-            posEditor.setVector3f(null);
-            scaEditor.setVector3f(null);
-            rotEditor.setVector3f(null);
+            posEditor.clear();
+            scaEditor.clear();
+            rotEditor.clear();
         }
         return this;
     }

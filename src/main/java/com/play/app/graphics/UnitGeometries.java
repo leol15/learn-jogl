@@ -185,7 +185,6 @@ public class UnitGeometries {
         final VAOHelper vHelper = new VAOHelper(numVerticies + 2, numCircleFragment * 2 * 3);
 
         // the tip of cone: (0, 1, 0)
-        // vertices.put(0).put(1).put(0).put(0).put(1).put(0).put(0.5f).put(1);
         vHelper.addPosition(0, 1, 0);
         vHelper.addNormals(0, 1, 0);
         vHelper.addUV(0.5f, 1);
@@ -230,7 +229,6 @@ public class UnitGeometries {
     }
 
     private static VAO createCyclinder(final int numSections) {
-        // TODO add uv
         final int numCircleFragment = numSections;
         // double the circle since the normal is different
         final int numTriangles = numCircleFragment * 4;
@@ -290,7 +288,7 @@ public class UnitGeometries {
             // top
             vHelper.addPosition(x, 1, y);
             vHelper.addNormals(x * 2, 0, y * 2);
-            vHelper.addUV((float) i / numCircleFragment, 0);
+            vHelper.addUV((float) i / numCircleFragment, 1);
 
             // last point does not have next triangle
             if (i != numCircleFragment) {

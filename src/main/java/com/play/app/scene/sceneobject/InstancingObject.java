@@ -6,7 +6,7 @@ import com.play.app.basics.*;
 import com.play.app.geometry.Ray;
 import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
-import com.play.app.ui.PropertyEditor;
+import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.utils.CONST;
 
 import org.joml.*;

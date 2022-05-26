@@ -14,4 +14,11 @@ public class SpacialThing {
         return out.translation(translation).rotate(rotation).scale(scale);
     }
 
+    public SpacialThing set(Matrix4f transform) {
+        transform.getUnnormalizedRotation(rotation);
+        transform.getTranslation(translation);
+        transform.getScale(scale);
+        return this;
+    }
+
 }

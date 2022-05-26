@@ -3,7 +3,7 @@ package com.play.app.scene.lights;
 import com.play.app.basics.Collidable;
 import com.play.app.geometry.Sphere;
 import com.play.app.mesh.Mesh;
-import com.play.app.ui.PropertyEditor;
+import com.play.app.ui.editor.PropertyEditor;
 
 import org.joml.*;
 

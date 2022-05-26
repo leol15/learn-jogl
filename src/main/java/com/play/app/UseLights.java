@@ -10,11 +10,8 @@ import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
 import com.play.app.scene.lights.*;
 import com.play.app.scene.sceneobject.*;
-import com.play.app.ui.PropertyEditor;
 import com.play.app.utils.*;
-import com.play.app.utils.WindowManager.Layer;
 
-import org.joml.*;
 import org.joml.Math;
 
 import lombok.extern.log4j.Log4j2;

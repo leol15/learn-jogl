@@ -3,7 +3,7 @@ package com.play.app.scene.lights;
 import java.awt.Color;
 
 import com.play.app.graphics.ShaderProgram;
-import com.play.app.ui.PropertyEditor;
+import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.utils.*;
 
 import org.joml.*;

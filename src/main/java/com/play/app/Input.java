@@ -13,7 +13,8 @@ import com.play.app.graphics.*;
 import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
 import com.play.app.scene.sceneobject.InstancingObject;
-import com.play.app.ui.*;
+import com.play.app.ui.Button;
+import com.play.app.ui.editor.*;
 import com.play.app.utils.*;
 import com.play.app.utils.WindowManager.Layer;
 
@@ -64,9 +65,9 @@ public class Input {
         // work
         // final TextInput textInput = new TextInput(windowManager, 300, 600);
         final SpacialThingEditor spacialThingEditor = new SpacialThingEditor(windowManager, 100, 600);
-        final Vector3fEditor vector3fEditor = new Vector3fEditor(windowManager, 100, 1000);
+        final VectorXfEditor vectorXfEditor = new VectorXfEditor(windowManager, 100, 1000);
         final Vector3f testVec3f = new Vector3f().set(1, 2, 3);
-        vector3fEditor.setVector3f(testVec3f);
+        vectorXfEditor.setVector(testVec3f);
 
         // select
         SceneNode[] selectedNode = { null };
@@ -127,7 +128,7 @@ public class Input {
 
             // textInput.show();
             spacialThingEditor.show();
-            vector3fEditor.show();
+            vectorXfEditor.show();
 
             glfwPollEvents();
         }

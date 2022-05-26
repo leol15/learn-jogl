@@ -9,6 +9,8 @@ public class CONST {
     public static final String SHADER_FOLDER = "resources/shaders/";
     public static final String SHADER_DEFAULT_FOLDER = SHADER_FOLDER + "essential/";
 
+    public static final String TEXTURE_FOLDER = "resources/textures/";
+
     public static final int SIZE_MAT4 = 4 * 4 * Float.BYTES;
     public static final int SIZE_VEC4 = 4 * Float.BYTES;
     // vec3 is still 16 bytes in GLSL

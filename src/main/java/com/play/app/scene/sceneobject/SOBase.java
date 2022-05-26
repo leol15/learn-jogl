@@ -8,13 +8,11 @@ import lombok.experimental.Accessors;
 
 @Accessors(chain = true)
 public class SOBase {
-    // TODO: this can be abtract to a material class
-
     @Setter
     protected ShaderProgram shader;
 
     // properties that can be applied to shader
-    protected final LightingMaterial material = new LightingMaterial();
+    public final LightingMaterial material = new LightingMaterial();
 
     @Setter
     protected Texture texture;

@@ -294,7 +294,7 @@ public class CameraControl {
     private void updateProjection() {
         projection.setPerspective(Math.toRadians(fov),
                 windowManager.windowSize[0] / (float) windowManager.windowSize[1],
-                0.1f, 100f);
+                0.1f, 300f);
         updateCameraUboData();
     }
 
