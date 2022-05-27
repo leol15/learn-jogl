@@ -36,19 +36,9 @@ public class UseLights {
         // test
         final SceneManager sceneManager = new SceneManager(windowManager, rootSceneNode, cameraControl);
         // shaders needs to be with cameraControl
-        final ShaderProgram simple3DShader = new ShaderProgram()
-                .withShader(CONST.SHADER_FOLDER + "simple3D.vert")
-                .withShader(CONST.SHADER_FOLDER + "simple3D.geom")
-                .withShader(CONST.SHADER_FOLDER + "simple3D.frag")
-                .linkProgram();
-        final ShaderProgram lineShader = new ShaderProgram()
-                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Line.vert")
-                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Default.frag")
-                .linkProgram();
-        final ShaderProgram blinnPhong = new ShaderProgram()
-                .withShader(CONST.SHADER_FOLDER + "BlinnPhong.vert")
-                .withShader(CONST.SHADER_FOLDER + "BlinnPhong.frag")
-                .linkProgram();
+        final ShaderProgram simple3DShader = ShaderUtils.getShader("simple3D");
+        final ShaderProgram lineShader = ShaderUtils.getShader("Line");
+        final ShaderProgram blinnPhong = ShaderUtils.getShader("BlinnPhong");
 
         // construct scene
 

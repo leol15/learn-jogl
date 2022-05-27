@@ -1,5 +1,8 @@
 package com.play.app.utils;
 
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
+
 import java.io.File;
 import java.util.*;
 
@@ -13,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class ShaderUtils {
     private static final Map<String, ShaderProgram> SHADERS = new HashMap<>();
+    private static final String SHADER_HELPER_SOURCE = AssetTools.loadTextFile(CONST.SHADER_HELPER_FILE);
 
     public static ShaderProgram getShader(String fileName) {
         if (SHADERS.containsKey(fileName)) {
@@ -30,6 +34,7 @@ public class ShaderUtils {
         final String vert = String.format("%s%s.vert", pathPrefix, fileName);
         final String geom = String.format("%s%s.geom", pathPrefix, fileName);
         final String frag = String.format("%s%s.frag", pathPrefix, fileName);
+
         if (!fileExists(vert)) {
             log.warn("Cannot file shader file {}", vert);
             return null;
@@ -37,14 +42,16 @@ public class ShaderUtils {
 
         final ShaderProgram shader = new ShaderProgram();
         if (fileExists(vert)) {
-            shader.withShader(vert);
+            loadShaderFile(shader, vert);
         }
         if (fileExists(geom)) {
-            shader.withShader(geom);
+            loadShaderFile(shader, geom);
         }
 
         if (fileExists(frag)) {
-            shader.withShader(frag);
+            loadShaderFile(shader, frag);
+        } else {
+            loadShaderFile(shader, CONST.DEFAULT_FRAG_SHADER_PATH);
         }
         shader.linkProgram();
 
@@ -55,5 +62,32 @@ public class ShaderUtils {
     private static boolean fileExists(String path) {
         final File f = new File(path);
         return f.exists() && !f.isDirectory();
+    }
+
+    private static void loadShaderFile(ShaderProgram shaderProgram, String path) {
+        if (path.endsWith(".frag")) {
+            loadShaderFile(shaderProgram, path, GL_FRAGMENT_SHADER);
+        } else if (path.endsWith(".geom")) {
+            loadShaderFile(shaderProgram, path, GL_GEOMETRY_SHADER);
+        } else if (path.endsWith(".vert")) {
+            loadShaderFile(shaderProgram, path, GL_VERTEX_SHADER);
+        } else {
+            log.warn("Unsupported shader file {}", path);
+        }
+    }
+
+    private static void loadShaderFile(ShaderProgram shaderProgram, String path, int type) {
+        log.info("loading shader from path: {}", path);
+
+        final String source = AssetTools.loadTextFile(path);
+        if (source == null) {
+            return;
+        }
+        final int versionIdx = source.indexOf("#version");
+        final int nextLine = source.indexOf("\n", versionIdx);
+        final StringBuilder appendedSource = new StringBuilder(source);
+        appendedSource.replace(versionIdx, nextLine, SHADER_HELPER_SOURCE);
+
+        shaderProgram.attachShader(appendedSource.toString(), type);
     }
 }

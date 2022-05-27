@@ -32,18 +32,11 @@ public class DrawLines {
         lineVAO.bufferData(CONST.VERT_IN_POSITION, positions);
         lineVAO.setDrawFunction(() -> glDrawArrays(GL_LINE_LOOP, 0, 4));
 
-        ShaderProgram lineShader = new ShaderProgram()
-                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Line.vert", GL_VERTEX_SHADER)
-                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Default.frag", GL_FRAGMENT_SHADER)
-                .linkProgram();
+        ShaderProgram lineShader = ShaderUtils.getShader("Line");
 
         CameraControl cam = new CameraControl(windowManager);
 
-        ShaderProgram simple3DShader = new ShaderProgram()
-                .withShader("resources/shaders/Simple3D.vert", GL_VERTEX_SHADER)
-                .withShader("resources/shaders/Simple3D.geom", GL_GEOMETRY_SHADER)
-                .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
-                .linkProgram();
+        ShaderProgram simple3DShader = ShaderUtils.getShader("Simple3D");
 
         // ui
         final Button togglePolygonMode = new Button(windowManager, 0, 50, "Toggle Polygon Mode");

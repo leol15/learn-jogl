@@ -34,11 +34,7 @@ public class DrawAScene {
         CameraControl camera = new CameraControl(windowManager);
         PropertyEditor propertyEditor = new PropertyEditor(windowManager);
 
-        ShaderProgram simple3DShader = new ShaderProgram()
-                .withShader("resources/shaders/Simple3D.vert", GL_VERTEX_SHADER)
-                .withShader("resources/shaders/Simple3D.geom", GL_GEOMETRY_SHADER)
-                .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
-                .linkProgram();
+        ShaderProgram simple3DShader = ShaderUtils.getShader("Simple3D");
         simple3DShader.uniform("debug", 1);
 
         Text fpsCounter = new Text(windowManager, "FPS: 1", 0, 0);
@@ -105,10 +101,7 @@ public class DrawAScene {
         rootSceneNode.addChild(new SceneNode().setSceneObject(
                 createInstancingObjectHelper(simple3DShader, Mesh.CUBE, cubeModel, new Cube())));
 
-        final ShaderProgram lineShader = new ShaderProgram()
-                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Line.vert", GL_VERTEX_SHADER)
-                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Default.frag", GL_FRAGMENT_SHADER)
-                .linkProgram();
+        final ShaderProgram lineShader = ShaderUtils.getShader("Line");
         final SpacialThing cicleModel = new SpacialThing();
         cicleModel.translation.set(-3, 0, 0);
         rootSceneNode.addChild(new SceneNode().setSceneObject(

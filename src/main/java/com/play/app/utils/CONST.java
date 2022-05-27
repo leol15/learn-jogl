@@ -1,5 +1,7 @@
 package com.play.app.utils;
 
+import java.nio.ByteBuffer;
+
 public class CONST {
 
     public static final String VIEW_MATRIX = "view";
@@ -8,6 +10,10 @@ public class CONST {
 
     public static final String SHADER_FOLDER = "resources/shaders/";
     public static final String SHADER_DEFAULT_FOLDER = SHADER_FOLDER + "essential/";
+    public static final String SHADER_HELPER_FILE = SHADER_DEFAULT_FOLDER + "UTILS.vert";
+    public static final String DEFAULT_FRAG_SHADER_PATH = SHADER_DEFAULT_FOLDER + "DEFAULT.frag";
+
+    public static final String FRAG_OUTPUT_NAME = "fragColor";
 
     public static final String TEXTURE_FOLDER = "resources/textures/";
 

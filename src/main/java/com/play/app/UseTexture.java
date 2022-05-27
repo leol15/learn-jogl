@@ -7,7 +7,7 @@ import static org.lwjgl.opengl.GL20.*;
 import java.nio.*;
 
 import com.play.app.graphics.*;
-import com.play.app.utils.CONST;
+import com.play.app.utils.*;
 
 import org.joml.*;
 import org.lwjgl.BufferUtils;
@@ -41,9 +41,7 @@ public class UseTexture {
         vao.bufferIndices(elements);
 
         // setup shader
-        ShaderProgram shaderProgram = new ShaderProgram()
-                .withShader("resources/shaders/Texture.vert", GL_VERTEX_SHADER)
-                .withShader("resources/shaders/Texture.frag", GL_FRAGMENT_SHADER);
+        ShaderProgram shaderProgram = ShaderUtils.getShader("Texture");
         shaderProgram.linkProgram();
         shaderProgram.useProgram();
 

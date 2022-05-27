@@ -107,6 +107,21 @@ public class CameraControl {
             return;
         }
         drawMarkerFrame--;
+        drawMarker();
+
+        // also draw a tiny marker
+        final float oldMarkerScale = markerScale;
+        markerScale = 200;
+        updateMarker();
+
+        drawMarker();
+
+        markerScale = oldMarkerScale;
+        updateMarker();
+
+    }
+
+    private void drawMarker() {
         for (int i = 0; i < ringModelMatrix.length; i++) {
             ringModelMatrix[i].get(modelBuffer);
             lineShader.uniformMatrix4fv(CONST.MODEL_MATRIX, modelBuffer);
@@ -115,7 +130,6 @@ public class CameraControl {
             UnitGeometries.drawCircle(40);
             lineShader.unuseProgram();
         }
-
     }
 
     public void focusOn(Vector3f target) {
@@ -245,10 +259,7 @@ public class CameraControl {
     // helpers
     ///////////////////
     private static ShaderProgram createLineShader() {
-        final ShaderProgram shaderProgram = new ShaderProgram()
-                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Line.vert", GL_VERTEX_SHADER)
-                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Default.frag", GL_FRAGMENT_SHADER)
-                .linkProgram();
+        final ShaderProgram shaderProgram = ShaderUtils.getShader("Line");
 
         final Matrix4f identityMatrix = new Matrix4f();
         final FloatBuffer identityMatrixBuffer = BufferUtils.createFloatBuffer(16);

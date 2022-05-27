@@ -1,13 +1,16 @@
 package com.play.app.graphics;
 
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
+
+import java.nio.FloatBuffer;
+
+import com.play.app.utils.*;
+
 import org.joml.*;
 
 import lombok.extern.log4j.Log4j2;
-
-import java.nio.*;
-import static org.lwjgl.opengl.GL45.*;
-
-import com.play.app.utils.*;
 
 @Log4j2
 public class ShaderProgram {
@@ -26,35 +29,8 @@ public class ShaderProgram {
         return id;
     }
 
-    public ShaderProgram withShader(String path, int type) {
-        loadShaderFromPath(path, type);
-        return this;
-    }
-
-    public ShaderProgram withShader(String path) {
-        if (path.endsWith(".frag")) {
-            return withShader(path, GL_FRAGMENT_SHADER);
-        } else if (path.endsWith(".geom")) {
-            return withShader(path, GL_GEOMETRY_SHADER);
-        } else if (path.endsWith(".vert")) {
-            return withShader(path, GL_VERTEX_SHADER);
-        } else {
-            log.warn("Unsupported shader file {}", path);
-            return this;
-        }
-    }
-
-    @Deprecated
-    public void loadShaderFromPath(String path, int type) {
-        log.info("loading shader from path: {}", path);
-
+    public ShaderProgram attachShader(String source, int type) {
         int shaderId = glCreateShader(type);
-        String source = AssetTools.loadTextFile(path);
-        if (source == null) {
-            glDeleteShader(shaderId);
-            return;
-        }
-
         glShaderSource(shaderId, source);
         glCompileShader(shaderId);
         if (glGetShaderi(shaderId, GL_COMPILE_STATUS) != GL_TRUE) {
@@ -63,11 +39,12 @@ public class ShaderProgram {
 
         glAttachShader(id, shaderId);
         glDeleteShader(shaderId);
+        return this;
     }
 
     public ShaderProgram linkProgram() {
-        // default out variable name in fragment shader, hack, TODO
-        glBindFragDataLocation(id, 0, "fragColor");
+        // set the out variable name in all fragment shader
+        glBindFragDataLocation(id, 0, CONST.FRAG_OUTPUT_NAME);
 
         glLinkProgram(id);
         int status = glGetProgrami(id, GL_LINK_STATUS);
@@ -88,14 +65,6 @@ public class ShaderProgram {
         glUseProgram(0);
     }
 
-    // note! Need a valid VAO to be bound
-    // deprecated, wrong, should `glVertexAttribPointer` directly to a VAO
-    public void setVertexAttribPointer(String attributeName, int size, int stride, int offset) {
-        int attributeId = glGetAttribLocation(id, attributeName);
-        glEnableVertexAttribArray(attributeId);
-        glVertexAttribPointer(attributeId, size, GL_FLOAT, false, stride, offset);
-    }
-
     // sets a uniform mat4 in the shader
     public void uniformMatrix4fv(String uniformName, FloatBuffer buffer) {
         useProgram();
@@ -107,6 +76,21 @@ public class ShaderProgram {
     public void uniformMatrix4fv(String uniformName, final Matrix4f mat) {
         mat.get(tmpMatrixBuffer);
         uniformMatrix4fv(uniformName, tmpMatrixBuffer);
+    }
+
+    // sets the location of texture
+    public void uniform(String uniformName, int v) {
+        useProgram();
+        int uniformId = glGetUniformLocation(id, uniformName);
+        glUniform1i(uniformId, v);
+        unuseProgram();
+    }
+
+    public void uniformf(String uniformName, float v) {
+        useProgram();
+        int uniformId = glGetUniformLocation(id, uniformName);
+        glUniform1f(uniformId, v);
+        unuseProgram();
     }
 
     public void uniform2f(String uniformName, Vector2f v) {
@@ -130,18 +114,4 @@ public class ShaderProgram {
         unuseProgram();
     }
 
-    // sets the location of texture
-    public void uniform(String uniformName, int v) {
-        useProgram();
-        int uniformId = glGetUniformLocation(id, uniformName);
-        glUniform1i(uniformId, v);
-        unuseProgram();
-    }
-
-    public void uniformf(String uniformName, float v) {
-        useProgram();
-        int uniformId = glGetUniformLocation(id, uniformName);
-        glUniform1f(uniformId, v);
-        unuseProgram();
-    }
 }

@@ -2,12 +2,12 @@
 
 in vec2 position;
 
-out vec4 vertexColor;
+out vec4 in_fragColor;
 
 uniform vec4 materialColor = vec4(1);
 uniform mat4 UItoGL = mat4(1);
 
 void main() {
-    vertexColor = materialColor;
+    in_fragColor = materialColor;
     gl_Position = UItoGL * vec4(position, 0, 1.0);
 }

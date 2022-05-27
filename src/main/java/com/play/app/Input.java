@@ -28,11 +28,7 @@ public class Input {
 
         final WindowManager windowManager = new WindowManager(window);
         final CameraControl cam = new CameraControl(windowManager);
-        final ShaderProgram simple3dShader = new ShaderProgram()
-                .withShader(CONST.SHADER_FOLDER + "simple3D.vert", GL_VERTEX_SHADER)
-                .withShader(CONST.SHADER_FOLDER + "/Simple3D.geom", GL_GEOMETRY_SHADER)
-                .withShader(CONST.SHADER_FOLDER + "simple3D.frag", GL_FRAGMENT_SHADER)
-                .linkProgram();
+        final ShaderProgram simple3dShader = ShaderUtils.getShader("Simple3D");
 
         final Matrix4f iden = new Matrix4f();
         final SceneNode rootNode = new SceneNode();

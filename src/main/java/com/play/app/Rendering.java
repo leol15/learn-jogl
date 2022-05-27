@@ -23,10 +23,7 @@ public class Rendering {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         // setup shader
-        ShaderProgram shaderProgram = new ShaderProgram();
-        shaderProgram.loadShaderFromPath("resources/shaders/Simple.vert", GL_VERTEX_SHADER);
-        shaderProgram.loadShaderFromPath("resources/shaders/Simple.frag", GL_FRAGMENT_SHADER);
-        shaderProgram.linkProgram();
+        ShaderProgram shaderProgram = ShaderUtils.getShader("Simple");
 
         // set uniform locations
         final WindowManager windowManager = new WindowManager(window);
@@ -35,12 +32,6 @@ public class Rendering {
         FloatBuffer fbModel = BufferUtils.createFloatBuffer(16);
         model.get(fbModel);
         shaderProgram.uniformMatrix4fv("model", fbModel);
-
-        // ShaderProgram planeShader = new ShaderProgram()
-        //         .withShader("resources/shaders/Simple3D.vert", GL_VERTEX_SHADER)
-        //         .withShader("resources/shaders/Simple3D.geom", GL_GEOMETRY_SHADER)
-        //         .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
-        //         .linkProgram();
 
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
         model.scale(0.6f);

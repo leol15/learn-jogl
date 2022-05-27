@@ -10,7 +10,7 @@ in VS_OUT {
     int debug;
 } gs_in[];
 
-out vec4 fs_color;
+out vec4 in_fragColor;
 
 layout (std140) uniform CAMERA_INFO
 {
@@ -22,7 +22,7 @@ layout (std140) uniform CAMERA_INFO
 
 const float MAGNITUDE = 0.1;
 void GenerateLine(int index) {
-    fs_color = vec4(1, 1, 0, 0.7);
+    in_fragColor = vec4(1, 1, 0, 0.7);
     gl_Position = projection * gl_in[index].gl_Position;
     EmitVertex();
     gl_Position = projection * (gl_in[index].gl_Position + 
@@ -39,7 +39,7 @@ void main() {
         GenerateLine(2); // third vertex normal
     }
 
-    fs_color = gs_in[0].color;
+    in_fragColor = gs_in[0].color;
     gl_Position = projection * gl_in[0].gl_Position;
     EmitVertex();
     gl_Position = projection * gl_in[1].gl_Position;

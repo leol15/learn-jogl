@@ -3,7 +3,7 @@
 layout(location = 0) in vec3 position;
 layout(location = 1) in vec3 color;
 
-out vec3 vertexColor;
+out vec4 in_fragColor;
 
 uniform mat4 model = mat4(1);
 
@@ -16,8 +16,7 @@ layout (std140) uniform CAMERA_INFO
 };
 
 void main() {
-    vertexColor = color;
-    // vertexColor = vec3(0, 0, position.y);
+    in_fragColor = vec4(color, 1);
     mat4 mvp = projection * view * model;
     gl_Position = mvp * vec4(position, 1.0);
 }

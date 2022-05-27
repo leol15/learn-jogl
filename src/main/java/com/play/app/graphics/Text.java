@@ -315,10 +315,7 @@ public class Text {
         int windowWidth = windowWidthBuffer.get();
         int windowHeight = windowHeightBuffer.get();
 
-        textShader = new ShaderProgram()
-                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Text.vert", GL_VERTEX_SHADER)
-                .withShader(CONST.SHADER_DEFAULT_FOLDER + "Text.frag", GL_FRAGMENT_SHADER);
-        textShader.linkProgram();
+        textShader = ShaderUtils.getShader("Text");
 
         // screen to UI projection
         Matrix4f projection = new Matrix4f();

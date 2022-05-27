@@ -63,27 +63,10 @@ public class VAO {
         return this;
     }
 
-    @Deprecated
-    public void bufferVerticies(FloatBuffer vertices) {
-        bind();
-        glBindBuffer(GL_ARRAY_BUFFER, vertexShaderVBOs[0]);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-        unbind();
-    }
-
     public void bufferIndices(IntBuffer elements) {
         bind();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementVBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, elements, GL_STATIC_DRAW);
-        unbind();
-    }
-
-    @Deprecated
-    public void vertexAttribPointerF(int index, int size, int stride, int offset) {
-        bind();
-        glEnableVertexAttribArray(index);
-        glVertexAttribPointer(index, size, GL_FLOAT, false,
-                stride * Float.BYTES, offset * Float.BYTES);
         unbind();
     }
 

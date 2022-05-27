@@ -56,10 +56,7 @@ public class UIBase {
 
         if (uiShader == null) {
             // create one off shader
-            uiShader = new ShaderProgram()
-                    .withShader(CONST.SHADER_DEFAULT_FOLDER + "UI.vert", GL_VERTEX_SHADER)
-                    .withShader(CONST.SHADER_DEFAULT_FOLDER + "Default.frag", GL_FRAGMENT_SHADER)
-                    .linkProgram();
+            uiShader = ShaderUtils.getShader("UI");
         }
     }
 

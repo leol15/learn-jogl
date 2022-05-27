@@ -1,5 +1,10 @@
 #version 450 core
 
+void capColor(inout vec3 color);
+void capColor(inout vec4 color);
+void getDiffuse(in vec3 L, in vec3 N, in vec3 C, out vec3 diffuse);
+void getSpecular(in vec3 L, in vec3 E, in vec3 N, in vec3 C, in float materialSpecularness, out vec3 specular);
+
 in vec3 surfacePos;
 in vec3 surfaceNormal;
 vec3 N = normalize(surfaceNormal);
@@ -46,8 +51,6 @@ layout (std140) uniform CAMERA_INFO
 void calculatePointLight(in int index, out vec3 color);
 void calculateDirLight(in int index, out vec3 color);
 void calculateSpotLight(in int index, out vec3 color);
-void capColor(inout vec3 color);
-void capColor(inout vec4 color);
 
 void main() {
     // ambinent light
@@ -80,11 +83,6 @@ void main() {
 
 // helpers
 
-// L: normalized direction vector to Light
-// C: color vector
-void getDiffuse(in vec3 L, in vec3 C, out vec3 diffuse);
-void getSpecular(in vec3 L, in vec3 E, in vec3 C, out vec3 specular);
-
 void calculatePointLight(in int index, out vec3 color) {
     vec3 L = PL[index].position - surfacePos;
     float lightDistance = length(L);
@@ -92,24 +90,22 @@ void calculatePointLight(in int index, out vec3 color) {
 
     // is facing light?
     if (dot(L, N) < 0) { return; }
-
-    // distance fall off
-    float distanceFallOff = 1 / dot(PL[index].attenuation, vec3(pow(lightDistance, 2), lightDistance, 1));
-
+    
     // diffuse light
     vec3 diffuse = vec3(0);
-    getDiffuse(L, PL[index].intensity, diffuse);
-    diffuse = diffuse * materialColor.rgb * distanceFallOff;
+    getDiffuse(L, N, PL[index].intensity, diffuse);
+    
     // specular
     vec3 E = normalize(eyePos - surfacePos);
     vec3 specular = vec3(0);
-    getSpecular(L, E, PL[index].intensity, specular);
-    specular = specular * materialColor.rgb * distanceFallOff;
+    getSpecular(L, E, N, PL[index].intensity, materialSpecularness, specular);
+
     // combine
-    color = diffuse + specular;
+    // distance fall off
+    float distanceFallOff = 1 / dot(PL[index].attenuation, vec3(pow(lightDistance, 2), lightDistance, 1));
+    color = (diffuse + specular) * materialColor.rgb * distanceFallOff;
     capColor(color);
 }
-
 
 void calculateDirLight(in int index, out vec3 color) {
     // is facing light?
@@ -118,15 +114,15 @@ void calculateDirLight(in int index, out vec3 color) {
 
     // diffuse light
     vec3 diffuse = vec3(0);
-    getDiffuse(L, DL[index].intensity, diffuse);
-    diffuse = diffuse * materialColor.rgb;
+    getDiffuse(L, N, DL[index].intensity, diffuse);
+
     // specular
     vec3 E = normalize(eyePos - surfacePos);
     vec3 specular = vec3(0);
-    getSpecular(L, E, DL[index].intensity, specular);
-    specular = specular * materialColor.rgb;
+    getSpecular(L, E, N, DL[index].intensity, materialSpecularness, specular);
+
     // combine
-    color = diffuse + specular;
+    color = (diffuse + specular) * materialColor.rgb;
     capColor(color);
 }
 
@@ -143,45 +139,18 @@ void calculateSpotLight(in int index, out vec3 color) {
         return;
     }
 
-    // distance fall off
-    float distanceFallOff = 1 / dot(SL[index].attenuation, vec3(pow(lightDistance, 2), lightDistance, 1));
-
     // diffuse light
     vec3 diffuse = vec3(0);
-    getDiffuse(L, SL[index].intensity, diffuse);
-    diffuse = diffuse * materialColor.rgb * distanceFallOff;
+    getDiffuse(L, N, SL[index].intensity, diffuse);
+
     // specular
     vec3 E = normalize(eyePos - surfacePos);
     vec3 specular = vec3(0);
-    getSpecular(L, E, SL[index].intensity, specular);
-    specular = specular * materialColor.rgb * distanceFallOff;
+    getSpecular(L, E, N, SL[index].intensity, materialSpecularness, specular);
+
     // combine
-    color = diffuse + specular;
+    // distance fall off
+    float distanceFallOff = 1 / dot(SL[index].attenuation, vec3(pow(lightDistance, 2), lightDistance, 1));
+    color = (diffuse + specular) * materialColor.rgb * distanceFallOff;
     capColor(color);
-}
-
-
-// L: normalized direction vector to Light
-// C: light color
-void getDiffuse(in vec3 L, in vec3 C, out vec3 diffuse) {
-    float NdotL = max(0, dot(N, L));
-    diffuse = NdotL * C;
-}
-
-void getSpecular(in vec3 L, in vec3 E, in vec3 C, out vec3 specular) {
-    if (materialSpecularness == 0) {
-        // no specular
-        specular = vec3(0);
-        return;
-    }
-    vec3 halfVec = normalize(normalize(L) + normalize(E));
-    float NdotH = max(0, dot(N, halfVec));
-    specular = C * pow(NdotH, materialSpecularness);
-}
-
-void capColor(inout vec3 color) {
-    clamp(color, vec3(0, 0, 0), vec3(1, 1, 1));
-}
-void capColor(inout vec4 color) {
-    clamp(color, vec4(0, 0, 0, 0), vec4(1, 1, 1, 1));
 }

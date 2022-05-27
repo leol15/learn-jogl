@@ -23,11 +23,7 @@ public class BatchRendering {
         WindowManager windowManager = new WindowManager(window);
         CameraControl camera = new CameraControl(windowManager);
 
-        ShaderProgram simple3DShader = new ShaderProgram()
-                .withShader("resources/shaders/Simple3D.vert", GL_VERTEX_SHADER)
-                .withShader("resources/shaders/Simple3D.geom", GL_GEOMETRY_SHADER)
-                .withShader("resources/shaders/Simple3D.frag", GL_FRAGMENT_SHADER)
-                .linkProgram();
+        ShaderProgram simple3DShader = ShaderUtils.getShader("Simple3D");
 
         Text fpsCounter = new Text(windowManager, "FPS: 1", 0, 0);
         fpsCounter.setColor(Color.RED);
