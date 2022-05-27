@@ -87,7 +87,7 @@ public class SceneNode {
         return position.set(position4.x, position4.y, position4.z);
     }
 
-    public void accept(SceneVisitor sceneVisitor) {
+    public void accept(SceneObjectVisitor sceneVisitor) {
         final Matrix4f identity = new Matrix4f();
         treeTransformVisitor(this, identity, (node, newTransform) -> {
             if (node.sceneObject != null) {

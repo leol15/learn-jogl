@@ -1,11 +1,11 @@
 package com.play.app.scene.lights;
 
-import com.play.app.scene.SceneVisitor;
+import com.play.app.scene.SceneObjectVisitor;
 import com.play.app.scene.sceneobject.*;
 
 import org.joml.Matrix4f;
 
-public class LightSceneVisitor implements SceneVisitor {
+public class LightSceneVisitor implements SceneObjectVisitor {
 
     @Override
     public void visitLightSceneObject(LightSceneObject object, Matrix4f worldTransform) {

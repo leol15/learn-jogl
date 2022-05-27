@@ -1,7 +1,7 @@
 package com.play.app.scene.sceneobject;
 
-import com.play.app.scene.SceneVisitor;
-import com.play.app.scene.lights.*;
+import com.play.app.scene.SceneObjectVisitor;
+import com.play.app.scene.lights.Light;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.utils.*;
 
@@ -30,7 +30,7 @@ public class LightSceneObject extends SimpleSceneObject {
     }
 
     @Override
-    public void accept(SceneVisitor visitor, Matrix4f worldTransform) {
+    public void accept(SceneObjectVisitor visitor, Matrix4f worldTransform) {
         visitor.visitLightSceneObject(this, worldTransform);
     }
 

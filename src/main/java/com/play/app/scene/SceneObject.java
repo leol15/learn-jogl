@@ -10,5 +10,5 @@ import org.joml.Matrix4f;
  */
 public interface SceneObject extends Drawable, Selectable, Editable {
     // perform some special action
-    public void accept(SceneVisitor visitor, Matrix4f worldTransform);
+    public void accept(SceneObjectVisitor visitor, Matrix4f worldTransform);
 }

@@ -57,7 +57,7 @@ public class SimpleSceneObject extends SOBase implements SceneObject {
     }
 
     @Override
-    public void accept(SceneVisitor visitor, Matrix4f worldTransform) {
+    public void accept(SceneObjectVisitor visitor, Matrix4f worldTransform) {
         visitor.visitSimpleSceneObject(this, worldTransform);
     }
 

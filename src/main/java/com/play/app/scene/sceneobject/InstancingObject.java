@@ -92,7 +92,7 @@ public class InstancingObject extends SOBase implements SceneObject {
     }
 
     @Override
-    public void accept(SceneVisitor visitor, Matrix4f worldTransform) {
+    public void accept(SceneObjectVisitor visitor, Matrix4f worldTransform) {
         visitor.visitInstancingObject(this, worldTransform);
     }
 
