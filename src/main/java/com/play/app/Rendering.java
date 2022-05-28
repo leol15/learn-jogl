@@ -2,10 +2,8 @@ package com.play.app;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
-import java.nio.*;
+import java.nio.FloatBuffer;
 
 import com.play.app.graphics.*;
 import com.play.app.scene.CameraControl;

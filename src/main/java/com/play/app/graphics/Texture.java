@@ -1,20 +1,19 @@
 
 package com.play.app.graphics;
 
-import org.lwjgl.*;
-
-import lombok.extern.log4j.Log4j2;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
+import static org.lwjgl.stb.STBImage.*;
 
 import java.io.IOException;
 import java.nio.*;
 
-import com.fasterxml.jackson.dataformat.yaml.*;
-import com.play.app.basics.*;
+import com.play.app.basics.Savable;
 import com.play.app.utils.WorldSerializer;
 
-import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
-import static org.lwjgl.stb.STBImage.*;
+import org.lwjgl.BufferUtils;
+
+import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class Texture implements Savable {
@@ -121,7 +120,7 @@ public class Texture implements Savable {
         setParameteri(GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         texImage2D(GL_RGBA8, width, height, GL_RGBA, data);
 
-        System.out.println("Loadeding texture from file: " + path + " [w " + width + ", h " + height + "]");
+        log.info("Loadeding texture from file: {} [w {}, h {}]", path, width, height);
     }
 
     @Override

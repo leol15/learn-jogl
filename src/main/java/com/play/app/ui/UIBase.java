@@ -1,7 +1,6 @@
 package com.play.app.ui;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
 
 import java.awt.Color;
 import java.nio.*;

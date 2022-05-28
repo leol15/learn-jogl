@@ -3,7 +3,6 @@ package com.play.app.graphics;
 import static java.awt.Font.*;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -249,8 +248,8 @@ public class Text {
         /* Flip image Horizontal to get the origin to bottom left */
         AffineTransform transform = AffineTransform.getScaleInstance(1f, -1f);
         transform.translate(0, -image.getHeight());
-        AffineTransformOp operation = new AffineTransformOp(transform,
-                AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+        // AffineTransformOp operation = new AffineTransformOp(transform,
+        //         AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
         // image = operation.filter(image, null);
         /* Get charWidth and charHeight of image */
         int width = image.getWidth();

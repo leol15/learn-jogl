@@ -1,7 +1,5 @@
 package com.play.app.utils;
 
-import java.nio.ByteBuffer;
-
 public class CONST {
 
     public static final String VIEW_MATRIX = "view";

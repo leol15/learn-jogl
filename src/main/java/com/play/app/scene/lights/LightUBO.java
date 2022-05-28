@@ -7,7 +7,7 @@ import java.nio.ByteBuffer;
 
 import com.play.app.graphics.UBO;
 import com.play.app.scene.SceneNode;
-import com.play.app.utils.*;
+import com.play.app.utils.CONST;
 
 import org.joml.*;
 import org.lwjgl.BufferUtils;
@@ -179,7 +179,7 @@ public class LightUBO {
             intensity.set(s.color);
             attenuation.set(s.attenuation.x, s.attenuation.y, s.attenuation.z, 1);
             direction.set(s.getDirection()).mul(worldTransform).normalize();
-            angle.set(s.angle.x, s.angle.y, s.angle.z, 0);
+            angle.set(s.angle.getValue(), 0, 0, 0);
         }
     }
 

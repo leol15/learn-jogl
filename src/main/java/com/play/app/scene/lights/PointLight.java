@@ -2,7 +2,6 @@ package com.play.app.scene.lights;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.basics.Collidable;
 import com.play.app.geometry.Sphere;
 import com.play.app.mesh.Mesh;

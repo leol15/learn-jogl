@@ -29,7 +29,6 @@ public class UnitGeometries {
     private static VAO PlaneVAO;
     private static Map<Integer, VAO> CircleVAO = new HashMap<>();
 
-    private static final int ATTR_SIZE = 3 + 3 + 2;
     private static final int DEFAULT_NUM_SECTIONS = 10;
 
     // must be called to initialize

@@ -40,13 +40,13 @@ root:
         shape:
           mesh: "cube"
           collidable: "cube"
-        isBillboard: false
-        isTransparent: false
+        isBillboard: true
+        isTransparent: true
         force: "0.000 -0.300 0.000"
-        emitTime: 0.0
+        emitTime: 0.001
         TTL: 5.0
-        intialPositionDelta: "0.100 0.300 -0.200"
-        initalVelocity: "-0.000 0.000 0.000"
+        intialPositionDelta: "-0.013 -0.476 -0.340"
+        initalVelocity: "-0.006 0.014 0.021"
   - modelInfo:
       translation: "3.000 1.000 1.000"
       scale: "1.000 1.000 1.000"
@@ -86,5 +86,5 @@ root:
           OBJ_DATA:
             color: "1.000 1.000 0.000 1.000"
             attenuation: "0.010 0.020 1.000"
-            angle: "30.000 0.000 0.000"
+            angle: 60.0
   sceneObject: null

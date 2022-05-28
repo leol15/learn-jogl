@@ -11,12 +11,10 @@ import org.joml.*;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import lombok.extern.log4j.Log4j2;
 
 /**
  * provides UI to edit a Vector3f
  */
-@Log4j2
 @Accessors(chain = true)
 public class VectorXfEditor extends UIBase {
     private static final float INPUT_WIDTH = 70f;

@@ -37,7 +37,6 @@ public class UseLights {
         final SceneManager sceneManager = new SceneManager(windowManager, rootSceneNode, cameraControl);
         // shaders needs to be with cameraControl
         final ShaderProgram simple3DShader = ShaderUtils.getShader("simple3D");
-        final ShaderProgram lineShader = ShaderUtils.getShader("Line");
         final ShaderProgram blinnPhong = ShaderUtils.getShader("BlinnPhong");
 
         // construct scene
@@ -96,7 +95,6 @@ public class UseLights {
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
         while (!glfwWindowShouldClose(window)) {
             // loop
-            double time = glfwGetTime();
             glfwSwapBuffers(window);
 
             sceneManager.render();

@@ -2,7 +2,6 @@ package com.play.app.scene.sceneobject;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.basics.*;
 import com.play.app.geometry.*;
 import com.play.app.mesh.Mesh;

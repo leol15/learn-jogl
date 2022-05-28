@@ -2,8 +2,6 @@ package com.play.app;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
 import java.awt.Color;
 import java.nio.FloatBuffer;
@@ -35,8 +33,6 @@ public class DrawLines {
         ShaderProgram lineShader = ShaderUtils.getShader("Line");
 
         CameraControl cam = new CameraControl(windowManager);
-
-        ShaderProgram simple3DShader = ShaderUtils.getShader("Simple3D");
 
         // ui
         final Button togglePolygonMode = new Button(windowManager, 0, 50, "Toggle Polygon Mode");

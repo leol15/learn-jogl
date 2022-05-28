@@ -20,10 +20,8 @@ import org.lwjgl.glfw.*;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import lombok.extern.log4j.Log4j2;
 
 @Accessors(chain = true)
-@Log4j2
 public class CameraControl {
 
     private static final Vector3f DEFAULT_CAM_POSITION = new Vector3f(3, 4, 5);

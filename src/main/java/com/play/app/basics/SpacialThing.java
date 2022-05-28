@@ -2,16 +2,10 @@ package com.play.app.basics;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.utils.WorldSerializer;
 
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
+import org.joml.*;
 
-import lombok.extern.log4j.Log4j2;
-
-@Log4j2
 public class SpacialThing implements Savable, Loadable {
 
     public final Vector3f scale = new Vector3f(1);

@@ -5,7 +5,6 @@ import java.util.*;
 import java.util.function.BiConsumer;
 
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.basics.*;
 import com.play.app.geometry.Ray;
 import com.play.app.ui.editor.PropertyEditor;
@@ -15,9 +14,7 @@ import org.joml.*;
 
 import lombok.*;
 import lombok.experimental.Accessors;
-import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @Accessors(chain = true)
 public class SceneNode implements Savable {
 

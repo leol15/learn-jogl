@@ -2,11 +2,11 @@ package com.play.app.scene.lights;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.basics.Collidable;
 import com.play.app.geometry.Cube;
 import com.play.app.mesh.Mesh;
 import com.play.app.ui.editor.PropertyEditor;
+import com.play.app.ui.property.FloatProperty;
 import com.play.app.utils.WorldSerializer;
 
 import org.joml.*;
@@ -16,7 +16,7 @@ public class SpotLight implements Light {
 
     public final Vector4f color = new Vector4f(1, 1, 0, 1);
     public final Vector3f attenuation = new Vector3f(0.01f, 0.02f, 1f);
-    public final Vector3f angle = new Vector3f(30, 0, 0); // spot light area in degrees
+    public final FloatProperty angle = new FloatProperty(45); // spot light area in degrees
 
     @Override
     public void addToEditor(PropertyEditor editor) {
@@ -55,7 +55,7 @@ public class SpotLight implements Light {
         writer.writeStartObject();
         writer.writeObjectField("color", color);
         writer.writeObjectField("attenuation", attenuation);
-        writer.writeObjectField("angle", angle);
+        writer.writeObjectField("angle", angle.getValue());
         writer.writeEndObject();
     }
 
@@ -65,7 +65,7 @@ public class SpotLight implements Light {
         reader.consumeStartObject();
         reader.consumeObjectField("color", sl.color);
         reader.consumeObjectField("attenuation", sl.attenuation);
-        reader.consumeObjectField("angle", sl.angle);
+        sl.angle.setValue(reader.consumeFloatField("angle"));
         reader.consumeEndObject();
 
         return sl;

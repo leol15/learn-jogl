@@ -4,21 +4,16 @@ import java.io.IOException;
 import java.util.*;
 
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.dataformat.yaml.*;
-import com.play.app.basics.*;
+import com.play.app.basics.SpacialThing;
 import com.play.app.geometry.Ray;
-import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
 import com.play.app.ui.editor.PropertyEditor;
-import com.play.app.utils.*;
+import com.play.app.utils.WorldSerializer;
 
 import org.joml.*;
 
-import lombok.Setter;
 import lombok.experimental.Accessors;
-import lombok.extern.log4j.Log4j2;
 
-@Log4j2
 @Accessors(chain = true)
 public class InstancingObject implements SceneObject {
 

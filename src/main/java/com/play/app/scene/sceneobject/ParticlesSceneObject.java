@@ -1,11 +1,10 @@
 package com.play.app.scene.sceneobject;
 
-import static org.lwjgl.opengl.GL45.*;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.io.IOException;
 import java.util.*;
 
-import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.basics.SpacialThing;
 import com.play.app.geometry.Cube;
 import com.play.app.mesh.Mesh;

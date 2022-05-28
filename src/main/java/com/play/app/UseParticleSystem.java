@@ -1,7 +1,6 @@
 package com.play.app;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL45.*;
 
 import com.play.app.geometry.Sphere;
 import com.play.app.graphics.*;
@@ -11,7 +10,7 @@ import com.play.app.scene.lights.SpotLight;
 import com.play.app.scene.sceneobject.*;
 import com.play.app.utils.*;
 
-import org.joml.*;
+import org.joml.Random;
 
 public class UseParticleSystem {
     public UseParticleSystem(long window) {
@@ -61,7 +60,6 @@ public class UseParticleSystem {
         final SceneManager sceneManager = new SceneManager(windowManager, rootSN, cameraControl);
         while (!glfwWindowShouldClose(window)) {
             // loop
-            double time = glfwGetTime();
             glfwSwapBuffers(window);
 
             sceneManager.render();

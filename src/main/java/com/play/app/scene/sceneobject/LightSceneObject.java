@@ -2,7 +2,6 @@ package com.play.app.scene.sceneobject;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.scene.SceneObjectVisitor;
 import com.play.app.scene.lights.Light;
 import com.play.app.ui.editor.PropertyEditor;
