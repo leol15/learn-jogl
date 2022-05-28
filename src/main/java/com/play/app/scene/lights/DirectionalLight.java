@@ -2,7 +2,7 @@ package com.play.app.scene.lights;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.basics.Collidable;
 import com.play.app.geometry.Cube;
 import com.play.app.mesh.Mesh;
@@ -48,11 +48,15 @@ public class DirectionalLight implements Light {
     }
 
     @Override
-    public void save(YAMLGenerator generator) throws IOException {
-        generator.writeStartObject();
-        WorldSerializer.writeObjectType(this.getClass(), generator);
-        WorldSerializer.writeObjectField("color", color, generator);
-        generator.writeEndObject();
+    public void save(WorldSerializer writer) throws IOException {
+        writer.writeStartObject();
+        writer.writeObjectType(this.getClass());
+        writer.writeObjectField("color", color);
+        writer.writeEndObject();
+    }
+
+    public static DirectionalLight load(YAMLParser parser) {
+        return null;
     }
 
 }

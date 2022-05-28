@@ -3,8 +3,7 @@ package com.play.app.scene.lights;
 import java.awt.Color;
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.play.app.basics.SaveLoad;
+import com.play.app.basics.*;
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.ui.property.FloatProperty;
@@ -12,7 +11,7 @@ import com.play.app.utils.*;
 
 import org.joml.*;
 
-public class LightingMaterial implements SaveLoad {
+public class LightingMaterial implements Savable, Loadable {
     public final Vector4f color = new Vector4f(1, 1, 1, 1);
     public final FloatProperty specularHardness = new FloatProperty(100);
 
@@ -41,10 +40,17 @@ public class LightingMaterial implements SaveLoad {
     }
 
     @Override
-    public void save(YAMLGenerator generator) throws IOException {
-        generator.writeStartObject();
-        WorldSerializer.writeObjectField("color", color, generator);
-        WorldSerializer.writeObjectField("specularHardness", specularHardness.getValue(), generator);
-        generator.writeEndObject();
+    public void save(WorldSerializer writer) throws IOException {
+        writer.writeStartObject();
+        writer.writeObjectField("color", color);
+        writer.writeObjectField("specularHardness", specularHardness.getValue());
+        writer.writeEndObject();
+    }
+
+    public void load(WorldSerializer reader) throws IOException {
+        reader.consumeStartObject();
+        reader.consumeObjectField("color", color);
+        specularHardness.setValue(reader.consumeFloatField("specularHardness"));
+        reader.consumeEndObject();
     }
 }

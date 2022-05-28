@@ -2,7 +2,7 @@ package com.play.app.scene.sceneobject;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.basics.*;
 import com.play.app.graphics.*;
 import com.play.app.scene.lights.LightingMaterial;
@@ -18,7 +18,7 @@ import lombok.experimental.Accessors;
  * Manages the shader for a SO and some shader related data
  */
 @Accessors(chain = true)
-public class SORenderProperty implements Editable, SaveLoad {
+public class SORenderProperty implements Editable, Savable, Loadable {
     @Setter
     public ShaderProgram shader;
     @Setter
@@ -52,11 +52,24 @@ public class SORenderProperty implements Editable, SaveLoad {
     }
 
     @Override
-    public void save(YAMLGenerator generator) throws IOException {
-        generator.writeStartObject();
-        WorldSerializer.writeObjectField("shader", shader, generator);
-        WorldSerializer.writeObjectField("texture", texture, generator);
-        WorldSerializer.writeObjectField("material", material, generator);
-        generator.writeEndObject();
+    public void save(WorldSerializer writer) throws IOException {
+        writer.writeStartObject();
+        writer.writeObjectField("shader", shader);
+        writer.writeObjectField("texture", texture);
+        writer.writeObjectField("material", material);
+        writer.writeEndObject();
+    }
+
+    @Override
+    public void load(WorldSerializer reader) throws IOException {
+        reader.consumeStartObject();
+
+        reader.consumeFieldName("shader");
+        shader = ShaderProgram.create(reader);
+        reader.consumeFieldName("texture");
+        texture = Texture.create(reader);
+        reader.consumeObjectField("material", material);
+
+        reader.consumeEndObject();
     }
 }

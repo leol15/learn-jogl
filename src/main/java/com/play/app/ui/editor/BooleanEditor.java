@@ -14,7 +14,6 @@ public class BooleanEditor extends UIBase {
         stateButton = new Button(windowManager, x, y, "null");
         stateButton.setAction(() -> {
             if (booleanProperty != null) {
-                Func.p("updateing bool");
                 booleanProperty.setValue(!booleanProperty.getValue());
                 updateDisplay();
             }

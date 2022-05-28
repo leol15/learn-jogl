@@ -4,8 +4,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.play.app.basics.SpacialThing;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.dataformat.yaml.*;
+import com.play.app.basics.*;
 import com.play.app.geometry.Ray;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.utils.*;
@@ -18,10 +19,10 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Accessors(chain = true)
-public class SceneNode {
+public class SceneNode implements Savable {
 
     public final SpacialThing modelInfo = new SpacialThing();
-    private Set<SceneNode> children = new HashSet<>();
+    private final Set<SceneNode> children = new HashSet<>();
     private SceneNode parent = null;
 
     @Getter
@@ -144,22 +145,41 @@ public class SceneNode {
         }
     }
 
-    public void save(YAMLGenerator generator) throws IOException {
-        generator.writeStartObject();
+    @Override
+    public void save(WorldSerializer writer) throws IOException {
+        writer.writeStartObject();
 
-        // model
-        WorldSerializer.writeObjectField("modelInfo", modelInfo, generator);
+        writer.writeObjectField("modelInfo", modelInfo);
 
-        // children
-        generator.writeArrayFieldStart("children");
+        writer.writeArrayFieldStart("children");
         for (final SceneNode child : children) {
-            child.save(generator);
+            child.save(writer);
         }
-        generator.writeEndArray();
+        writer.writeEndArray();
 
-        // content
-        WorldSerializer.writeObjectField("sceneObject", sceneObject, generator);
-        generator.writeEndObject();
+        writer.writeInterfaceField("sceneObject", sceneObject);
+
+        writer.writeEndObject();
+    }
+
+    public static SceneNode create(WorldSerializer reader) throws IOException {
+        final SceneNode node = new SceneNode();
+        reader.consumeStartObject();
+
+        reader.consumeObjectField("modelInfo", node.modelInfo);
+
+        reader.consumeArrayFieldStart("children");
+        while (reader.currentToken() != JsonToken.END_ARRAY) {
+            final SceneNode child = SceneNode.create(reader);
+            child.parent = node;
+            node.children.add(child);
+        }
+        reader.consumeEndArray();
+
+        node.sceneObject = (SceneObject) reader.consumeInterfaceField("sceneObject");
+
+        reader.consumeEndObject();
+        return node;
     }
 
 }

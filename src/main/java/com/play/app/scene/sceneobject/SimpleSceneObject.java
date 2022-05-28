@@ -2,7 +2,7 @@ package com.play.app.scene.sceneobject;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.geometry.Ray;
 import com.play.app.scene.*;
 import com.play.app.ui.editor.PropertyEditor;
@@ -44,17 +44,24 @@ public class SimpleSceneObject implements SceneObject {
     }
 
     @Override
-    public void save(YAMLGenerator generator) throws IOException {
-        generator.writeStartObject();
-        WorldSerializer.writeObjectType(this.getClass(), generator);
-        WorldSerializer.writeObjectField("property", property, generator);
-        WorldSerializer.writeObjectField("shape", shape, generator);
-        generator.writeEndObject();
-    }
-
-    @Override
     public boolean hasTransparency() {
         return property.material.hasTransparency();
     }
 
+    @Override
+    public void save(WorldSerializer writer) throws IOException {
+        writer.writeStartObject();
+        writer.writeObjectField("property", property);
+        writer.writeObjectField("shape", shape);
+        writer.writeEndObject();
+    }
+
+    public static SimpleSceneObject create(WorldSerializer reader) throws IOException {
+        final SimpleSceneObject sso = new SimpleSceneObject();
+        reader.consumeStartObject();
+        reader.consumeObjectField("property", sso.property);
+        reader.consumeObjectField("shape", sso.shape);
+        reader.consumeEndObject();
+        return sso;
+    }
 }

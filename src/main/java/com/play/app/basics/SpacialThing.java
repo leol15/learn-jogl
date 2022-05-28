@@ -2,14 +2,17 @@ package com.play.app.basics;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.utils.WorldSerializer;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class SpacialThing implements SaveLoad {
+import lombok.extern.log4j.Log4j2;
+
+@Log4j2
+public class SpacialThing implements Savable, Loadable {
 
     public final Vector3f scale = new Vector3f(1);
     public final Quaternionf rotation = new Quaternionf();
@@ -26,12 +29,20 @@ public class SpacialThing implements SaveLoad {
         return this;
     }
 
-    public void save(YAMLGenerator generator) throws IOException {
-        generator.writeStartObject();
-        WorldSerializer.writeObjectField("translation", translation, generator);
-        WorldSerializer.writeObjectField("scale", scale, generator);
-        WorldSerializer.writeObjectField("rotation", rotation, generator);
-        generator.writeEndObject();
+    public void save(WorldSerializer writer) throws IOException {
+        writer.writeStartObject();
+        writer.writeObjectField("translation", translation);
+        writer.writeObjectField("scale", scale);
+        writer.writeObjectField("rotation", rotation);
+        writer.writeEndObject();
+    }
+
+    public void load(WorldSerializer reader) throws IOException {
+        reader.consumeStartObject();
+        reader.consumeObjectField("translation", translation);
+        reader.consumeObjectField("scale", scale);
+        reader.consumeObjectField("rotation", rotation);
+        reader.consumeEndObject();
     }
 
 }

@@ -3,20 +3,25 @@ package com.play.app.graphics;
 
 import org.lwjgl.*;
 
+import lombok.extern.log4j.Log4j2;
+
 import java.io.IOException;
 import java.nio.*;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.play.app.basics.SaveLoad;
+import com.fasterxml.jackson.dataformat.yaml.*;
+import com.play.app.basics.*;
+import com.play.app.utils.WorldSerializer;
 
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
 import static org.lwjgl.stb.STBImage.*;
 
-public class Texture implements SaveLoad {
+@Log4j2
+public class Texture implements Savable {
 
     private int id;
     private int width, height;
+    private String textureFilePath;
 
     public Texture() {
         id = glGenTextures();
@@ -30,6 +35,7 @@ public class Texture implements SaveLoad {
 
     public Texture(String path) {
         this();
+        textureFilePath = path;
         loadTexture(path);
     }
 
@@ -119,9 +125,17 @@ public class Texture implements SaveLoad {
     }
 
     @Override
-    public void save(YAMLGenerator generator) throws IOException {
-        // TODO Auto-generated method stub
-        generator.writeString("Texture Stub");
+    public void save(WorldSerializer writer) throws IOException {
+        writer.writeString(textureFilePath);
+    }
+
+    public static Texture create(WorldSerializer reader) throws IOException {
+        final String path = reader.consumeString();
+        if (path == null || path.equals("null")) {
+            return null;
+        } else {
+            return new Texture(path);
+        }
     }
 
 }

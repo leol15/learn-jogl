@@ -5,7 +5,7 @@ import static org.lwjgl.opengl.GL45.*;
 import java.io.IOException;
 import java.util.*;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.basics.SpacialThing;
 import com.play.app.geometry.Cube;
 import com.play.app.mesh.Mesh;
@@ -125,19 +125,34 @@ public class ParticlesSceneObject extends SimpleSceneObject {
     }
 
     @Override
-    public void save(YAMLGenerator generator) throws IOException {
-        generator.writeStartObject();
-        WorldSerializer.writeObjectField("property", property, generator);
-        WorldSerializer.writeObjectField("shape", shape, generator);
-        WorldSerializer.writeObjectType(this.getClass(), generator);
-        WorldSerializer.writeObjectField("isBillboard", isBillboard.getValue(), generator);
-        WorldSerializer.writeObjectField("isTransparent", isTransparent.getValue(), generator);
-        WorldSerializer.writeObjectField("force", force, generator);
-        WorldSerializer.writeObjectField("emitTime", emitTime.getValue(), generator);
-        WorldSerializer.writeObjectField("TTL", TTL.getValue(), generator);
-        WorldSerializer.writeObjectField("intialPositionDelta", intialPositionDelta, generator);
-        WorldSerializer.writeObjectField("initalVelocity", initalVelocity, generator);
-        generator.writeEndObject();
+    public void save(WorldSerializer writer) throws IOException {
+        writer.writeStartObject();
+        writer.writeObjectField("property", property);
+        writer.writeObjectField("shape", shape);
+        writer.writeObjectField("isBillboard", isBillboard.getValue());
+        writer.writeObjectField("isTransparent", isTransparent.getValue());
+        writer.writeObjectField("force", force);
+        writer.writeObjectField("emitTime", emitTime.getValue());
+        writer.writeObjectField("TTL", TTL.getValue());
+        writer.writeObjectField("intialPositionDelta", intialPositionDelta);
+        writer.writeObjectField("initalVelocity", initalVelocity);
+        writer.writeEndObject();
+    }
+
+    public static ParticlesSceneObject create(WorldSerializer reader) throws IOException {
+        final ParticlesSceneObject pso = new ParticlesSceneObject(reader.GLOBAL_DATA.cameraControl);
+        reader.consumeStartObject();
+        reader.consumeObjectField("property", pso.property);
+        reader.consumeObjectField("shape", pso.shape);
+        pso.isBillboard.setValue(reader.consumeBooleanField("isBillboard"));
+        pso.isTransparent.setValue(reader.consumeBooleanField("isTransparent"));
+        reader.consumeObjectField("force", pso.force);
+        pso.emitTime.setValue(reader.consumeFloatField("emitTime"));
+        pso.TTL.setValue(reader.consumeFloatField("TTL"));
+        reader.consumeObjectField("intialPositionDelta", pso.intialPositionDelta);
+        reader.consumeObjectField("initalVelocity", pso.initalVelocity);
+        reader.consumeEndObject();
+        return pso;
     }
 
     // dt is in seconds

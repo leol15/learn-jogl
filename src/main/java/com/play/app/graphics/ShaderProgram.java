@@ -7,8 +7,7 @@ import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.play.app.basics.SaveLoad;
+import com.play.app.basics.*;
 import com.play.app.utils.*;
 
 import org.joml.*;
@@ -16,7 +15,7 @@ import org.joml.*;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class ShaderProgram implements SaveLoad {
+public class ShaderProgram implements Savable {
 
     private int id;
     private final FloatBuffer tmpMatrixBuffer = Func.newMatBuffer();
@@ -118,9 +117,13 @@ public class ShaderProgram implements SaveLoad {
     }
 
     @Override
-    public void save(YAMLGenerator generator) throws IOException {
+    public void save(WorldSerializer writer) throws IOException {
         // a bit weird, should save the shader path info, instead of the shader shource code
-        ShaderUtils.save(this, generator);
+        ShaderUtils.save(this, writer);
+    }
+
+    public static ShaderProgram create(WorldSerializer reader) throws IOException {
+        return ShaderUtils.load(reader);
     }
 
 }

@@ -2,7 +2,7 @@ package com.play.app.scene.sceneobject;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.scene.SceneObjectVisitor;
 import com.play.app.scene.lights.Light;
 import com.play.app.ui.editor.PropertyEditor;
@@ -16,15 +16,22 @@ public class LightSceneObject extends SimpleSceneObject {
 
     public LightSceneObject(Light light) {
         super();
-
-        this.light = light;
-        shape.mesh = light.getDebugMesh();
-        shape.collidable = light.getDebugCollidable();
+        // debug shader
         property.shader = ShaderUtils.getShader("Simple3D");
+        setLight(light);
     }
 
     public Light getLight() {
         return light;
+    }
+
+    public LightSceneObject setLight(Light l) {
+        light = l;
+        if (light != null) {
+            shape.mesh = light.getDebugMesh();
+            shape.collidable = light.getDebugCollidable();
+        }
+        return this;
     }
 
     @Override
@@ -50,12 +57,21 @@ public class LightSceneObject extends SimpleSceneObject {
     }
 
     @Override
-    public void save(YAMLGenerator generator) throws IOException {
-        generator.writeStartObject();
-        WorldSerializer.writeObjectType(this.getClass(), generator);
-        WorldSerializer.writeObjectField("property", property, generator);
-        WorldSerializer.writeObjectField("shape", shape, generator);
-        WorldSerializer.writeObjectField("light", light, generator);
-        generator.writeEndObject();
+    public void save(WorldSerializer writer) throws IOException {
+        writer.writeStartObject();
+        writer.writeObjectField("property", property);
+        writer.writeObjectField("shape", shape);
+        writer.writeInterfaceField("light", light);
+        writer.writeEndObject();
+    }
+
+    public static LightSceneObject create(WorldSerializer reader) throws IOException {
+        final LightSceneObject lso = new LightSceneObject(null);
+        reader.consumeStartObject();
+        reader.consumeObjectField("property", lso.property);
+        reader.consumeObjectField("shape", lso.shape);
+        lso.setLight((Light) reader.consumeInterfaceField("light"));
+        reader.consumeEndObject();
+        return lso;
     }
 }

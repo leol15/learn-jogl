@@ -11,7 +11,8 @@ run:
 # recursive development
 dev:
 	mvn compile exec:java -Dexec.mainClass="com.play.app.App" \
-		-Dlog4j2.configurationFile="target/log4j.properties"
+		-Dlog4j2.configurationFile="target/log4j.properties" \
+		-DLOG4J_SKIP_JANSI=false
 	make
 
 clean:

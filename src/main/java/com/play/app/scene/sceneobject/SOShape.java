@@ -2,11 +2,12 @@ package com.play.app.scene.sceneobject;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.basics.*;
-import com.play.app.geometry.Ray;
+import com.play.app.geometry.*;
 import com.play.app.mesh.Mesh;
 import com.play.app.ui.editor.PropertyEditor;
+import com.play.app.utils.WorldSerializer;
 
 import org.joml.*;
 
@@ -17,7 +18,7 @@ import lombok.experimental.Accessors;
  * Manages both the rendered shape and the collidable in scene editor
  */
 @Accessors(chain = true)
-public class SOShape implements Editable, SaveLoad {
+public class SOShape implements Editable, Savable, Loadable {
     @Setter
     public Mesh mesh;
     @Setter
@@ -45,12 +46,21 @@ public class SOShape implements Editable, SaveLoad {
     }
 
     @Override
-    public void save(YAMLGenerator generator) throws IOException {
+    public void save(WorldSerializer writer) throws IOException {
         // TODO hmmm
-        generator.writeStartObject();
-        // public Mesh mesh;
-        // @Setter
-        // public Collidable collidable;
-        generator.writeEndObject();
+        writer.writeStartObject();
+        writer.writeObjectField("mesh", "cube");
+        writer.writeObjectField("collidable", "cube");
+        writer.writeEndObject();
+    }
+
+    @Override
+    public void load(WorldSerializer reader) throws IOException {
+        reader.consumeStartObject();
+        reader.consumeStringField("mesh");
+        reader.consumeStringField("collidable");
+        mesh = Mesh.CUBE;
+        collidable = new Cube();
+        reader.consumeEndObject();
     }
 }

@@ -3,13 +3,14 @@ package com.play.app.scene.sceneobject;
 import java.io.IOException;
 import java.util.*;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.basics.*;
 import com.play.app.geometry.Ray;
 import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
 import com.play.app.ui.editor.PropertyEditor;
-import com.play.app.utils.CONST;
+import com.play.app.utils.*;
 
 import org.joml.*;
 
@@ -96,9 +97,35 @@ public class InstancingObject implements SceneObject {
     }
 
     @Override
-    public void save(YAMLGenerator generator) throws IOException {
-        generator.writeString("InstancingObject stub");
+    public void save(WorldSerializer writer) throws IOException {
+        writer.writeStartObject();
+        writer.writeObjectField("property", property);
+        writer.writeObjectField("shape", shape);
+        writer.writeArrayFieldStart("instances");
+        for (final SpacialThing i : instances) {
+            writer.writeObject(i);
+        }
+        writer.writeEndArray();
+        writer.writeEndObject();
+    }
 
+    public static InstancingObject create(WorldSerializer reader) throws IOException {
+        final InstancingObject io = new InstancingObject();
+        reader.consumeStartObject();
+
+        reader.consumeObjectField("property", io.property);
+        reader.consumeObjectField("shape", io.shape);
+
+        reader.consumeArrayFieldStart("instances");
+        while (reader.currentToken() != JsonToken.END_ARRAY) {
+            final SpacialThing i = new SpacialThing();
+            i.load(reader);
+            io.addInstance(i);
+        }
+        reader.consumeEndArray();
+
+        reader.consumeEndObject();
+        return io;
     }
 
     @Override

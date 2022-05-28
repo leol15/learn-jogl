@@ -6,7 +6,7 @@ import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 import java.io.*;
 import java.util.*;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.graphics.ShaderProgram;
 
 import lombok.extern.log4j.Log4j2;
@@ -103,7 +103,12 @@ public class ShaderUtils {
     }
 
     // save just the name to file
-    public static void save(ShaderProgram shader, YAMLGenerator generator) throws IOException {
-        generator.writeString(getShaderName(shader));
+    public static void save(ShaderProgram shader, WorldSerializer writer) throws IOException {
+        writer.writeString(getShaderName(shader));
+    }
+
+    public static ShaderProgram load(WorldSerializer reader) throws IOException {
+        final String name = reader.consumeString();
+        return getShader(name);
     }
 }

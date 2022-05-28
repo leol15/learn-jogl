@@ -1,77 +1,90 @@
 ---
-WORLD_FILE: "v1"
+FILE_VERSION: "v1"
 root:
   modelInfo:
-    translation: "0.000, 0.000, 0.000"
-    scale: "1.000, 1.000, 1.000"
-    rotation: "0.000, 0.000, 0.000, 1.000"
+    translation: "0.000 0.000 0.000"
+    scale: "1.000 1.000 1.000"
+    rotation: "0.000 0.000 0.000 1.000"
   children:
   - modelInfo:
-      translation: "3.000, 1.000, 1.000"
-      scale: "1.000, 1.000, 1.000"
-      rotation: "0.000, 0.000, 0.000, 1.000"
+      translation: "1.000 1.000 1.000"
+      scale: "1.000 1.000 1.000"
+      rotation: "0.000 0.000 0.000 1.000"
     children: []
     sceneObject:
       OBJ_TYPE: "com.play.app.scene.sceneobject.SimpleSceneObject"
-      property:
-        shader: "Simple3D"
-        texture: null
-        material:
-          color: "0.000, 1.000, 0.000, 1.000"
-          specularHardness: 100.0
-      shape: {}
+      OBJ_DATA:
+        property:
+          shader: "Simple3D"
+          texture: null
+          material:
+            color: "1.000 0.000 0.000 0.500"
+            specularHardness: 100.0
+        shape:
+          mesh: "cube"
+          collidable: "cube"
   - modelInfo:
-      translation: "0.000, 2.000, 0.000"
-      scale: "1.000, 1.000, 1.000"
-      rotation: "0.000, 0.000, 0.000, 1.000"
+      translation: "0.000 0.000 0.000"
+      scale: "1.000 1.000 1.000"
+      rotation: "0.000 0.000 0.000 1.000"
+    children: []
+    sceneObject:
+      OBJ_TYPE: "com.play.app.scene.sceneobject.ParticlesSceneObject"
+      OBJ_DATA:
+        property:
+          shader: "BlinnPhong"
+          texture: "resources/textures/dash.png"
+          material:
+            color: "0.000 0.300 0.600 1.000"
+            specularHardness: 100.0
+        shape:
+          mesh: "cube"
+          collidable: "cube"
+        isBillboard: false
+        isTransparent: false
+        force: "0.000 -0.300 0.000"
+        emitTime: 0.0
+        TTL: 5.0
+        intialPositionDelta: "0.100 0.300 -0.200"
+        initalVelocity: "-0.000 0.000 0.000"
+  - modelInfo:
+      translation: "3.000 1.000 1.000"
+      scale: "1.000 1.000 1.000"
+      rotation: "0.000 0.000 0.000 1.000"
+    children: []
+    sceneObject:
+      OBJ_TYPE: "com.play.app.scene.sceneobject.SimpleSceneObject"
+      OBJ_DATA:
+        property:
+          shader: "Simple3D"
+          texture: null
+          material:
+            color: "0.000 1.000 0.000 0.500"
+            specularHardness: 100.0
+        shape:
+          mesh: "cube"
+          collidable: "cube"
+  - modelInfo:
+      translation: "0.000 2.000 0.000"
+      scale: "1.000 1.000 1.000"
+      rotation: "0.000 0.000 0.000 1.000"
     children: []
     sceneObject:
       OBJ_TYPE: "com.play.app.scene.sceneobject.LightSceneObject"
-      property:
-        shader: "Simple3D"
-        texture: null
-        material:
-          color: "1.000, 1.000, 0.000, 1.000"
-          specularHardness: 100.0
-      shape: {}
-      light:
-        OBJ_TYPE: "com.play.app.scene.lights.SpotLight"
-        color: "1.000, 1.000, 0.000, 1.000"
-        attenuation: "0.010, 0.020, 1.000"
-        angle: "30.000, 0.000, 0.000"
-  - modelInfo:
-      translation: "0.000, 0.000, 0.000"
-      scale: "1.000, 1.000, 1.000"
-      rotation: "0.000, 0.000, 0.000, 1.000"
-    children: []
-    sceneObject:
-      property:
-        shader: "BlinnPhong"
-        texture: "Texture Stub"
-        material:
-          color: "1.000, 1.000, 1.000, 1.000"
-          specularHardness: 100.0
-      shape: {}
-      OBJ_TYPE: "com.play.app.scene.sceneobject.ParticlesSceneObject"
-      isBillboard: false
-      isTransparent: false
-      force: "0.000, -0.300, 0.000"
-      emitTime: 0.0
-      TTL: 5.0
-      intialPositionDelta: "-0.481, 0.263, 0.301"
-      initalVelocity: "0.023, -0.011, 0.005"
-  - modelInfo:
-      translation: "1.000, 1.000, 1.000"
-      scale: "1.000, 1.000, 1.000"
-      rotation: "0.000, 0.000, 0.000, 1.000"
-    children: []
-    sceneObject:
-      OBJ_TYPE: "com.play.app.scene.sceneobject.SimpleSceneObject"
-      property:
-        shader: "Simple3D"
-        texture: null
-        material:
-          color: "1.000, 0.000, 0.000, 1.000"
-          specularHardness: 100.0
-      shape: {}
+      OBJ_DATA:
+        property:
+          shader: "Simple3D"
+          texture: null
+          material:
+            color: "1.000 1.000 0.000 1.000"
+            specularHardness: 100.0
+        shape:
+          mesh: "cube"
+          collidable: "cube"
+        light:
+          OBJ_TYPE: "com.play.app.scene.lights.SpotLight"
+          OBJ_DATA:
+            color: "1.000 1.000 0.000 1.000"
+            attenuation: "0.010 0.020 1.000"
+            angle: "30.000 0.000 0.000"
   sceneObject: null

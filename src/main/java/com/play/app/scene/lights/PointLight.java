@@ -2,7 +2,7 @@ package com.play.app.scene.lights;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.basics.Collidable;
 import com.play.app.geometry.Sphere;
 import com.play.app.mesh.Mesh;
@@ -43,12 +43,22 @@ public class PointLight implements Light {
     }
 
     @Override
-    public void save(YAMLGenerator generator) throws IOException {
-        generator.writeStartObject();
-        WorldSerializer.writeObjectType(this.getClass(), generator);
-        WorldSerializer.writeObjectField("color", color, generator);
-        WorldSerializer.writeObjectField("attenuation", attenuation, generator);
-        generator.writeEndObject();
+    public void save(WorldSerializer writer) throws IOException {
+        writer.writeStartObject();
+        writer.writeObjectField("color", color);
+        writer.writeObjectField("attenuation", attenuation);
+        writer.writeEndObject();
+    }
+
+    public static PointLight load(WorldSerializer reader) throws IOException {
+        final PointLight pl = new PointLight();
+
+        reader.consumeStartObject();
+        reader.consumeObjectField("color", pl.color);
+        reader.consumeObjectField("attenuation", pl.attenuation);
+        reader.consumeEndObject();
+
+        return pl;
     }
 
 }
