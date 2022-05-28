@@ -6,7 +6,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.play.app.geometry.Ray;
 import com.play.app.scene.*;
 import com.play.app.ui.editor.PropertyEditor;
-import com.play.app.utils.WorldSerializer;
+import com.play.app.utils.*;
 
 import org.joml.*;
 
@@ -50,6 +50,11 @@ public class SimpleSceneObject implements SceneObject {
         WorldSerializer.writeObjectField("property", property, generator);
         WorldSerializer.writeObjectField("shape", shape, generator);
         generator.writeEndObject();
+    }
+
+    @Override
+    public boolean hasTransparency() {
+        return property.material.hasTransparency();
     }
 
 }

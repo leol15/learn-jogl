@@ -1,7 +1,9 @@
 package com.play.app;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL45.*;
 
+import com.play.app.geometry.Sphere;
 import com.play.app.graphics.*;
 import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
@@ -22,7 +24,6 @@ public class UseParticleSystem {
         rootSN.createChild().setSceneObject(pSO);
         pSO.shape.setMesh(Mesh.CUBE);
         pSO.property.setShader(ShaderUtils.getShader("BlinnPhong"));
-        // pSO.setShader(ShaderUtils.getShader("Texture"));
         pSO.force.set(0, -0.3, 0);
         pSO.TTL.setValue(5);
         pSO.emitTime.setValue(0.001f);
@@ -30,6 +31,20 @@ public class UseParticleSystem {
 
         final Texture treeTex = new Texture(CONST.TEXTURE_FOLDER + "dash.png");
         pSO.property.setTexture(treeTex);
+
+        final SimpleSceneObject sphereSO = new SimpleSceneObject();
+        sphereSO.property.setShader(ShaderUtils.getShader("Simple3D"));
+        sphereSO.shape.setMesh(Mesh.createSphereMesh(20)).setCollidable(new Sphere());
+        sphereSO.property.material.color.set(1, 0, 0, 0.5);
+        final SceneNode sphereNode = rootSN.createChild().setSceneObject(sphereSO);
+        sphereNode.modelInfo.translation.set(1, 1, 1);
+
+        final SimpleSceneObject sphereSO2 = new SimpleSceneObject();
+        sphereSO2.property.setShader(ShaderUtils.getShader("Simple3D"));
+        sphereSO2.shape.setMesh(Mesh.createSphereMesh(20)).setCollidable(new Sphere());
+        sphereSO2.property.material.color.set(0, 1, 0, 0.5);
+        final SceneNode sphereNode2 = rootSN.createChild().setSceneObject(sphereSO2);
+        sphereNode2.modelInfo.translation.set(3, 1, 1);
 
         final Random rand = new Random(100);
 
@@ -64,7 +79,7 @@ public class UseParticleSystem {
             particleCount.setText("Particle Count: " + pSO.getParticleCount());
 
             // debug
-            lightSN.draw(new Matrix4f());
+            // lightSN.draw(new Matrix4f());
             glfwPollEvents();
         }
 

@@ -2,12 +2,6 @@ package com.play.app.utils;
 
 import static org.lwjgl.opengl.GL11.*;
 
-import java.io.*;
-
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.*;
-import com.play.app.basics.SpacialThing;
 import com.play.app.geometry.Ray;
 import com.play.app.scene.*;
 import com.play.app.scene.lights.LightUBO;
@@ -80,10 +74,30 @@ public class SceneManager {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         LightUBO.getInstance().addAllLights(root);
         // draw
+        // since the scene has tranparent things, we need to draw transparent things last
+        CONST.drawTransparent = false;
+        glDepthMask(true);
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
         root.draw(identity);
 
-        saveButton.show();
+        // draw transparent things
+        CONST.drawTransparent = true;
+        glDepthMask(false);
+        glEnable(GL_BLEND);
+        // TODO better blending function
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        // glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE);
+        root.draw(identity);
+
+        glDepthMask(true);
         cam.draw();
+        // draw UI with no depth info
+        glClear(GL_DEPTH_BUFFER_BIT);
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        saveButton.show();
         editor.show();
     }
 

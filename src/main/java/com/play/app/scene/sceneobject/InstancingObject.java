@@ -101,4 +101,9 @@ public class InstancingObject implements SceneObject {
 
     }
 
+    @Override
+    public boolean hasTransparency() {
+        return property.material.hasTransparency();
+    }
+
 }

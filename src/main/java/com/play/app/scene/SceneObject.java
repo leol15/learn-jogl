@@ -11,4 +11,7 @@ import org.joml.Matrix4f;
 public interface SceneObject extends Drawable, Selectable, Editable, SaveLoad {
     // perform some special action
     public void accept(SceneObjectVisitor visitor, Matrix4f worldTransform);
+
+    // to try handle transparency
+    public boolean hasTransparency();
 }

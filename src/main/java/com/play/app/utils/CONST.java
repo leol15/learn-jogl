@@ -36,4 +36,7 @@ public class CONST {
     // material info
     public static final String MATERIAL_COLOR = "materialColor";
     public static final String MATERIAL_SPECULAR_HARDNESS = "materialSpecularness";
+
+    // TODO, bad bad bad
+    public static boolean drawTransparent = false;
 }

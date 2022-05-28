@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-import com.fasterxml.jackson.annotation.JsonFormat.Feature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.play.app.basics.*;
+import com.play.app.basics.SpacialThing;
 import com.play.app.geometry.Ray;
 import com.play.app.ui.editor.PropertyEditor;
-import com.play.app.utils.WorldSerializer;
+import com.play.app.utils.*;
 
 import org.joml.*;
 
@@ -50,6 +49,10 @@ public class SceneNode {
     public void draw(final Matrix4f transform) {
         treeTransformVisitor(this, transform, (node, newTransform) -> {
             if (node.sceneObject != null) {
+                if (node.sceneObject.hasTransparency() ^ CONST.drawTransparent) {
+                    // not draw
+                    return;
+                }
                 node.sceneObject.draw(newTransform);
             }
         });

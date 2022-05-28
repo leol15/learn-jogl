@@ -29,7 +29,7 @@ public class LightSceneObject extends SimpleSceneObject {
 
     @Override
     public void addToEditor(PropertyEditor editor) {
-        super.addToEditor(editor);
+        // does not add shape or property, they are fixed
         light.addToEditor(editor);
     }
 

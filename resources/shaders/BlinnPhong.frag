@@ -53,8 +53,6 @@ void calculateDirLight(in int index, out vec3 color);
 void calculateSpotLight(in int index, out vec3 color);
 
 void main() {
-    // ambinent light
-    vec3 ambinent = materialColor.rgb * ambientColor;
     vec3 color = vec3(0);
     vec3 finalColor = vec3(0);
     // point light
@@ -73,10 +71,14 @@ void main() {
         finalColor = finalColor + color;
     }
 
-    fragColor = vec4(finalColor + ambinent, 1);
+    // ambinent light
+    vec3 ambinent = materialColor.rgb * ambientColor;
+
+    fragColor = vec4(finalColor + ambinent, materialColor.a);
     capColor(fragColor);
 
     // debug
+    // fragColor = vec4(1, 0, 0, 1);
     // fragColor = vec4(numActiveLights.xyz, 1);
 }
 

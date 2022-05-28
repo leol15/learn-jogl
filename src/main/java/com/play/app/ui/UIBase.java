@@ -146,7 +146,6 @@ public class UIBase {
         glPolygonMode(GL_FRONT, oldPolygonMode);
 
         // so subsequent draw can appear, TODO maybe just disable it
-        glClear(GL_DEPTH_BUFFER_BIT);
     }
 
     protected UIBase setBackgroundColor(final Vector4f color) {

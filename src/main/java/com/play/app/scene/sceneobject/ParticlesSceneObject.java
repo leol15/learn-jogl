@@ -1,6 +1,6 @@
 package com.play.app.scene.sceneobject;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL45.*;
 
 import java.io.IOException;
 import java.util.*;
@@ -52,17 +52,20 @@ public class ParticlesSceneObject extends SimpleSceneObject {
 
     @Override
     public void draw(Matrix4f transform) {
-        // transparency sort
-        if (isTransparent.getValue()) {
-            sortByDistToCamera(transform);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-        }
-
-        lastTransform.set(transform);
-
         // draw debug thing
         super.draw(transform);
+
         // draw the particles
+        lastTransform.set(transform);
+
+        // transparency sort
+        if (isTransparent.getValue()) {
+            // seems like now no need to sort,
+            // but additive blending is needed.
+            // sortByDistToCamera(transform);
+            // TODO: better blending function
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+        }
 
         if (shape.mesh == null) {
             return;
@@ -99,6 +102,11 @@ public class ParticlesSceneObject extends SimpleSceneObject {
 
         // debug
         update(1f / 60f);
+    }
+
+    @Override
+    public boolean hasTransparency() {
+        return property.material.hasTransparency() || isTransparent.getValue();
     }
 
     @Override

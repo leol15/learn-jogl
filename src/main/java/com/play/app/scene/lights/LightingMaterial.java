@@ -21,6 +21,10 @@ public class LightingMaterial implements SaveLoad {
         shader.uniformf(CONST.MATERIAL_SPECULAR_HARDNESS, specularHardness.getValue());
     }
 
+    public boolean hasTransparency() {
+        return color.w < 1;
+    }
+
     public LightingMaterial setColor(final Color color) {
         this.setColor(Func.toVec4(color));
         return this;

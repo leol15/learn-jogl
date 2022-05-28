@@ -7,26 +7,19 @@ root:
     rotation: "0.000, 0.000, 0.000, 1.000"
   children:
   - modelInfo:
-      translation: "0.000, 0.000, 0.000"
+      translation: "3.000, 1.000, 1.000"
       scale: "1.000, 1.000, 1.000"
       rotation: "0.000, 0.000, 0.000, 1.000"
     children: []
     sceneObject:
+      OBJ_TYPE: "com.play.app.scene.sceneobject.SimpleSceneObject"
       property:
-        shader: "BlinnPhong"
-        texture: "Texture Stub"
+        shader: "Simple3D"
+        texture: null
         material:
-          color: "0.000, 0.300, 0.600, 1.000"
+          color: "0.000, 1.000, 0.000, 1.000"
           specularHardness: 100.0
       shape: {}
-      OBJ_TYPE: "com.play.app.scene.sceneobject.ParticlesSceneObject"
-      isBillboard: true
-      isTransparent: true
-      force: "0.000, -0.300, 0.000"
-      emitTime: 0.001
-      TTL: 5.0
-      intialPositionDelta: "0.139, -0.307, 0.061"
-      initalVelocity: "-0.005, -0.023, 0.010"
   - modelInfo:
       translation: "0.000, 2.000, 0.000"
       scale: "1.000, 1.000, 1.000"
@@ -46,4 +39,39 @@ root:
         color: "1.000, 1.000, 0.000, 1.000"
         attenuation: "0.010, 0.020, 1.000"
         angle: "30.000, 0.000, 0.000"
+  - modelInfo:
+      translation: "0.000, 0.000, 0.000"
+      scale: "1.000, 1.000, 1.000"
+      rotation: "0.000, 0.000, 0.000, 1.000"
+    children: []
+    sceneObject:
+      property:
+        shader: "BlinnPhong"
+        texture: "Texture Stub"
+        material:
+          color: "1.000, 1.000, 1.000, 1.000"
+          specularHardness: 100.0
+      shape: {}
+      OBJ_TYPE: "com.play.app.scene.sceneobject.ParticlesSceneObject"
+      isBillboard: false
+      isTransparent: false
+      force: "0.000, -0.300, 0.000"
+      emitTime: 0.0
+      TTL: 5.0
+      intialPositionDelta: "-0.481, 0.263, 0.301"
+      initalVelocity: "0.023, -0.011, 0.005"
+  - modelInfo:
+      translation: "1.000, 1.000, 1.000"
+      scale: "1.000, 1.000, 1.000"
+      rotation: "0.000, 0.000, 0.000, 1.000"
+    children: []
+    sceneObject:
+      OBJ_TYPE: "com.play.app.scene.sceneobject.SimpleSceneObject"
+      property:
+        shader: "Simple3D"
+        texture: null
+        material:
+          color: "1.000, 0.000, 0.000, 1.000"
+          specularHardness: 100.0
+      shape: {}
   sceneObject: null
