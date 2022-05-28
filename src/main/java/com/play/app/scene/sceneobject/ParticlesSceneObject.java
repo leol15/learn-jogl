@@ -2,8 +2,10 @@ package com.play.app.scene.sceneobject;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.io.IOException;
 import java.util.*;
 
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.play.app.basics.SpacialThing;
 import com.play.app.geometry.Cube;
 import com.play.app.mesh.Mesh;
@@ -16,29 +18,30 @@ import org.joml.*;
 
 public class ParticlesSceneObject extends SimpleSceneObject {
 
+    // emitter attr
+    public final Vector3f force = new Vector3f(0, -.1f, 0);
+    public FloatProperty emitTime = new FloatProperty(0.2f); // in seconds
+    // particle attr
+    public BooleanProperty isBillboard = new BooleanProperty(true);
+    public BooleanProperty isTransparent = new BooleanProperty(true);
+    public FloatProperty TTL = new FloatProperty(5f); // in seconds
+    public final Vector3f initalVelocity = new Vector3f(0.02f, 0.06f, 0);
+    public final Vector3f intialPositionDelta = new Vector3f(0);
+
+    // helper
+    private float TTE = 0;
     private final CameraControl cameraControl;
     private final List<Particle> particles = new ArrayList<>();
     private final Matrix4f tmpMatrix = new Matrix4f();
     private final Matrix4f lastTransform = new Matrix4f();
 
-    public BooleanProperty isBillboard = new BooleanProperty(true);
-    public BooleanProperty isTransparent = new BooleanProperty(true);
-    // emitter attr
-    public final Vector3f force = new Vector3f(0, -.1f, 0);
-    public FloatProperty emitTime = new FloatProperty(0.2f); // in seconds
-    private float TTE = 0;
-    // particle attr
-    public FloatProperty TTL = new FloatProperty(5f); // in seconds
-    public final Vector3f initalVelocity = new Vector3f(0.02f, 0.06f, 0);
-    public final Vector3f intialPositionDelta = new Vector3f(0);
-
     public ParticlesSceneObject(CameraControl cameraControl) {
         super();
 
         // debug view
-        setMesh(Mesh.CUBE);
-        setCollidable(new Cube());
-        setShader(ShaderUtils.getShader("Simple3D"));
+        shape.mesh = Mesh.CUBE;
+        shape.collidable = new Cube();
+        property.shader = ShaderUtils.getShader("Simple3D");
 
         this.cameraControl = cameraControl;
     }
@@ -61,11 +64,11 @@ public class ParticlesSceneObject extends SimpleSceneObject {
         super.draw(transform);
         // draw the particles
 
-        if (mesh == null) {
+        if (shape.mesh == null) {
             return;
         }
 
-        bindAll();
+        property.bind(transform);
 
         final AxisAngle4f invertedCameraRotation = new AxisAngle4f();
         if (isBillboard.getValue()) {
@@ -76,19 +79,19 @@ public class ParticlesSceneObject extends SimpleSceneObject {
         }
 
         for (final Particle p : particles) {
-            if (shader != null) {
+            if (property.shader != null) {
                 // rotate to face camera 
                 if (isBillboard.getValue()) {
                     p.model.rotation.set(invertedCameraRotation);
                 }
                 p.model.getModelMatrix(tmpMatrix);
-                shader.uniformMatrix4fv(CONST.MODEL_MATRIX, tmpMatrix);
-                shader.useProgram();
+
+                property.bind(tmpMatrix);
             }
-            mesh.drawMesh();
+            shape.draw();
         }
 
-        unbindAll();
+        property.unbind();
 
         if (isTransparent.getValue()) {
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -111,6 +114,22 @@ public class ParticlesSceneObject extends SimpleSceneObject {
         editor.addProperty("TTL", TTL);
         editor.addProperty("Intial dx", intialPositionDelta);
         editor.addProperty("Intial V", initalVelocity);
+    }
+
+    @Override
+    public void save(YAMLGenerator generator) throws IOException {
+        generator.writeStartObject();
+        WorldSerializer.writeObjectField("property", property, generator);
+        WorldSerializer.writeObjectField("shape", shape, generator);
+        WorldSerializer.writeObjectType(this.getClass(), generator);
+        WorldSerializer.writeObjectField("isBillboard", isBillboard.getValue(), generator);
+        WorldSerializer.writeObjectField("isTransparent", isTransparent.getValue(), generator);
+        WorldSerializer.writeObjectField("force", force, generator);
+        WorldSerializer.writeObjectField("emitTime", emitTime.getValue(), generator);
+        WorldSerializer.writeObjectField("TTL", TTL.getValue(), generator);
+        WorldSerializer.writeObjectField("intialPositionDelta", intialPositionDelta, generator);
+        WorldSerializer.writeObjectField("initalVelocity", initalVelocity, generator);
+        generator.writeEndObject();
     }
 
     // dt is in seconds

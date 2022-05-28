@@ -20,16 +20,16 @@ public class UseParticleSystem {
 
         final ParticlesSceneObject pSO = new ParticlesSceneObject(cameraControl);
         rootSN.createChild().setSceneObject(pSO);
-        pSO.setMesh(Mesh.CUBE);
-        pSO.setShader(ShaderUtils.getShader("BlinnPhong"));
+        pSO.shape.setMesh(Mesh.CUBE);
+        pSO.property.setShader(ShaderUtils.getShader("BlinnPhong"));
         // pSO.setShader(ShaderUtils.getShader("Texture"));
         pSO.force.set(0, -0.3, 0);
         pSO.TTL.setValue(5);
         pSO.emitTime.setValue(0.001f);
-        pSO.material.color.set(0, 0.3, 0.6, 1);
+        pSO.property.material.color.set(0, 0.3, 0.6, 1);
 
         final Texture treeTex = new Texture(CONST.TEXTURE_FOLDER + "dash.png");
-        pSO.setTexture(treeTex);
+        pSO.property.setTexture(treeTex);
 
         final Random rand = new Random(100);
 

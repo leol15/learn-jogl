@@ -4,8 +4,11 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.glBindFragDataLocation;
 
+import java.io.IOException;
 import java.nio.FloatBuffer;
 
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.play.app.basics.SaveLoad;
 import com.play.app.utils.*;
 
 import org.joml.*;
@@ -13,7 +16,7 @@ import org.joml.*;
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
-public class ShaderProgram {
+public class ShaderProgram implements SaveLoad {
 
     private int id;
     private final FloatBuffer tmpMatrixBuffer = Func.newMatBuffer();
@@ -112,6 +115,12 @@ public class ShaderProgram {
         int uniformId = glGetUniformLocation(id, uniformName);
         glUniform4f(uniformId, v.x, v.y, v.z, v.w);
         unuseProgram();
+    }
+
+    @Override
+    public void save(YAMLGenerator generator) throws IOException {
+        // a bit weird, should save the shader path info, instead of the shader shource code
+        ShaderUtils.save(this, generator);
     }
 
 }

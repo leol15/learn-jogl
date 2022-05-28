@@ -64,10 +64,10 @@ public class DrawAScene {
         final Matrix4f identity = new Matrix4f();
 
         // add rays on click
-        InstancingObject clickLines = new InstancingObject()
-                .setMesh(Mesh.createCyclinderMesh(3));
+        InstancingObject clickLines = new InstancingObject();
+        clickLines.shape.setMesh(Mesh.createCyclinderMesh(3));
         // clickLines.setColor(Func.toVec4(Color.YELLOW));
-        clickLines.setShader(simple3DShader);
+        clickLines.property.shader = simple3DShader;
 
         SceneNode lineSceneNode = new SceneNode().setSceneObject(clickLines);
         rootSceneNode.addChild(lineSceneNode);
@@ -179,10 +179,10 @@ public class DrawAScene {
             ShaderProgram shader, Mesh mesh, SpacialThing spacialThing,
             Collidable collidable) {
         final InstancingObject o = new InstancingObject()
-                .addInstance(spacialThing)
-                .setMesh(mesh)
+                .addInstance(spacialThing);
+        o.shape.setMesh(mesh)
                 .setCollidable(collidable);
-        o.setShader(shader);
+        o.property.setShader(shader);
         return o;
     }
 

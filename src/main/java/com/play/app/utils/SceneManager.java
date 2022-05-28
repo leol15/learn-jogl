@@ -2,9 +2,16 @@ package com.play.app.utils;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.io.*;
+
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.*;
+import com.play.app.basics.SpacialThing;
 import com.play.app.geometry.Ray;
 import com.play.app.scene.*;
 import com.play.app.scene.lights.LightUBO;
+import com.play.app.ui.Button;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.utils.WindowManager.Layer;
 
@@ -20,12 +27,20 @@ public class SceneManager {
     private final PropertyEditor editor;
     private final Matrix4f identity = new Matrix4f();
 
+    private final Button saveButton;
+
     private SceneNode selectedNode;
 
     public SceneManager(WindowManager windowManager, SceneNode root, CameraControl cam) {
         // static inits
         LightUBO.getInstance();
         CameraUBO.getInstance();
+
+        // dev
+        saveButton = new Button(windowManager, 500, 50, "Save");
+        saveButton.setAction(() -> {
+            new WorldSerializer().save("test-scene.yaml", root);
+        });
 
         this.root = root;
         this.cam = cam;
@@ -67,6 +82,7 @@ public class SceneManager {
         // draw
         root.draw(identity);
 
+        saveButton.show();
         cam.draw();
         editor.show();
     }

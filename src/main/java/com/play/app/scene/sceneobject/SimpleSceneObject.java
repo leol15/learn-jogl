@@ -1,64 +1,55 @@
 package com.play.app.scene.sceneobject;
 
-import com.play.app.basics.*;
+import java.io.IOException;
+
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.play.app.geometry.Ray;
-import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
 import com.play.app.ui.editor.PropertyEditor;
-import com.play.app.utils.CONST;
+import com.play.app.utils.WorldSerializer;
 
 import org.joml.*;
 
-import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
 
 @Accessors(chain = true)
 @Log4j2
-public class SimpleSceneObject extends SOBase implements SceneObject {
+public class SimpleSceneObject implements SceneObject {
 
-    // simple, only 2 fields, no transformation info (provided by SceneNode)
-    @Setter
-    protected Mesh mesh;
-    @Setter
-    private Collidable collidable;
+    public final SORenderProperty property = new SORenderProperty();
+    public final SOShape shape = new SOShape();
 
     @Override
     public void draw(Matrix4f transform) {
-        if (mesh == null) {
-            return;
-        }
-
-        bindAll();
-
-        if (shader != null) {
-            shader.uniformMatrix4fv(CONST.MODEL_MATRIX, transform);
-            shader.useProgram();
-        }
-
-        mesh.drawMesh();
-
-        unbindAll();
+        property.bind(transform);
+        shape.draw();
+        property.unbind();
     }
 
     @Override
     public Vector3f intersectRay(Ray ray, Matrix4f worldMatrix) {
-        if (collidable == null) {
-            return null;
-        }
-        final Matrix4f rayMatIdentity = new Matrix4f();
-
-        return collidable.collide(ray, worldMatrix, rayMatIdentity);
+        return shape.intersectRay(ray, worldMatrix);
     }
 
     @Override
     public void addToEditor(PropertyEditor editor) {
-        material.select(editor);
+        property.addToEditor(editor);
+        shape.addToEditor(editor);
     }
 
     @Override
     public void accept(SceneObjectVisitor visitor, Matrix4f worldTransform) {
         visitor.visitSimpleSceneObject(this, worldTransform);
+    }
+
+    @Override
+    public void save(YAMLGenerator generator) throws IOException {
+        generator.writeStartObject();
+        WorldSerializer.writeObjectType(this.getClass(), generator);
+        WorldSerializer.writeObjectField("property", property, generator);
+        WorldSerializer.writeObjectField("shape", shape, generator);
+        generator.writeEndObject();
     }
 
 }

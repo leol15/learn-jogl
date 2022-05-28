@@ -34,11 +34,11 @@ public class Input {
         final SceneNode rootNode = new SceneNode();
         final SpacialThing cube1Transform = new SpacialThing();
 
-        InstancingObject cubes = new InstancingObject();
-        cubes.setShader(simple3dShader);
-        cubes.setCollidable(new Cube())
-                .setMesh(Mesh.CUBE)
+        InstancingObject cubes = new InstancingObject()
                 .addInstance(cube1Transform);
+        cubes.shape.setCollidable(new Cube())
+                .setMesh(Mesh.CUBE);
+        cubes.property.setShader(simple3dShader);
         SceneNode cube1 = new SceneNode().setSceneObject(cubes);
         rootNode.addChild(cube1);
 

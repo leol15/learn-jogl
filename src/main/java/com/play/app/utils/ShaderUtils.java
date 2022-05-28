@@ -3,9 +3,10 @@ package com.play.app.utils;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL32.GL_GEOMETRY_SHADER;
 
-import java.io.File;
+import java.io.*;
 import java.util.*;
 
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.play.app.graphics.ShaderProgram;
 
 import lombok.extern.log4j.Log4j2;
@@ -59,6 +60,16 @@ public class ShaderUtils {
         return shader;
     }
 
+    public static String getShaderName(ShaderProgram shader) {
+        for (final String k : SHADERS.keySet()) {
+            if (SHADERS.get(k).equals(shader)) {
+                return k;
+            }
+        }
+        log.warn("Shader name not found, shader is not managed by this: {}", shader);
+        return null;
+    }
+
     private static boolean fileExists(String path) {
         final File f = new File(path);
         return f.exists() && !f.isDirectory();
@@ -89,5 +100,10 @@ public class ShaderUtils {
         appendedSource.replace(versionIdx, nextLine, SHADER_HELPER_SOURCE);
 
         shaderProgram.attachShader(appendedSource.toString(), type);
+    }
+
+    // save just the name to file
+    public static void save(ShaderProgram shader, YAMLGenerator generator) throws IOException {
+        generator.writeString(getShaderName(shader));
     }
 }

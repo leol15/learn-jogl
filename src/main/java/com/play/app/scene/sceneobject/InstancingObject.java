@@ -1,7 +1,9 @@
 package com.play.app.scene.sceneobject;
 
+import java.io.IOException;
 import java.util.*;
 
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.play.app.basics.*;
 import com.play.app.geometry.Ray;
 import com.play.app.mesh.Mesh;
@@ -17,12 +19,11 @@ import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 @Accessors(chain = true)
-public class InstancingObject extends SOBase implements SceneObject {
+public class InstancingObject implements SceneObject {
 
-    @Setter
-    private Mesh mesh;
-    @Setter
-    private Collidable collidable;
+    public final SORenderProperty property = new SORenderProperty();
+    public final SOShape shape = new SOShape();
+
     private final Set<SpacialThing> instances = new HashSet<>();
 
     // helper
@@ -40,38 +41,34 @@ public class InstancingObject extends SOBase implements SceneObject {
 
     @Override
     public void draw(Matrix4f transform) {
-        if (mesh == null) {
-            return;
-        }
 
-        bindAll();
+        property.bind(transform);
 
         for (final SpacialThing modelInfo : instances) {
-            if (shader != null) {
+            // override the instance model matrix
+            if (property.shader != null) {
                 modelInfo.getModelMatrix(tmpMatrix);
                 tmpMatrix.mulLocal(transform);
-                shader.uniformMatrix4fv(CONST.MODEL_MATRIX, tmpMatrix);
-                shader.useProgram();
+                property.bind(tmpMatrix);
             }
-            mesh.drawMesh();
+            shape.draw();
         }
 
-        unbindAll();
+        property.unbind();
     }
 
     // return the first point of intersection
     @Override
     public Vector3f intersectRay(final Ray ray, final Matrix4f worldMatrix) {
-        if (collidable == null) {
+        if (shape.collidable == null) {
             return null;
         }
-        final Matrix4f rayMatIdentity = new Matrix4f();
         final Matrix4f tmpMat = new Matrix4f();
         for (final SpacialThing model : instances) {
             model.getModelMatrix(tmpMat);
             tmpMat.mulLocal(worldMatrix);
 
-            final Vector3f intersect = collidable.collide(ray, tmpMat, rayMatIdentity);
+            final Vector3f intersect = shape.intersectRay(ray, tmpMat);
             if (intersect != null) {
                 return intersect;
             }
@@ -82,7 +79,9 @@ public class InstancingObject extends SOBase implements SceneObject {
 
     @Override
     public void addToEditor(PropertyEditor editor) {
-        material.select(editor);
+        property.addToEditor(editor);
+        shape.addToEditor(editor);
+        // TODO not really good to edit all instance?
         if (instances.size() > 0) {
             for (SpacialThing s : instances) {
                 editor.addProperty("instance 0", s);
@@ -94,6 +93,12 @@ public class InstancingObject extends SOBase implements SceneObject {
     @Override
     public void accept(SceneObjectVisitor visitor, Matrix4f worldTransform) {
         visitor.visitInstancingObject(this, worldTransform);
+    }
+
+    @Override
+    public void save(YAMLGenerator generator) throws IOException {
+        generator.writeString("InstancingObject stub");
+
     }
 
 }

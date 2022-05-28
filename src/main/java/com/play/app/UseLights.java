@@ -42,34 +42,34 @@ public class UseLights {
 
         // construct scene
 
-        final SimpleSceneObject cubeObject = new SimpleSceneObject()
-                .setCollidable(new Cube())
+        final SimpleSceneObject cubeObject = new SimpleSceneObject();
+        cubeObject.shape.setCollidable(new Cube())
                 .setMesh(Mesh.CUBE);
-        cubeObject.setShader(blinnPhong);
+        cubeObject.property.setShader(blinnPhong);
         final SceneNode cubeSN = rootSceneNode.createChild().setSceneObject(cubeObject);
         cubeSN.modelInfo.rotation.setAngleAxis(Math.toRadians(30f), 1, 1, 1);
         cubeSN.modelInfo.translation.set(0, -2, 0);
         cubeSN.modelInfo.scale.set(2, 2, 2);
 
-        final SimpleSceneObject bottomPlane = new SimpleSceneObject()
-                .setCollidable(new Plane())
+        final SimpleSceneObject bottomPlane = new SimpleSceneObject();
+        bottomPlane.shape.setCollidable(new Plane())
                 .setMesh(Mesh.PLANE);
-        bottomPlane.setShader(blinnPhong);
+        bottomPlane.property.setShader(blinnPhong);
         final SceneNode bottomPlaneSN = rootSceneNode.createChild().setSceneObject(bottomPlane);
         bottomPlaneSN.modelInfo.rotation.setAngleAxis(Math.toRadians(-90), 1, 0, 0);
         bottomPlaneSN.modelInfo.scale.set(15, 15, 1);
 
-        final SimpleSceneObject sphere = new SimpleSceneObject()
-                .setCollidable(new Sphere())
+        final SimpleSceneObject sphere = new SimpleSceneObject();
+        sphere.shape.setCollidable(new Sphere())
                 .setMesh(Mesh.createSphereMesh(20));
-        sphere.setShader(blinnPhong);
+        sphere.property.setShader(blinnPhong);
         final SceneNode sphereSN = rootSceneNode.createChild().setSceneObject(sphere);
         sphereSN.modelInfo.translation.set(5, 3, 5);
 
         final PointLight pointL = new PointLight();
         pointL.color.set(0, 1, 0, 1);
         final LightSceneObject lightSO1 = new LightSceneObject(pointL);
-        lightSO1.setShader(simple3DShader);
+        lightSO1.property.setShader(simple3DShader);
         final SceneNode lightNode = rootSceneNode.createChild().setSceneObject(lightSO1);
         lightNode.modelInfo.translation.set(2, 2, -2);
         lightNode.modelInfo.scale.set(0.5, 0.5, 0.5);
@@ -78,7 +78,7 @@ public class UseLights {
         final DirectionalLight dirL = new DirectionalLight();
         dirL.color.set(1, 0, 0, 1);
         final LightSceneObject lightSO2 = new LightSceneObject(dirL);
-        lightSO2.setShader(simple3DShader);
+        lightSO2.property.setShader(simple3DShader);
         final SceneNode dirLightNode = rootSceneNode.createChild().setSceneObject(lightSO2);
         dirLightNode.modelInfo.translation.set(2, 5, -2);
         dirLightNode.modelInfo.scale.set(0.5, 1, 0.5);
@@ -88,7 +88,7 @@ public class UseLights {
         final SpotLight spotL = new SpotLight();
         spotL.color.set(0, 0, 1, 1);
         final LightSceneObject lightSO3 = new LightSceneObject(spotL);
-        lightSO3.setShader(simple3DShader);
+        lightSO3.property.setShader(simple3DShader);
         final SceneNode spotLigtNode = rootSceneNode.createChild().setSceneObject(lightSO3);
         spotLigtNode.modelInfo.translation.set(3, 3, -3);
         spotLigtNode.modelInfo.scale.set(0.5, 0.5, 0.5);

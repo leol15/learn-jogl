@@ -1,9 +1,13 @@
 package com.play.app.scene.lights;
 
+import java.io.IOException;
+
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.play.app.basics.Collidable;
 import com.play.app.geometry.Sphere;
 import com.play.app.mesh.Mesh;
 import com.play.app.ui.editor.PropertyEditor;
+import com.play.app.utils.WorldSerializer;
 
 import org.joml.*;
 
@@ -36,6 +40,15 @@ public class PointLight implements Light {
     @Override
     public Vector4f getColor() {
         return color;
+    }
+
+    @Override
+    public void save(YAMLGenerator generator) throws IOException {
+        generator.writeStartObject();
+        WorldSerializer.writeObjectType(this.getClass(), generator);
+        WorldSerializer.writeObjectField("color", color, generator);
+        WorldSerializer.writeObjectField("attenuation", attenuation, generator);
+        generator.writeEndObject();
     }
 
 }

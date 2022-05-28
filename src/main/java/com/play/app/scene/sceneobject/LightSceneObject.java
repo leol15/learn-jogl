@@ -1,5 +1,8 @@
 package com.play.app.scene.sceneobject;
 
+import java.io.IOException;
+
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.play.app.scene.SceneObjectVisitor;
 import com.play.app.scene.lights.Light;
 import com.play.app.ui.editor.PropertyEditor;
@@ -15,9 +18,9 @@ public class LightSceneObject extends SimpleSceneObject {
         super();
 
         this.light = light;
-        setMesh(light.getDebugMesh());
-        setCollidable(light.getDebugCollidable());
-        setShader(ShaderUtils.getShader("Simple3D"));
+        shape.mesh = light.getDebugMesh();
+        shape.collidable = light.getDebugCollidable();
+        property.shader = ShaderUtils.getShader("Simple3D");
     }
 
     public Light getLight() {
@@ -26,6 +29,7 @@ public class LightSceneObject extends SimpleSceneObject {
 
     @Override
     public void addToEditor(PropertyEditor editor) {
+        super.addToEditor(editor);
         light.addToEditor(editor);
     }
 
@@ -37,23 +41,21 @@ public class LightSceneObject extends SimpleSceneObject {
     // override the color to match the light color
     @Override
     public void draw(Matrix4f transform) {
-        if (this.mesh == null) {
-            return;
-        }
+        // override color
+        property.material.color.set(light.getColor());
 
-        bindAll();
+        property.bind(transform);
+        shape.draw();
+        property.unbind();
+    }
 
-        if (shader != null) {
-            shader.uniformMatrix4fv(CONST.MODEL_MATRIX, transform);
-            // override color
-            if (light != null) {
-                shader.uniform4f(CONST.MATERIAL_COLOR, light.getColor());
-            }
-            shader.useProgram();
-        }
-
-        mesh.drawMesh();
-
-        unbindAll();
+    @Override
+    public void save(YAMLGenerator generator) throws IOException {
+        generator.writeStartObject();
+        WorldSerializer.writeObjectType(this.getClass(), generator);
+        WorldSerializer.writeObjectField("property", property, generator);
+        WorldSerializer.writeObjectField("shape", shape, generator);
+        WorldSerializer.writeObjectField("light", light, generator);
+        generator.writeEndObject();
     }
 }

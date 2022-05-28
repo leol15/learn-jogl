@@ -3,13 +3,17 @@ package com.play.app.graphics;
 
 import org.lwjgl.*;
 
+import java.io.IOException;
 import java.nio.*;
+
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.play.app.basics.SaveLoad;
 
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL13.GL_CLAMP_TO_BORDER;
 import static org.lwjgl.stb.STBImage.*;
 
-public class Texture {
+public class Texture implements SaveLoad {
 
     private int id;
     private int width, height;
@@ -112,6 +116,12 @@ public class Texture {
         texImage2D(GL_RGBA8, width, height, GL_RGBA, data);
 
         System.out.println("Loadeding texture from file: " + path + " [w " + width + ", h " + height + "]");
+    }
+
+    @Override
+    public void save(YAMLGenerator generator) throws IOException {
+        // TODO Auto-generated method stub
+        generator.writeString("Texture Stub");
     }
 
 }

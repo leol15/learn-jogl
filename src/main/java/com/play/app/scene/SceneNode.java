@@ -1,11 +1,15 @@
 package com.play.app.scene;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.BiConsumer;
 
+import com.fasterxml.jackson.annotation.JsonFormat.Feature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.play.app.basics.*;
 import com.play.app.geometry.Ray;
 import com.play.app.ui.editor.PropertyEditor;
+import com.play.app.utils.WorldSerializer;
 
 import org.joml.*;
 
@@ -135,6 +139,24 @@ public class SceneNode {
             tmpMat.set(tmpMatCopy);
             treeTransformVisitor(child, tmpMat, process);
         }
+    }
+
+    public void save(YAMLGenerator generator) throws IOException {
+        generator.writeStartObject();
+
+        // model
+        WorldSerializer.writeObjectField("modelInfo", modelInfo, generator);
+
+        // children
+        generator.writeArrayFieldStart("children");
+        for (final SceneNode child : children) {
+            child.save(generator);
+        }
+        generator.writeEndArray();
+
+        // content
+        WorldSerializer.writeObjectField("sceneObject", sceneObject, generator);
+        generator.writeEndObject();
     }
 
 }
