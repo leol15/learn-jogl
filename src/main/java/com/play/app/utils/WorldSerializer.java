@@ -195,6 +195,16 @@ public class WorldSerializer {
         fromStringRep(out, consumeStringField(name));
     }
 
+    public void writeObjectField(String name, int i) throws IOException {
+        generator.writeFieldName(name);
+        generator.writeNumber(i);
+    }
+
+    public int consumeIntField(String name) throws IOException {
+        consumeFieldName(name);
+        return consumeInt();
+    }
+
     public void writeObjectField(String name, float f) throws IOException {
         generator.writeFieldName(name);
         generator.writeNumber(f);
@@ -259,7 +269,7 @@ public class WorldSerializer {
             final Method createMethod = interfase.getMethod("create", new Class<?>[] { WorldSerializer.class });
             o = createMethod.invoke(null, this);
         } catch (Exception e) {
-            log.error("cannot find class or class does not support create {}", clazz);
+            log.error("cannot find class or class does not support create: {}", clazz);
             e.printStackTrace();
         }
         consumeEndObject();
@@ -290,6 +300,12 @@ public class WorldSerializer {
 
     public void writeObjectType(Class<?> clazz) throws IOException {
         generator.writeStringField(WorldSerializer.OBJ_TYPE, toClassString(clazz));
+    }
+
+    public int consumeInt() throws IOException {
+        final int i = parser.getIntValue();
+        nextToken();
+        return i;
     }
 
     public float consumeFloat() throws IOException {

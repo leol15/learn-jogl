@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.*;
 
 import com.play.app.basics.SpacialThing;
-import com.play.app.geometry.Cube;
-import com.play.app.mesh.Mesh;
 import com.play.app.scene.CameraControl;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.ui.property.*;
@@ -36,11 +34,6 @@ public class ParticlesSceneObject extends SimpleSceneObject {
 
     public ParticlesSceneObject(CameraControl cameraControl) {
         super();
-
-        // debug view
-        shape.mesh = Mesh.CUBE;
-        shape.collidable = new Cube();
-        property.shader = ShaderUtils.getShader("Simple3D");
 
         this.cameraControl = cameraControl;
     }

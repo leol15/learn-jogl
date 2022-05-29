@@ -17,6 +17,10 @@ import org.lwjgl.BufferUtils;
  * Vertex attribute layout: position(3) normal(3) uv(2)
  */
 public class UnitGeometries {
+    // all the types
+    public enum Type {
+        Circle, Plane, Cube, Sphere, Cone, Cyclinder;
+    };
 
     // mapping from resolution to VAO
     // solid

@@ -4,9 +4,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL43.GL_MAX_UNIFORM_LOCATIONS;
 
-import com.play.app.geometry.*;
-import com.play.app.graphics.ShaderProgram;
-import com.play.app.mesh.Mesh;
+import com.play.app.graphics.*;
 import com.play.app.scene.*;
 import com.play.app.scene.lights.*;
 import com.play.app.scene.sceneobject.*;
@@ -42,8 +40,7 @@ public class UseLights {
         // construct scene
 
         final SimpleSceneObject cubeObject = new SimpleSceneObject();
-        cubeObject.shape.setCollidable(new Cube())
-                .setMesh(Mesh.CUBE);
+        cubeObject.shape.setUnitGeometry(UnitGeometries.Type.Cube);
         cubeObject.property.setShader(blinnPhong);
         final SceneNode cubeSN = rootSceneNode.createChild().setSceneObject(cubeObject);
         cubeSN.modelInfo.rotation.setAngleAxis(Math.toRadians(30f), 1, 1, 1);
@@ -51,16 +48,14 @@ public class UseLights {
         cubeSN.modelInfo.scale.set(2, 2, 2);
 
         final SimpleSceneObject bottomPlane = new SimpleSceneObject();
-        bottomPlane.shape.setCollidable(new Plane())
-                .setMesh(Mesh.PLANE);
+        bottomPlane.shape.setUnitGeometry(UnitGeometries.Type.Plane);
         bottomPlane.property.setShader(blinnPhong);
         final SceneNode bottomPlaneSN = rootSceneNode.createChild().setSceneObject(bottomPlane);
         bottomPlaneSN.modelInfo.rotation.setAngleAxis(Math.toRadians(-90), 1, 0, 0);
         bottomPlaneSN.modelInfo.scale.set(15, 15, 1);
 
         final SimpleSceneObject sphere = new SimpleSceneObject();
-        sphere.shape.setCollidable(new Sphere())
-                .setMesh(Mesh.createSphereMesh(20));
+        sphere.shape.setUnitGeometry(UnitGeometries.Type.Sphere);
         sphere.property.setShader(blinnPhong);
         final SceneNode sphereSN = rootSceneNode.createChild().setSceneObject(sphere);
         sphereSN.modelInfo.translation.set(5, 3, 5);

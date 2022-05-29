@@ -2,10 +2,11 @@ package com.play.app.scene.lights;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.*;
-import com.play.app.basics.Collidable;
-import com.play.app.geometry.Cube;
-import com.play.app.mesh.Mesh;
+import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
+import com.play.app.collider.*;
+import com.play.app.graphics.UnitGeometries;
+import com.play.app.graphics.UnitGeometries.Type;
+import com.play.app.mesh.*;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.utils.WorldSerializer;
 
@@ -30,12 +31,12 @@ public class DirectionalLight implements Light {
 
     @Override
     public Mesh getDebugMesh() {
-        return Mesh.createConeMesh(10);
+        return new UnitMesh(UnitGeometries.Type.Cone);
     }
 
     @Override
-    public Collidable getDebugCollidable() {
-        return new Cube();
+    public Collider getDebugCollider() {
+        return new UnitCollider(Type.Cone);
     }
 
     public Vector4f getDirection() {

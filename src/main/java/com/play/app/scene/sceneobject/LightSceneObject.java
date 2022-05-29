@@ -28,7 +28,7 @@ public class LightSceneObject extends SimpleSceneObject {
         light = l;
         if (light != null) {
             shape.mesh = light.getDebugMesh();
-            shape.collidable = light.getDebugCollidable();
+            shape.collider = light.getDebugCollider();
         }
         return this;
     }

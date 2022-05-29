@@ -2,9 +2,10 @@ package com.play.app.scene.lights;
 
 import java.io.IOException;
 
-import com.play.app.basics.Collidable;
-import com.play.app.geometry.Sphere;
-import com.play.app.mesh.Mesh;
+import com.play.app.collider.*;
+import com.play.app.graphics.UnitGeometries;
+import com.play.app.graphics.UnitGeometries.Type;
+import com.play.app.mesh.*;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.utils.WorldSerializer;
 
@@ -28,12 +29,12 @@ public class PointLight implements Light {
 
     @Override
     public Mesh getDebugMesh() {
-        return Mesh.createSphereMesh(10);
+        return new UnitMesh(UnitGeometries.Type.Sphere);
     }
 
     @Override
-    public Collidable getDebugCollidable() {
-        return new Sphere();
+    public Collider getDebugCollider() {
+        return new UnitCollider(Type.Sphere);
     }
 
     @Override

@@ -6,9 +6,11 @@ import static org.lwjgl.opengl.GL11.*;
 import java.awt.Color;
 
 import com.play.app.basics.*;
+import com.play.app.collider.*;
 import com.play.app.geometry.*;
 import com.play.app.graphics.*;
-import com.play.app.mesh.Mesh;
+import com.play.app.graphics.UnitGeometries.Type;
+import com.play.app.mesh.*;
 import com.play.app.scene.*;
 import com.play.app.scene.sceneobject.InstancingObject;
 import com.play.app.ui.Button;
@@ -41,13 +43,11 @@ public class DrawAScene {
 
         // scene
         final SceneNode penTip = new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.CONE, new SpacialThing(),
-                        new Cube()));
+                createInstancingObjectHelper(simple3DShader, new SpacialThing(), Type.Cone));
         penTip.modelInfo.scale.mul(0.5f);
         penTip.modelInfo.translation.add(0, 2, 0);
         final SceneNode penBody = new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.CYCLINDER, new SpacialThing(),
-                        new Cube()));
+                createInstancingObjectHelper(simple3DShader, new SpacialThing(), Type.Cyclinder));
         penBody.modelInfo.scale.mul(0.5f, 2, 0.5f);
 
         final SceneNode pen = new SceneNode().addChild(penTip).addChild(penBody);
@@ -63,7 +63,7 @@ public class DrawAScene {
 
         // add rays on click
         InstancingObject clickLines = new InstancingObject();
-        clickLines.shape.setMesh(Mesh.createCyclinderMesh(3));
+        clickLines.shape.setMesh(new UnitMesh(UnitGeometries.Type.Cyclinder));
         // clickLines.setColor(Func.toVec4(Color.YELLOW));
         clickLines.property.shader = simple3DShader;
 
@@ -75,35 +75,34 @@ public class DrawAScene {
         final SpacialThing planeModel = new SpacialThing();
         planeModel.translation.set(-2, 0, 0);
         rootSceneNode.addChild(new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.PLANE, planeModel, new Plane())));
+                createInstancingObjectHelper(simple3DShader, planeModel, Type.Plane)));
 
         final SpacialThing coneModel = new SpacialThing();
         coneModel.translation.set(3, 0, 0);
         rootSceneNode.addChild(new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.CONE, coneModel, new Cube())));
+                createInstancingObjectHelper(simple3DShader, coneModel, Type.Cone)));
 
         final SpacialThing cyclinderModel = new SpacialThing();
         cyclinderModel.translation.set(4.5f, 0, 0);
         rootSceneNode.addChild(new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.CYCLINDER, cyclinderModel,
-                        new Cube())));
+                createInstancingObjectHelper(simple3DShader, cyclinderModel, Type.Cyclinder)));
 
         final SpacialThing sphereModel = new SpacialThing();
         sphereModel.translation.set(0, 1, 0);
         sphereModel.scale.set(1, 2, 1);
         rootSceneNode.addChild(new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.SPHERE, sphereModel, new Sphere())));
+                createInstancingObjectHelper(simple3DShader, sphereModel, Type.Sphere)));
 
         final SpacialThing cubeModel = new SpacialThing();
         cubeModel.translation.set(6, 0, 0);
         rootSceneNode.addChild(new SceneNode().setSceneObject(
-                createInstancingObjectHelper(simple3DShader, Mesh.CUBE, cubeModel, new Cube())));
+                createInstancingObjectHelper(simple3DShader, cubeModel, Type.Cube)));
 
         final ShaderProgram lineShader = ShaderUtils.getShader("Line");
         final SpacialThing cicleModel = new SpacialThing();
         cicleModel.translation.set(-3, 0, 0);
         rootSceneNode.addChild(new SceneNode().setSceneObject(
-                createInstancingObjectHelper(lineShader, Mesh.CIRCLE, cicleModel, new Cube())));
+                createInstancingObjectHelper(lineShader, cicleModel, Type.Circle)));
 
         SceneNode[] selectedNode = { null };
         windowManager.addCharCallback(Layer.SCENE, (window2, character) -> {
@@ -174,12 +173,10 @@ public class DrawAScene {
     }
 
     private SceneObject createInstancingObjectHelper(
-            ShaderProgram shader, Mesh mesh, SpacialThing spacialThing,
-            Collidable collidable) {
+            ShaderProgram shader, SpacialThing spacialThing, Type type) {
         final InstancingObject o = new InstancingObject()
                 .addInstance(spacialThing);
-        o.shape.setMesh(mesh)
-                .setCollidable(collidable);
+        o.shape.setUnitGeometry(type);
         o.property.setShader(shader);
         return o;
     }

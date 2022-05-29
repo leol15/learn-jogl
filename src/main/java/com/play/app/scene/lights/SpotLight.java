@@ -2,9 +2,10 @@ package com.play.app.scene.lights;
 
 import java.io.IOException;
 
-import com.play.app.basics.Collidable;
-import com.play.app.geometry.Cube;
-import com.play.app.mesh.Mesh;
+import com.play.app.collider.*;
+import com.play.app.graphics.UnitGeometries;
+import com.play.app.graphics.UnitGeometries.Type;
+import com.play.app.mesh.*;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.ui.property.FloatProperty;
 import com.play.app.utils.WorldSerializer;
@@ -32,7 +33,7 @@ public class SpotLight implements Light {
 
     @Override
     public Mesh getDebugMesh() {
-        return Mesh.createConeMesh(10);
+        return new UnitMesh(UnitGeometries.Type.Cone);
     }
 
     @Override
@@ -45,9 +46,9 @@ public class SpotLight implements Light {
     }
 
     @Override
-    public Collidable getDebugCollidable() {
+    public Collider getDebugCollider() {
         // TODO use cone
-        return new Cube();
+        return new UnitCollider(Type.Cube);
     }
 
     @Override

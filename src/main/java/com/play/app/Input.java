@@ -6,9 +6,8 @@ import static org.lwjgl.opengl.GL11.*;
 import java.awt.Color;
 
 import com.play.app.basics.SpacialThing;
-import com.play.app.geometry.*;
+import com.play.app.geometry.Ray;
 import com.play.app.graphics.*;
-import com.play.app.mesh.Mesh;
 import com.play.app.scene.*;
 import com.play.app.scene.sceneobject.InstancingObject;
 import com.play.app.ui.Button;
@@ -34,8 +33,7 @@ public class Input {
 
         InstancingObject cubes = new InstancingObject()
                 .addInstance(cube1Transform);
-        cubes.shape.setCollidable(new Cube())
-                .setMesh(Mesh.CUBE);
+        cubes.shape.setUnitGeometry(UnitGeometries.Type.Cube);
         cubes.property.setShader(simple3dShader);
         SceneNode cube1 = new SceneNode().setSceneObject(cubes);
         rootNode.addChild(cube1);

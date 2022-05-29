@@ -56,7 +56,7 @@ public class InstancingObject implements SceneObject {
     // return the first point of intersection
     @Override
     public Vector3f intersectRay(final Ray ray, final Matrix4f worldMatrix) {
-        if (shape.collidable == null) {
+        if (shape.collider == null) {
             return null;
         }
         final Matrix4f tmpMat = new Matrix4f();
