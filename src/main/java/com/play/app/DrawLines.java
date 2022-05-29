@@ -7,7 +7,7 @@ import java.awt.Color;
 import java.nio.FloatBuffer;
 
 import com.play.app.graphics.*;
-import com.play.app.scene.CameraControl;
+import com.play.app.scene.camera.CameraManager;
 import com.play.app.ui.Button;
 import com.play.app.utils.*;
 
@@ -32,7 +32,7 @@ public class DrawLines {
 
         ShaderProgram lineShader = ShaderUtils.getShader("Line");
 
-        CameraControl cam = new CameraControl(windowManager);
+        CameraManager cam = new CameraManager(windowManager);
 
         // ui
         final Button togglePolygonMode = new Button(windowManager, 0, 50, "Toggle Polygon Mode");
@@ -71,7 +71,7 @@ public class DrawLines {
             // UnitGeometries.drawCube();
             // simple3DShader.unuseProgram();
 
-            cam.draw();
+            cam.show();
 
             togglePolygonMode.show();
             glfwPollEvents();

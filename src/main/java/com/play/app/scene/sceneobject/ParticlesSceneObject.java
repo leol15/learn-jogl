@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.util.*;
 
 import com.play.app.basics.SpacialThing;
-import com.play.app.scene.CameraControl;
+import com.play.app.scene.*;
+import com.play.app.scene.camera.Camera;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.ui.property.*;
 import com.play.app.utils.*;
@@ -27,15 +28,15 @@ public class ParticlesSceneObject extends SimpleSceneObject {
 
     // helper
     private float TTE = 0;
-    private final CameraControl cameraControl;
+    private final Camera camera;
     private final List<Particle> particles = new ArrayList<>();
     private final Matrix4f tmpMatrix = new Matrix4f();
     private final Matrix4f lastTransform = new Matrix4f();
 
-    public ParticlesSceneObject(CameraControl cameraControl) {
+    public ParticlesSceneObject(Camera camera) {
         super();
 
-        this.cameraControl = cameraControl;
+        this.camera = camera;
     }
 
     public int getParticleCount() {
@@ -68,7 +69,7 @@ public class ParticlesSceneObject extends SimpleSceneObject {
         final AxisAngle4f invertedCameraRotation = new AxisAngle4f();
         if (isBillboard.getValue()) {
             final Matrix4f viewMatrix = new Matrix4f();
-            cameraControl.getViewMatrix(viewMatrix);
+            camera.getViewMatrix(viewMatrix);
             viewMatrix.getRotation(invertedCameraRotation);
             invertedCameraRotation.angle = -invertedCameraRotation.angle;
         }
@@ -132,7 +133,7 @@ public class ParticlesSceneObject extends SimpleSceneObject {
     }
 
     public static ParticlesSceneObject create(WorldSerializer reader) throws IOException {
-        final ParticlesSceneObject pso = new ParticlesSceneObject(reader.GLOBAL_DATA.cameraControl);
+        final ParticlesSceneObject pso = new ParticlesSceneObject(reader.GLOBAL_DATA.camera);
         reader.consumeStartObject();
         reader.consumeObjectField("property", pso.property);
         reader.consumeObjectField("shape", pso.shape);
@@ -182,10 +183,10 @@ public class ParticlesSceneObject extends SimpleSceneObject {
         final Matrix4f toLocalSpace = new Matrix4f();
         worldTransform.invertAffine(toLocalSpace);
 
-        final Vector3f cameraPos = cameraControl.getCameraPosition();
+        final Vector3f cameraPos = new Vector3f(camera.position);
         Func.multMat(cameraPos, toLocalSpace);
 
-        final Vector3f cameraTarget = cameraControl.getCameraTarget();
+        final Vector3f cameraTarget = new Vector3f(camera.target);
         Func.multMat(cameraTarget, toLocalSpace);
 
         final Vector3f cameraDirection = new Vector3f();

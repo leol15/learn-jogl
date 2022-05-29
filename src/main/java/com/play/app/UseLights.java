@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL43.GL_MAX_UNIFORM_LOCATIONS;
 
 import com.play.app.graphics.*;
 import com.play.app.scene.*;
+import com.play.app.scene.camera.CameraUBO;
 import com.play.app.scene.lights.*;
 import com.play.app.scene.sceneobject.*;
 import com.play.app.utils.*;
@@ -29,10 +30,10 @@ public class UseLights {
         CameraUBO.getInstance();
 
         final WindowManager windowManager = new WindowManager(window);
-        final CameraControl cameraControl = new CameraControl(windowManager);
+        // final CameraControl cameraControl = new CameraControl(windowManager);
         final SceneNode rootSceneNode = new SceneNode();
         // test
-        final SceneManager sceneManager = new SceneManager(windowManager, rootSceneNode, cameraControl);
+        final SceneManager sceneManager = new SceneManager(windowManager, rootSceneNode);
         // shaders needs to be with cameraControl
         final ShaderProgram simple3DShader = ShaderUtils.getShader("simple3D");
         final ShaderProgram blinnPhong = ShaderUtils.getShader("BlinnPhong");

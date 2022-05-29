@@ -6,7 +6,7 @@ import static org.lwjgl.opengl.GL11.*;
 import java.nio.FloatBuffer;
 
 import com.play.app.graphics.*;
-import com.play.app.scene.CameraControl;
+import com.play.app.scene.camera.CameraManager;
 import com.play.app.utils.*;
 
 import org.joml.*;
@@ -25,7 +25,7 @@ public class Rendering {
 
         // set uniform locations
         final WindowManager windowManager = new WindowManager(window);
-        final CameraControl camera = new CameraControl(windowManager);
+        final CameraManager camera = new CameraManager(windowManager);
         Matrix4f model = new Matrix4f();
         FloatBuffer fbModel = BufferUtils.createFloatBuffer(16);
         model.get(fbModel);
@@ -48,7 +48,7 @@ public class Rendering {
             shaderProgram.useProgram();
             UnitGeometries.drawCube();
 
-            camera.draw();
+            camera.show();
 
             glfwPollEvents();
         }

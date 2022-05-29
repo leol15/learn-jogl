@@ -219,4 +219,12 @@ public class WindowManager {
         }
         resetStopPropagation();
     }
+
+    public void captureCursor() {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+
+    public void releaseCursor() {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
 }

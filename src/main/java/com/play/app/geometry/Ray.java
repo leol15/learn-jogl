@@ -1,6 +1,6 @@
 package com.play.app.geometry;
 
-import com.play.app.basics.Collidable;
+import com.play.app.basics.*;
 
 import org.joml.*;
 
@@ -34,6 +34,15 @@ public class Ray implements Collidable {
         newDirection.set(src.x, src.y, src.z);
 
         return new Ray(newStart, newDirection.normalize());
+    }
+
+    public Matrix4f getTransform(Matrix4f out, float length, float lineWidth) {
+        out.identity();
+        out.translateLocal(start);
+        Quaternionf q = new Quaternionf().rotateTo(new Vector3f(0, 1, 0), direction);
+        out.rotate(q);
+        out.scale(lineWidth, length, lineWidth);
+        return out;
     }
 
 }

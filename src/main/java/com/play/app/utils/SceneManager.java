@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 import com.play.app.geometry.Ray;
 import com.play.app.scene.*;
+import com.play.app.scene.camera.*;
 import com.play.app.scene.lights.LightUBO;
 import com.play.app.ui.Button;
 import com.play.app.ui.editor.PropertyEditor;
@@ -11,13 +12,19 @@ import com.play.app.utils.WindowManager.Layer;
 
 import org.joml.*;
 
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
+
 /**
  * manages a window, a camera, a root scene node
  */
+@Log4j2
 public class SceneManager {
     private SceneNode root;
-    private final CameraControl cam;
+    // private final CameraControl cam;
     private final WindowManager windowManager;
+    @Getter
+    private final CameraManager cameraManager;
 
     private final PropertyEditor editor;
     private final Matrix4f identity = new Matrix4f();
@@ -26,24 +33,24 @@ public class SceneManager {
 
     private SceneNode selectedNode;
 
-    public SceneManager(WindowManager windowManager, SceneNode root, CameraControl cam) {
+    public SceneManager(WindowManager windowManager, SceneNode root) {
         this.root = root;
-        this.cam = cam;
+        // this.cam = cam;
         this.windowManager = windowManager;
+        cameraManager = new CameraManager(windowManager, this);
 
         // static inits
         LightUBO.getInstance();
         CameraUBO.getInstance();
 
-        // dev
+        // save/load
         saveButton = new Button(windowManager, 500, 50, "Save");
         loadButton = new Button(windowManager, 600, 50, "Load");
         setupSaveLoadButtons();
 
         // set up edit area
         editor = new PropertyEditor(windowManager);
-        // select action in scene
-        configureSelect();
+
         // set background color
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
     }
@@ -70,7 +77,8 @@ public class SceneManager {
         root.draw(identity);
 
         glDepthMask(true);
-        cam.draw();
+        cameraManager.show();
+
         // draw UI with no depth info
         glClear(GL_DEPTH_BUFFER_BIT);
         glDisable(GL_DEPTH_TEST);
@@ -81,36 +89,31 @@ public class SceneManager {
         editor.show();
     }
 
-    private void configureSelect() {
-        windowManager.addCharCallback(Layer.SCENE, (window2, character) -> {
-            if (character == 'a') {
-                windowManager.stopPropagation();
-                final Ray ray = cam.getRay(windowManager.lastMousePos[0], windowManager.lastMousePos[1]);
+    public void selectSceneNode(Ray ray) {
+        // select
+        SceneNode node = root.castRay(ray);
+        editor.clear();
+        if (selectedNode != null) {
+            selectedNode.deselect(editor);
+            editor.clear();
+        }
+        if (node != null) {
+            selectedNode = node;
+            selectedNode.select(editor);
+        }
+    }
 
-                // select
-                SceneNode node = root.castRay(ray);
-                editor.clear();
-                if (selectedNode != null) {
-                    selectedNode.deselect(editor);
-                    editor.clear();
-                }
-                if (node != null) {
-                    selectedNode = node;
-                    selectedNode.select(editor);
-                }
-            } else if (character == 'f') {
-                // focus
-                if (selectedNode != null) {
-                    final Vector3f position = new Vector3f();
-                    cam.focusOn(selectedNode.getPosition(position));
-                }
-            }
-        });
-
+    public boolean focusSelect() {
+        if (selectedNode != null) {
+            cameraManager.getCamera().focusOn(selectedNode.getPosition(new Vector3f()));
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void setupSaveLoadButtons() {
-        final WorldSerializer worldSerializer = new WorldSerializer(cam);
+        final WorldSerializer worldSerializer = new WorldSerializer(cameraManager.getCamera());
         saveButton.setAction(() -> {
             worldSerializer.save("test-scene.yaml", root);
         });

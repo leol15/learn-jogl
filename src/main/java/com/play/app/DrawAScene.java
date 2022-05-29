@@ -12,6 +12,7 @@ import com.play.app.graphics.*;
 import com.play.app.graphics.UnitGeometries.Type;
 import com.play.app.mesh.*;
 import com.play.app.scene.*;
+import com.play.app.scene.camera.CameraManager;
 import com.play.app.scene.sceneobject.InstancingObject;
 import com.play.app.ui.Button;
 import com.play.app.ui.editor.PropertyEditor;
@@ -31,7 +32,7 @@ public class DrawAScene {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         WindowManager windowManager = new WindowManager(window);
-        CameraControl camera = new CameraControl(windowManager);
+        CameraManager cameraManager = new CameraManager(windowManager);
         PropertyEditor propertyEditor = new PropertyEditor(windowManager);
 
         ShaderProgram simple3DShader = ShaderUtils.getShader("Simple3D");
@@ -108,7 +109,7 @@ public class DrawAScene {
         windowManager.addCharCallback(Layer.SCENE, (window2, character) -> {
             if (character == 'a') {
                 windowManager.stopPropagation();
-                final Ray ray = camera.getRay(windowManager.lastMousePos[0],
+                final Ray ray = cameraManager.getCamera().getRay(windowManager.lastMousePos[0],
                         windowManager.lastMousePos[1]);
 
                 // SpacialThing lineTransform = Func.createLine(ray, 10, 0.03f);
@@ -130,7 +131,8 @@ public class DrawAScene {
                     if (intersect == null) {
                         log.error("could not find intersect of selected object");
                     }
-                    SpacialThing toSelectLineModel = Func.createLine(camera.getCameraPosition(),
+                    SpacialThing toSelectLineModel = Func.createLine(
+                            new Vector3f(cameraManager.getCamera().position),
                             intersect, 0.1f);
                     clickLines.addInstance(toSelectLineModel);
                 }
@@ -159,7 +161,7 @@ public class DrawAScene {
             rootSceneNode.draw(identity);
 
             // UI
-            camera.draw();
+            cameraManager.show();
             float fps = (float) (1 / (time - previousTime));
             fpsCounter.setText(String.format("FPS: %.2f", fps), 0, 0);
             fpsCounter.draw();

@@ -4,7 +4,7 @@ import static org.lwjgl.opengl.GL45.*;
 
 import java.util.*;
 
-import com.play.app.scene.CameraUBO;
+import com.play.app.scene.camera.CameraUBO;
 import com.play.app.scene.lights.LightUBO;
 
 import lombok.extern.log4j.Log4j2;

@@ -3,6 +3,7 @@ package com.play.app;
 import static org.lwjgl.glfw.GLFW.*;
 
 import com.play.app.graphics.*;
+import com.play.app.graphics.UnitGeometries.Type;
 import com.play.app.scene.*;
 import com.play.app.scene.lights.SpotLight;
 import com.play.app.scene.sceneobject.*;
@@ -14,13 +15,14 @@ public class UseParticleSystem {
     public UseParticleSystem(long window) {
 
         final WindowManager windowManager = new WindowManager(window);
-        final CameraControl cameraControl = new CameraControl(windowManager);
+        // final CameraControl cameraControl = new CameraControl(windowManager);
         final SceneNode rootSN = new SceneNode();
+        final SceneManager sceneManager = new SceneManager(windowManager, rootSN);
 
-        final ParticlesSceneObject pSO = new ParticlesSceneObject(cameraControl);
+        final ParticlesSceneObject pSO = new ParticlesSceneObject(sceneManager.getCameraManager().getCamera());
 
         rootSN.createChild().setSceneObject(pSO);
-        pSO.shape.setUnitGeometry(UnitGeometries.Type.Cube);
+        pSO.shape.setUnitGeometry(Type.Cube);
         pSO.property.setShader(ShaderUtils.getShader("BlinnPhong"));
         pSO.force.set(0, -0.3, 0);
         pSO.TTL.setValue(5);
@@ -32,14 +34,14 @@ public class UseParticleSystem {
 
         final SimpleSceneObject sphereSO = new SimpleSceneObject();
         sphereSO.property.setShader(ShaderUtils.getShader("Simple3D"));
-        sphereSO.shape.setUnitGeometry(UnitGeometries.Type.Sphere);
+        sphereSO.shape.setUnitGeometry(Type.Sphere);
         sphereSO.property.material.color.set(1, 0, 0, 0.5);
         final SceneNode sphereNode = rootSN.createChild().setSceneObject(sphereSO);
         sphereNode.modelInfo.translation.set(1, 1, 1);
 
         final SimpleSceneObject sphereSO2 = new SimpleSceneObject();
         sphereSO2.property.setShader(ShaderUtils.getShader("Simple3D"));
-        sphereSO2.shape.setUnitGeometry(UnitGeometries.Type.Sphere);
+        sphereSO2.shape.setUnitGeometry(Type.Sphere);
         sphereSO2.property.material.color.set(0, 1, 0, 0.5);
         final SceneNode sphereNode2 = rootSN.createChild().setSceneObject(sphereSO2);
         sphereNode2.modelInfo.translation.set(3, 1, 1);
@@ -56,7 +58,6 @@ public class UseParticleSystem {
         final SceneNode lightSN = rootSN.createChild().setSceneObject(new LightSceneObject(spotLight));
         lightSN.modelInfo.translation.set(0, 2, 0);
 
-        final SceneManager sceneManager = new SceneManager(windowManager, rootSN, cameraControl);
         while (!glfwWindowShouldClose(window)) {
             // loop
             glfwSwapBuffers(window);

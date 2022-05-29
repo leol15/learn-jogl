@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.*;
 import com.play.app.basics.*;
 import com.play.app.scene.*;
+import com.play.app.scene.camera.Camera;
 
 import org.joml.*;
 
@@ -21,13 +22,13 @@ public class WorldSerializer {
     @AllArgsConstructor
     public class GlobalData {
         // some scene node construction need these
-        public final CameraControl cameraControl;
+        public final Camera camera;
     }
 
     public final GlobalData GLOBAL_DATA;
 
-    public WorldSerializer(CameraControl cameraControl) {
-        GLOBAL_DATA = new GlobalData(cameraControl);
+    public WorldSerializer(Camera camera) {
+        GLOBAL_DATA = new GlobalData(camera);
     }
 
     public static final String OBJ_TYPE = "OBJ_TYPE";

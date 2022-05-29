@@ -9,6 +9,7 @@ import com.play.app.basics.SpacialThing;
 import com.play.app.geometry.Ray;
 import com.play.app.graphics.*;
 import com.play.app.scene.*;
+import com.play.app.scene.camera.CameraManager;
 import com.play.app.scene.sceneobject.InstancingObject;
 import com.play.app.ui.Button;
 import com.play.app.ui.editor.*;
@@ -24,7 +25,7 @@ public class Input {
         glPolygonMode(GL_FRONT, GL_LINE);
 
         final WindowManager windowManager = new WindowManager(window);
-        final CameraControl cam = new CameraControl(windowManager);
+        final CameraManager cam = new CameraManager(windowManager);
         final ShaderProgram simple3dShader = ShaderUtils.getShader("Simple3D");
 
         final Matrix4f iden = new Matrix4f();
@@ -66,7 +67,7 @@ public class Input {
         windowManager.addKeyCallback(Layer.SCENE, (window2, key, code, action, mods) -> {
             if (key == GLFW_KEY_A && action == GLFW_PRESS) {
                 windowManager.stopPropagation();
-                final Ray ray = cam.getRay(windowManager.lastMousePos[0],
+                final Ray ray = cam.getCamera().getRay(windowManager.lastMousePos[0],
                         windowManager.lastMousePos[1]);
 
                 // move ray forward a bit
@@ -107,7 +108,7 @@ public class Input {
 
             // debug
             rootNode.draw(iden);
-            cam.draw();
+            cam.show();
 
             float fps = (float) (1 / (time - previousTime));
             fpsCounter.setText(String.format("FPS: %.2f", fps), 200, 200);

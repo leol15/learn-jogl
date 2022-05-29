@@ -6,7 +6,7 @@ import static org.lwjgl.opengl.GL11.*;
 import java.awt.Color;
 
 import com.play.app.graphics.*;
-import com.play.app.scene.CameraControl;
+import com.play.app.scene.camera.CameraManager;
 import com.play.app.ui.Button;
 import com.play.app.utils.*;
 
@@ -19,7 +19,7 @@ public class BatchRendering {
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         WindowManager windowManager = new WindowManager(window);
-        CameraControl camera = new CameraControl(windowManager);
+        CameraManager cameraManager = new CameraManager(windowManager);
 
         ShaderProgram simple3DShader = ShaderUtils.getShader("Simple3D");
 
@@ -73,7 +73,7 @@ public class BatchRendering {
             simple3DShader.unuseProgram();
 
             // UI
-            camera.draw();
+            cameraManager.show();
             float fps = (float) (1 / (time - previousTime));
             fpsCounter.setText(String.format("FPS: %.2f", fps), 0, 0);
             fpsCounter.draw();
