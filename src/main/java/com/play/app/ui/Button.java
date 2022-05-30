@@ -49,6 +49,10 @@ public class Button extends UIBase {
         buttons.add(this);
     }
 
+    public void destroy() {
+        buttons.remove(this);
+    }
+
     public void setLabel(String label) {
         this.label = label;
         text.setText(label);
@@ -59,8 +63,8 @@ public class Button extends UIBase {
     }
 
     public Button setColor(float r, float g, float b, float a) {
-        setBackgroundColor(r, g, b, a);
-        backgroundColorCopy.set(backgroundColor);
+        background.setColor(r, g, b, a);
+        backgroundColorCopy.set(r, g, b, a);
         computeHoverAndTextColor();
         return this;
     }
@@ -77,23 +81,24 @@ public class Button extends UIBase {
     private void setHovered(boolean hovered) {
         if (hovered) {
             // copy over background color
-            backgroundColorCopy.set(backgroundColor);
-            setBackgroundColor(hoverColor);
+            backgroundColorCopy.set(background.color);
+            background.setColor(hoverColor);
         } else {
-            setBackgroundColor(backgroundColorCopy);
+            background.setColor(backgroundColorCopy);
         }
     }
 
     private void computeHoverAndTextColor() {
-        if (backgroundColor.length() < 1.01f) {
+        if (background.color.length() < 1.01f) {
             hoverColor.set(0.2, 0.2, 0.2, 1);
         } else {
-            backgroundColor.mul(1.2f, hoverColor);
+            background.color.mul(1.2f, hoverColor);
         }
         hoverColor.mul(1, 1, 1, 0.7f);
-        text.setColor(1 - backgroundColor.x,
-                1 - backgroundColor.y,
-                1 - backgroundColor.z,
+        text.setColor(
+                1 - background.color.x,
+                1 - background.color.y,
+                1 - background.color.z,
                 1);
     }
 

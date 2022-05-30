@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.*;
 
 import com.play.app.basics.SpacialThing;
-import com.play.app.scene.*;
 import com.play.app.scene.camera.Camera;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.ui.property.*;

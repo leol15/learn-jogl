@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.function.Consumer;
 
 import com.play.app.graphics.Text;
-import com.play.app.utils.*;
+import com.play.app.utils.WindowManager;
 import com.play.app.utils.WindowManager.Layer;
 
 import org.joml.Vector4f;
@@ -46,7 +46,7 @@ public class TextInput extends UIBase {
 
         // configure
         setBounds(x, y, 100, TEXT_HEIGHT);
-        setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+        background.setColor(DEFAULT_BACKGROUND_COLOR);
 
         // for simlpicity, just add call back
         windowManager.addKeyCallback(Layer.UI, (window, key, code, action, mods) -> {
@@ -61,18 +61,10 @@ public class TextInput extends UIBase {
         });
 
         windowManager.addMouseButtonCallback(Layer.UI, (window, button, action, mods) -> {
-            // if (!visible) {
-            //     return;
-            // }
-            final float mouseX = windowManager.lastMousePos[0];
-            final float mouseY = windowManager.lastMousePos[1];
-            onClick(mouseX, mouseY, action);
+            onClick(action);
         });
 
         windowManager.addScrollCallback(Layer.UI, (window, dx, dy) -> {
-            // if (!visible) {
-            //     return;
-            // }
             handleScroll(dx, dy);
         });
     }
@@ -199,15 +191,15 @@ public class TextInput extends UIBase {
         focused = inFocus;
         if (focused) {
             textDisplay.setColor(Color.YELLOW);
-            setBackgroundColor(DEFAULT_ACTIVE_BACKGROUND_COLOR);
+            background.setColor(DEFAULT_ACTIVE_BACKGROUND_COLOR);
         } else {
             textDisplay.setColor(Color.WHITE);
-            setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+            background.setColor(DEFAULT_BACKGROUND_COLOR);
         }
     }
 
-    private void onClick(float mouseX, float mouseY, int action) {
-        boolean inside = inside(mouseX, mouseY);
+    private void onClick(int action) {
+        boolean inside = inside(windowManager.lastMousePos[0], windowManager.lastMousePos[1]);
         boolean shouldConsumeEvent = inside;
         if (shouldConsumeEvent) {
             // event is handled

@@ -44,6 +44,14 @@ public class SceneNode implements Savable {
         return child;
     }
 
+    public int getNumChildren() {
+        return children.size();
+    }
+
+    public List<SceneNode> getChildren() {
+        return new ArrayList<>(children);
+    }
+
     public void draw(final Matrix4f transform) {
         treeTransformVisitor(this, transform, (node, newTransform) -> {
             if (node.sceneObject != null) {

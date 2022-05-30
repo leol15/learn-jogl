@@ -307,21 +307,15 @@ public class Text {
 
     private void initStatic(WindowManager windowManager) {
         // get window stats
-        IntBuffer windowWidthBuffer = BufferUtils.createIntBuffer(1);
-        IntBuffer windowHeightBuffer = BufferUtils.createIntBuffer(1);
-        // Get the window size passed to glfwCreateWindow
-        glfwGetWindowSize(windowManager.window, windowWidthBuffer, windowHeightBuffer);
-        int windowWidth = windowWidthBuffer.get();
-        int windowHeight = windowHeightBuffer.get();
+        int windowWidth = windowManager.windowSize[0];
+        int windowHeight = windowManager.windowSize[1];
 
         textShader = ShaderUtils.getShader("Text");
 
         // screen to UI projection
-        Matrix4f projection = new Matrix4f();
-        projection.scale(2f / windowWidth, -2f / windowHeight, 1);
-        projection.translate(-windowWidth / 2, -windowHeight / 2, 0);
-        FloatBuffer screenToGLSpace = BufferUtils.createFloatBuffer(16);
-        projection.get(screenToGLSpace);
+        Matrix4f screenToGLSpace = new Matrix4f();
+        screenToGLSpace.scale(2f / windowWidth, -2f / windowHeight, 1);
+        screenToGLSpace.translate(-windowWidth / 2, -windowHeight / 2, 0);
         textShader.uniformMatrix4fv("UItoGL", screenToGLSpace);
     }
 

@@ -28,7 +28,7 @@ public class SpacialThingEditor extends UIBase {
 
     public SpacialThingEditor(WindowManager windowManager, float x, float y) {
         super(windowManager);
-        setBackgroundColor(DEFAULT_BG_COLOR);
+        background.setColor(DEFAULT_BG_COLOR);
         // labels
         positionLabel = new Text(windowManager);
         scaleLabel = new Text(windowManager);

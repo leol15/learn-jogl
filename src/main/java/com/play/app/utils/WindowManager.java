@@ -4,6 +4,8 @@ import static org.lwjgl.glfw.GLFW.*;
 
 import java.util.*;
 
+import com.play.app.basics.*;
+
 import org.lwjgl.glfw.*;
 
 /**
@@ -62,6 +64,14 @@ public class WindowManager {
         windowSize[1] = tmp[1];
     }
 
+    public void captureCursor() {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+
+    public void releaseCursor() {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+
     // key and button have 2 related events
     private boolean stopPropagation = false;
 
@@ -82,10 +92,12 @@ public class WindowManager {
     ///////////////////////
     public final int[] windowSize = new int[2];
     public final float[] lastMousePos = new float[2];
+    public Event<int[]> windowSizeEvent = new Event<int[]>(windowSize);
 
     private void updateWindowSize(long window, int w, int h) {
         windowSize[0] = w;
         windowSize[1] = h;
+        windowSizeEvent.fire();
     }
 
     private void updateCursorPos(long window, double x, double y) {
@@ -218,13 +230,5 @@ public class WindowManager {
                 break;
         }
         resetStopPropagation();
-    }
-
-    public void captureCursor() {
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    }
-
-    public void releaseCursor() {
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 }

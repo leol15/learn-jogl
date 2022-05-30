@@ -8,6 +8,7 @@ import com.play.app.mesh.SpringMesh;
 import com.play.app.physics.TimeStepEngine;
 import com.play.app.scene.SceneNode;
 import com.play.app.scene.sceneobject.SimpleSceneObject;
+import com.play.app.ui.BackgroundRect;
 import com.play.app.utils.*;
 
 public class UseSpring {

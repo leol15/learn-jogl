@@ -8,6 +8,7 @@ import com.play.app.scene.camera.*;
 import com.play.app.scene.lights.LightUBO;
 import com.play.app.ui.Button;
 import com.play.app.ui.editor.PropertyEditor;
+import com.play.app.ui.treeview.SceneTreeView;
 
 import org.joml.*;
 
@@ -23,6 +24,7 @@ public class SceneManager {
     private final WindowManager windowManager;
     @Getter
     private final CameraManager cameraManager;
+    private final SceneTreeView sceneTreeView;
 
     private final PropertyEditor editor;
     private final Matrix4f identity = new Matrix4f();
@@ -58,6 +60,9 @@ public class SceneManager {
 
         polygonModeButton = new Button(windowManager, 900, 50, "Polygon Mode");
         setupPolygonModeButton();
+
+        // tree view area
+        sceneTreeView = new SceneTreeView(windowManager, root, 0, 0, 0);
 
         // set up edit area
         editor = new PropertyEditor(windowManager);
@@ -109,6 +114,7 @@ public class SceneManager {
         switchControlsButton.show();
         polygonModeButton.show();
         editor.show();
+        sceneTreeView.show();
     }
 
     public void selectSceneNode(Ray ray) {

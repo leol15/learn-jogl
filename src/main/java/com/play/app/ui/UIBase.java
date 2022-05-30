@@ -3,15 +3,8 @@ package com.play.app.ui;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Color;
-import java.nio.*;
 
-import com.play.app.geometry.Rect;
-import com.play.app.graphics.*;
-import com.play.app.utils.*;
-import com.play.app.utils.WindowManager.Layer;
-
-import org.joml.*;
-import org.lwjgl.BufferUtils;
+import com.play.app.utils.WindowManager;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -19,56 +12,28 @@ import lombok.extern.log4j.Log4j2;
 
 /**
  * Every UI element should derive from UIBase
- * For simplicity, every UI element is a square
+ * For simplicity, every UI element is a rectangle
+ * Coordinates are in screen space
  */
 @Log4j2
 @Accessors(chain = true)
-public class UIBase {
+public class UIBase implements WindowEventHandler {
 
-    // static things
-    protected static ShaderProgram uiShader;
-    private static final VAO backgroundVAO = createUnitPlane();
-
-    // things
     protected final WindowManager windowManager;
-
-    // UIBase managed things
-    // postion related
-    private final Matrix4f screenToGLSpace = new Matrix4f();
-    private final Rect bound = new Rect(0, 0, 100, 100);
-    private final Vector2f viewPortSize = new Vector2f();
-    // properties
-    protected final Vector4f backgroundColor = new Vector4f(0.3f, 0.3f, 0.3f, 1);
+    protected final BackgroundRect background;
 
     // state
     @Setter
     protected boolean visible = true;
 
-    // coordinates are in screen space
     public UIBase(WindowManager windowManager) {
         this.windowManager = windowManager;
-        windowManager.addWindowSizeCallback(Layer.ALWAYS, this::onWindowSizeChanged);
-
-        onWindowSizeChanged(windowManager.window,
-                windowManager.windowSize[0],
-                windowManager.windowSize[1]);
-
-        if (uiShader == null) {
-            // create one off shader
-            uiShader = ShaderUtils.getShader("UI");
-        }
+        background = new BackgroundRect(windowManager);
     }
 
     public UIBase(WindowManager windowManager, float x, float y, float w, float h) {
         this(windowManager);
-
-        setPosition(x, y);
-        setSize(w, h);
-    }
-
-    // TODO is this needed?
-    private void onClick() {
-
+        setBounds(x, y, w, h);
     }
 
     final public void show() {
@@ -89,32 +54,24 @@ public class UIBase {
 
     // subclass shoud override this for resizing
     public UIBase setBounds(float x, float y, float w, float h) {
-        bound.setX(x).setY(y).setW(w).setH(h);
-        computeProjectionMatrix();
+        background.setBounds(x, y, w, h);
         return this;
     }
 
-    public void setColor(Color c) {
-        setColor(c.getRed() / 255.0f,
-                c.getGreen() / 255.0f,
-                c.getBlue() / 255.0f,
-                c.getAlpha() / 255.0f);
-    }
-
     public float getWidth() {
-        return bound.getW();
+        return background.getW();
     }
 
     public float getHeight() {
-        return bound.getH();
+        return background.getH();
     }
 
     public float getX() {
-        return bound.getX();
+        return background.getX();
     }
 
     public float getY() {
-        return bound.getY();
+        return background.getY();
     }
 
     //////////////////
@@ -126,6 +83,13 @@ public class UIBase {
         showBackground();
     }
 
+    final public void setColor(Color c) {
+        setColor(c.getRed() / 255.0f,
+                c.getGreen() / 255.0f,
+                c.getBlue() / 255.0f,
+                c.getAlpha() / 255.0f);
+    }
+
     // implement this to update color
     public UIBase setColor(float r, float g, float b, float a) {
         return this;
@@ -134,85 +98,13 @@ public class UIBase {
     protected void showBackground() {
         int oldPolygonMode = glGetInteger(GL_POLYGON_MODE);
         glPolygonMode(GL_FRONT, GL_FILL);
-
-        uiShader.uniformMatrix4fv("UItoGL", screenToGLSpace);
-        uiShader.uniform4f(CONST.MATERIAL_COLOR, backgroundColor);
-        // actual draw
-        uiShader.useProgram();
-        backgroundVAO.draw();
-        uiShader.unuseProgram();
-
+        background.show();
         glPolygonMode(GL_FRONT, oldPolygonMode);
-
         // so subsequent draw can appear, TODO maybe just disable it
     }
 
-    protected UIBase setBackgroundColor(final Vector4f color) {
-        return this.setBackgroundColor(color.x, color.y, color.z, color.w);
-    }
-
-    protected UIBase setBackgroundColor(float r, float g, float b, float a) {
-        backgroundColor.set(r, g, b, a);
-        return this;
-    }
-
-    protected UIBase setBackgroundColor(final Color color) {
-        this.setBackgroundColor(color.getRed() / 255.0f,
-                color.getGreen() / 255.0f,
-                color.getBlue() / 255.0f,
-                color.getAlpha() / 255.0f);
-        return this;
-    }
-
     protected boolean inside(float screenX, float screenY) {
-        return visible && bound.inside(screenX, screenY);
-    }
-
-    //////////////////
-    // internal thing
-    //////////////////
-
-    private void setViewPortSize(int width, int height) {
-        viewPortSize.set(width, height);
-        computeProjectionMatrix();
-    }
-
-    private void onWindowSizeChanged(long window, int width, int height) {
-        setViewPortSize(width, height);
-    }
-
-    private void computeProjectionMatrix() {
-        screenToGLSpace.identity();
-        // to gl space
-        screenToGLSpace.scale(2f / viewPortSize.x, -2f / viewPortSize.y, 1);
-        screenToGLSpace.translate(-viewPortSize.x / 2, -viewPortSize.y / 2, 0);
-        // scale and move
-        screenToGLSpace.scale(bound.getW(), bound.getH(), 1);
-        screenToGLSpace.translate(bound.getX() / bound.getW(), bound.getY() / bound.getH(), 0);
-    }
-
-    private static VAO createUnitPlane() {
-        // create a unit plane for all UI backgrouds
-        final VAO vao = new VAO();
-        final FloatBuffer positions = BufferUtils.createFloatBuffer(3 * 4);
-        positions.put(0).put(0).put(0);
-        positions.put(0).put(1).put(0);
-        positions.put(1).put(1).put(0);
-        positions.put(1).put(0).put(0);
-
-        final IntBuffer elements = BufferUtils.createIntBuffer(2 * 3);
-        elements.put(0).put(1).put(2);
-        elements.put(0).put(2).put(3);
-
-        positions.flip();
-        elements.flip();
-
-        vao.bufferData(CONST.VERT_IN_POSITION, positions);
-        vao.bufferIndices(elements);
-
-        vao.setDrawFunction(() -> glDrawElements(GL_TRIANGLES, 2 * 3, GL_UNSIGNED_INT, 0));
-
-        return vao;
+        return visible && background.inside(screenX, screenY);
     }
 
 }
