@@ -3,12 +3,11 @@ package com.play.app.utils;
 import static org.lwjgl.opengl.GL11.*;
 
 import com.play.app.geometry.Ray;
-import com.play.app.scene.*;
+import com.play.app.scene.SceneNode;
 import com.play.app.scene.camera.*;
 import com.play.app.scene.lights.LightUBO;
 import com.play.app.ui.Button;
 import com.play.app.ui.editor.PropertyEditor;
-import com.play.app.utils.WindowManager.Layer;
 
 import org.joml.*;
 
@@ -21,7 +20,6 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class SceneManager {
     private SceneNode root;
-    // private final CameraControl cam;
     private final WindowManager windowManager;
     @Getter
     private final CameraManager cameraManager;
@@ -29,7 +27,8 @@ public class SceneManager {
     private final PropertyEditor editor;
     private final Matrix4f identity = new Matrix4f();
 
-    private final Button saveButton, loadButton;
+    private final Button saveButton, loadButton, switchControlsButton;
+    private final Button polygonModeButton;
 
     private SceneNode selectedNode;
 
@@ -48,11 +47,32 @@ public class SceneManager {
         loadButton = new Button(windowManager, 600, 50, "Load");
         setupSaveLoadButtons();
 
+        switchControlsButton = new Button(windowManager, 700, 50, "Switch View");
+        switchControlsButton.setAction(() -> {
+            if (cameraManager.getActiveController() == cameraManager.EDITOR_CAMERA_CONTROL) {
+                cameraManager.setControll(cameraManager.FIRST_PRESON_CAMERA_CONTROL);
+            } else {
+                cameraManager.setControll(cameraManager.EDITOR_CAMERA_CONTROL);
+            }
+        });
+
+        polygonModeButton = new Button(windowManager, 900, 50, "Polygon Mode");
+        setupPolygonModeButton();
+
         // set up edit area
         editor = new PropertyEditor(windowManager);
 
         // set background color
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
+    }
+
+    private void setupPolygonModeButton() {
+        final int[] toggleState = new int[1];
+        final int[] polygonMode = { GL_LINE, GL_FILL, GL_POINT };
+        polygonModeButton.setAction(() -> {
+            glPolygonMode(GL_FRONT_AND_BACK, polygonMode[toggleState[0]]);
+            toggleState[0] = (toggleState[0] + 1) % polygonMode.length;
+        });
     }
 
     public void render() {
@@ -86,6 +106,8 @@ public class SceneManager {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         saveButton.show();
         loadButton.show();
+        switchControlsButton.show();
+        polygonModeButton.show();
         editor.show();
     }
 

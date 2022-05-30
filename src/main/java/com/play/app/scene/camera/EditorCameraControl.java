@@ -62,14 +62,14 @@ public class EditorCameraControl implements CameraControl {
 
         gridVAO = createBaseGrid();
         lineShader = createLineShader();
-
-        resetCameraPosition();
     }
 
     @Override
     public void setCamera(Camera camera) {
         this.camera = camera;
-        resetCameraPosition();
+        if (camera != null && camera.position.distance(camera.target) < 1) {
+            resetCameraPosition();
+        }
         updated();
     }
 

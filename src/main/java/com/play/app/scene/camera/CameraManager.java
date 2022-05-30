@@ -15,6 +15,7 @@ public class CameraManager {
     public final EditorCameraControl EDITOR_CAMERA_CONTROL;
     public final FirstPersonCameraControl FIRST_PRESON_CAMERA_CONTROL;
 
+    @Getter
     private CameraControl activeController;
     @Getter
     private final Camera camera;

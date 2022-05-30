@@ -22,7 +22,7 @@ layout (std140) uniform CAMERA_INFO
 
 const float MAGNITUDE = 0.1;
 void GenerateLine(int index) {
-    in_fragColor = vec4(1, 1, 0, 0.7);
+    in_fragColor = vec4(1, 1, 0, 1);
     gl_Position = projection * gl_in[index].gl_Position;
     EmitVertex();
     gl_Position = projection * (gl_in[index].gl_Position + 

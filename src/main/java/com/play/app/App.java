@@ -47,7 +47,8 @@ public class App {
 		// new DrawAScene(window);
 		// new UseLights(window);
 		// new UseParticleSystem(window);
-		new UseCameraControl(window);
+		// new UseCameraControl(window);
+		new UseSpring(window);
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);
