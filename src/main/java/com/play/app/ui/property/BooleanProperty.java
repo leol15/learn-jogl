@@ -1,6 +1,8 @@
 package com.play.app.ui.property;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @AllArgsConstructor
 @Getter

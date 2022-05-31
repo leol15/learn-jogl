@@ -1,15 +1,28 @@
 package com.play.app;
 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.GL_FILL;
+import static org.lwjgl.opengl.GL11.GL_FRONT;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glGetInteger;
+import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.opengl.GL43.GL_MAX_UNIFORM_LOCATIONS;
 
-import com.play.app.graphics.*;
-import com.play.app.scene.*;
+import com.play.app.graphics.ShaderProgram;
+import com.play.app.graphics.UnitGeometries;
+import com.play.app.scene.SceneNode;
 import com.play.app.scene.camera.CameraUBO;
-import com.play.app.scene.lights.*;
-import com.play.app.scene.sceneobject.*;
-import com.play.app.utils.*;
+import com.play.app.scene.lights.DirectionalLight;
+import com.play.app.scene.lights.LightUBO;
+import com.play.app.scene.lights.PointLight;
+import com.play.app.scene.lights.SpotLight;
+import com.play.app.scene.sceneobject.LightSceneObject;
+import com.play.app.scene.sceneobject.SimpleSceneObject;
+import com.play.app.utils.SceneManager;
+import com.play.app.utils.ShaderUtils;
+import com.play.app.utils.WindowManager;
 
 import org.joml.Math;
 

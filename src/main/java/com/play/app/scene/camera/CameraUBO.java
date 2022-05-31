@@ -1,12 +1,17 @@
 package com.play.app.scene.camera;
 
+import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15.glBindBuffer;
+import static org.lwjgl.opengl.GL15.glBufferData;
+import static org.lwjgl.opengl.GL31.GL_UNIFORM_BUFFER;
+
 import java.nio.ByteBuffer;
 
 import com.play.app.graphics.UBO;
 import com.play.app.utils.CONST;
 
-import static org.lwjgl.opengl.GL45.*;
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import lombok.Getter;

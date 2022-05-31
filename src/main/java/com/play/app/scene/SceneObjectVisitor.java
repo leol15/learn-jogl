@@ -1,6 +1,8 @@
 package com.play.app.scene;
 
-import com.play.app.scene.sceneobject.*;
+import com.play.app.scene.sceneobject.InstancingObject;
+import com.play.app.scene.sceneobject.LightSceneObject;
+import com.play.app.scene.sceneobject.SimpleSceneObject;
 
 import org.joml.Matrix4f;
 

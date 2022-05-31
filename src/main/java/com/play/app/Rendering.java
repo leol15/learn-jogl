@@ -1,15 +1,29 @@
 package com.play.app;
 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_FILL;
+import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glPolygonMode;
 
 import java.nio.FloatBuffer;
 
-import com.play.app.graphics.*;
+import com.play.app.graphics.ShaderProgram;
+import com.play.app.graphics.UnitGeometries;
 import com.play.app.scene.camera.CameraManager;
-import com.play.app.utils.*;
+import com.play.app.utils.CONST;
+import com.play.app.utils.ShaderUtils;
+import com.play.app.utils.WindowManager;
 
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 public class Rendering {

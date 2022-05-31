@@ -1,13 +1,20 @@
 package com.play.app;
 
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
-import com.play.app.graphics.*;
+import com.play.app.graphics.Texture;
 import com.play.app.graphics.UnitGeometries.Type;
-import com.play.app.scene.*;
+import com.play.app.scene.SceneNode;
 import com.play.app.scene.lights.SpotLight;
-import com.play.app.scene.sceneobject.*;
-import com.play.app.utils.*;
+import com.play.app.scene.sceneobject.LightSceneObject;
+import com.play.app.scene.sceneobject.ParticlesSceneObject;
+import com.play.app.scene.sceneobject.SimpleSceneObject;
+import com.play.app.utils.CONST;
+import com.play.app.utils.SceneManager;
+import com.play.app.utils.ShaderUtils;
+import com.play.app.utils.WindowManager;
 
 import org.joml.Random;
 
@@ -48,9 +55,9 @@ public class UseParticleSystem {
 
         final Random rand = new Random(100);
 
-        final Text particleCount = new Text(windowManager);
-        particleCount.setColor(1, 1, 1, 1);
-        particleCount.setText("Particle Count: ", 400, 10);
+        // final Text particleCount = new Text(windowManager);
+        // particleCount.setColor(1, 1, 1, 1);
+        // particleCount.setText("Particle Count: ", 400, 10);
 
         // lights
         final SpotLight spotLight = new SpotLight();
@@ -73,8 +80,8 @@ public class UseParticleSystem {
                     (rand.nextFloat() - 0.5f),
                     (rand.nextFloat() - 0.5f),
                     (rand.nextFloat() - 0.5f));
-            particleCount.draw();
-            particleCount.setText("Particle Count: " + pSO.getParticleCount());
+            // particleCount.draw();
+            // particleCount.setText("Particle Count: " + pSO.getParticleCount());
 
             // debug
             // lightSN.draw(new Matrix4f());

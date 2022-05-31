@@ -48,7 +48,8 @@ public class App {
 		// new UseLights(window);
 		// new UseParticleSystem(window);
 		// new UseCameraControl(window);
-		new UseSpring(window);
+		// new UseSpring(window);
+		new UseUI(window);
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);

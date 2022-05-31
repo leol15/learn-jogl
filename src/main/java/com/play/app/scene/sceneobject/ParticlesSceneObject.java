@@ -1,17 +1,25 @@
 package com.play.app.scene.sceneobject;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_ONE;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.play.app.basics.SpacialThing;
 import com.play.app.scene.camera.Camera;
 import com.play.app.ui.editor.PropertyEditor;
-import com.play.app.ui.property.*;
-import com.play.app.utils.*;
+import com.play.app.ui.property.BooleanProperty;
+import com.play.app.ui.property.FloatProperty;
+import com.play.app.utils.Func;
+import com.play.app.utils.WorldSerializer;
 
-import org.joml.*;
+import org.joml.AxisAngle4f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class ParticlesSceneObject extends SimpleSceneObject {
 

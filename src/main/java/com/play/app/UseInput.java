@@ -1,26 +1,38 @@
 package com.play.app;
 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_FRONT;
+import static org.lwjgl.opengl.GL11.GL_LINE;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glPolygonMode;
 
 import java.awt.Color;
 
 import com.play.app.basics.SpacialThing;
 import com.play.app.geometry.Ray;
-import com.play.app.graphics.*;
-import com.play.app.scene.*;
+import com.play.app.graphics.ShaderProgram;
+import com.play.app.graphics.UnitGeometries;
+import com.play.app.scene.SceneNode;
 import com.play.app.scene.camera.CameraManager;
 import com.play.app.scene.sceneobject.InstancingObject;
-import com.play.app.ui.Button;
-import com.play.app.ui.editor.*;
-import com.play.app.utils.*;
+import com.play.app.utils.ShaderUtils;
+import com.play.app.utils.WindowManager;
 import com.play.app.utils.WindowManager.Layer;
 
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
-public class Input {
+public class UseInput {
 
-    public Input(long window) {
+    public UseInput(long window) {
 
         glPolygonMode(GL_FRONT, GL_LINE);
 
@@ -39,28 +51,28 @@ public class Input {
         SceneNode cube1 = new SceneNode().setSceneObject(cubes);
         rootNode.addChild(cube1);
 
-        Text fpsCounter = new Text(windowManager, "FPS: 1", 0, 0);
-        fpsCounter.setColor(Color.RED);
-        double previousTime = 0;
+        // Text fpsCounter = new Text(windowManager, "FPS: 1", 0, 0);
+        // fpsCounter.setColor(Color.RED);
+        // double previousTime = 0;
 
-        Button button = new Button(windowManager, 600, 300, 100f, 100f);
-        button.setColor(Color.GREEN);
-        Button button2 = new Button(windowManager, 100, 100, 100f, 100f);
-        Button button3 = new Button(windowManager, 300, 300, "Yoooo");
+        // Button button = new Button(windowManager, 600, 300, 100f, 100f);
+        // button.setColor(Color.GREEN);
+        // Button button2 = new Button(windowManager, 100, 100, 100f, 100f);
+        // Button button3 = new Button(windowManager, 300, 300, "Yoooo");
 
-        int[] tmp = new int[1];
-        button.setAction(() -> {
-            System.out.println("Hello world button");
-            tmp[0]++;
-            button.setColor(tmp[0] % 2 == 0 ? Color.RED : Color.GREEN);
-        });
+        // int[] tmp = new int[1];
+        // button.setAction(() -> {
+        //     System.out.println("Hello world button");
+        //     tmp[0]++;
+        //     button.setColor(tmp[0] % 2 == 0 ? Color.RED : Color.GREEN);
+        // });
 
         // work
         // final TextInput textInput = new TextInput(windowManager, 300, 600);
-        final SpacialThingEditor spacialThingEditor = new SpacialThingEditor(windowManager, 100, 600);
-        final VectorXfEditor vectorXfEditor = new VectorXfEditor(windowManager, 100, 1000);
+        // final SpacialThingEditor spacialThingEditor = new SpacialThingEditor(windowManager, 100, 600);
+        // final VectorXfEditor vectorXfEditor = new VectorXfEditor(windowManager, 100, 1000);
         final Vector3f testVec3f = new Vector3f().set(1, 2, 3);
-        vectorXfEditor.setVector(testVec3f);
+        // vectorXfEditor.setVector(testVec3f);
 
         // select
         SceneNode[] selectedNode = { null };
@@ -84,14 +96,14 @@ public class Input {
                     // TODO edit
                     // selectedNode[0].getSceneObject().setColor(Color.WHITE);
                     selectedNode[0] = null;
-                    spacialThingEditor.setSpacialThing(null);
-                    spacialThingEditor.setVisible(false);
+                    // spacialThingEditor.setSpacialThing(null);
+                    // spacialThingEditor.setVisible(false);
                 }
                 if (newNode != null) {
                     // newNode.getSceneObject().setColor(Color.RED);
                     selectedNode[0] = newNode;
-                    spacialThingEditor.setSpacialThing(newNode.modelInfo);
-                    spacialThingEditor.setVisible(true);
+                    // spacialThingEditor.setSpacialThing(newNode.modelInfo);
+                    // spacialThingEditor.setVisible(true);
                 }
             }
         });
@@ -110,18 +122,18 @@ public class Input {
             rootNode.draw(iden);
             cam.show();
 
-            float fps = (float) (1 / (time - previousTime));
-            fpsCounter.setText(String.format("FPS: %.2f", fps), 200, 200);
-            fpsCounter.draw();
-            previousTime = time;
+            // float fps = (float) (1 / (time - previousTime));
+            // fpsCounter.setText(String.format("FPS: %.2f", fps), 200, 200);
+            // fpsCounter.draw();
+            // previousTime = time;
 
-            button.show();
-            button2.show();
-            button3.show();
+            // button.show();
+            // button2.show();
+            // button3.show();
 
             // textInput.show();
-            spacialThingEditor.show();
-            vectorXfEditor.show();
+            // spacialThingEditor.show();
+            // vectorXfEditor.show();
 
             glfwPollEvents();
         }

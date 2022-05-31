@@ -2,11 +2,15 @@ package com.play.app.scene.sceneobject;
 
 import java.io.IOException;
 
-import com.play.app.basics.*;
-import com.play.app.graphics.*;
+import com.play.app.basics.Editable;
+import com.play.app.basics.Loadable;
+import com.play.app.basics.Savable;
+import com.play.app.graphics.ShaderProgram;
+import com.play.app.graphics.Texture;
 import com.play.app.scene.lights.LightingMaterial;
 import com.play.app.ui.editor.PropertyEditor;
-import com.play.app.utils.*;
+import com.play.app.utils.CONST;
+import com.play.app.utils.WorldSerializer;
 
 import org.joml.Matrix4f;
 

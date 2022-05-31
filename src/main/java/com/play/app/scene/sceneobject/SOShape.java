@@ -2,15 +2,20 @@ package com.play.app.scene.sceneobject;
 
 import java.io.IOException;
 
-import com.play.app.basics.*;
-import com.play.app.collider.*;
-import com.play.app.geometry.*;
+import com.play.app.basics.Editable;
+import com.play.app.basics.Loadable;
+import com.play.app.basics.Savable;
+import com.play.app.collider.Collider;
+import com.play.app.collider.UnitCollider;
+import com.play.app.geometry.Ray;
 import com.play.app.graphics.UnitGeometries;
-import com.play.app.mesh.*;
+import com.play.app.mesh.Mesh;
+import com.play.app.mesh.UnitMesh;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.utils.WorldSerializer;
 
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import lombok.Setter;
 import lombok.experimental.Accessors;

@@ -1,6 +1,8 @@
 package com.play.app.scene;
 
-import com.play.app.basics.*;
+import com.play.app.basics.Editable;
+import com.play.app.basics.Savable;
+import com.play.app.basics.Selectable;
 
 import org.joml.Matrix4f;
 

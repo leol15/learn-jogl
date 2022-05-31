@@ -27,6 +27,17 @@ public class NormalMesh implements Mesh {
         vao = new VAO();
     }
 
+    public int numPos() {
+        return positions.size();
+    }
+
+    public void reset() {
+        positions.clear();
+        normals.clear();
+        uvs.clear();
+        triangles.clear();
+    }
+
     @Override
     public void draw() {
         // assume data is uploaded to VAO already
@@ -92,6 +103,7 @@ public class NormalMesh implements Mesh {
 
         positionsBuf.flip();
         normalsBuf.flip();
+        uvsBuf.flip();
         trianglesBuf.flip();
         vao.bufferData(CONST.VERT_IN_POSITION, positionsBuf);
         vao.bufferData(CONST.VERT_IN_NORMAL, normalsBuf);

@@ -2,7 +2,11 @@
 package com.play.app.utils;
 
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
@@ -39,7 +43,6 @@ public class AssetTools {
         try {
             ImageIO.write(image, "png", new File(path));
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

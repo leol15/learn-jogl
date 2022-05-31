@@ -1,16 +1,19 @@
 package com.play.app.scene.sceneobject;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonToken;
 import com.play.app.basics.SpacialThing;
 import com.play.app.geometry.Ray;
-import com.play.app.scene.*;
+import com.play.app.scene.SceneObject;
+import com.play.app.scene.SceneObjectVisitor;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.utils.WorldSerializer;
 
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import lombok.experimental.Accessors;
 

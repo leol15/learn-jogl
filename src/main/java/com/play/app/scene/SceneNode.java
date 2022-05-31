@@ -1,18 +1,26 @@
 package com.play.app.scene;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 import com.fasterxml.jackson.core.JsonToken;
-import com.play.app.basics.*;
+import com.play.app.basics.Savable;
+import com.play.app.basics.SpacialThing;
 import com.play.app.geometry.Ray;
 import com.play.app.ui.editor.PropertyEditor;
-import com.play.app.utils.*;
+import com.play.app.utils.CONST;
+import com.play.app.utils.WorldSerializer;
 
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Accessors(chain = true)

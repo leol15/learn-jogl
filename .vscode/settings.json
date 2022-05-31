@@ -1,10 +1,11 @@
 {
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.format.settings.url": "eclipse-formatter.xml",
-    "java.sources.organizeImports.starThreshold": 2,
-    "java.sources.organizeImports.staticStarThreshold": 2,
+    "java.sources.organizeImports.starThreshold": 999,
+    "java.sources.organizeImports.staticStarThreshold": 999,
     "java.completion.filteredTypes": [
         "com.sun.*",
+        "java.awt.*",
         "sun.*",
         "jdk.*",
         "org.graalvm.*",

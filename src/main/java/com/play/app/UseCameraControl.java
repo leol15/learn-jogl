@@ -1,13 +1,18 @@
 
 package com.play.app;
 
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 import com.play.app.graphics.UnitGeometries.Type;
 import com.play.app.scene.SceneNode;
-import com.play.app.scene.camera.*;
+import com.play.app.scene.camera.CameraManager;
 import com.play.app.scene.sceneobject.SimpleSceneObject;
-import com.play.app.utils.*;
+import com.play.app.utils.SceneManager;
+import com.play.app.utils.ShaderUtils;
+import com.play.app.utils.WindowManager;
 
 public class UseCameraControl {
 

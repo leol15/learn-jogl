@@ -1,17 +1,27 @@
 
 package com.play.app.scene.camera;
 
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.play.app.geometry.Ray;
 import com.play.app.graphics.UnitGeometries.Type;
 import com.play.app.mesh.UnitMesh;
 import com.play.app.scene.sceneobject.SimpleSceneObject;
-import com.play.app.utils.*;
+import com.play.app.utils.ShaderUtils;
+import com.play.app.utils.WindowManager;
 
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import lombok.experimental.Accessors;
 import lombok.extern.log4j.Log4j2;
