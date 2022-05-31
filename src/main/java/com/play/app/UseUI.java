@@ -12,7 +12,7 @@ import com.play.app.ui.elements.ContainerH;
 import com.play.app.ui.elements.ContainerV;
 import com.play.app.ui.elements.Padding;
 import com.play.app.ui.elements.TextInput;
-import com.play.app.ui.elements.UIButton;
+import com.play.app.ui.elements.Button;
 import com.play.app.ui.elements.UIText;
 import com.play.app.utils.SceneManager;
 import com.play.app.utils.WindowManager;
@@ -45,7 +45,7 @@ public class UseUI {
         row.addChild(new Padding(uiManager));
         row.addChild(new Padding(uiManager));
         row.addChild(new UIText(uiManager, "Row text"));
-        row.addChild(new UIButton(uiManager, "Button 1"));
+        row.addChild(new Button(uiManager, "Button 1"));
         row.addChild(new TextInput(uiManager, "input 1"));
         box.addChild(row);
 
@@ -65,14 +65,14 @@ public class UseUI {
         final Vector3f v3 = new Vector3f(1, 2, 3);
         vEditor.setVector(v3);
 
-        final UIButton button2 = new UIButton(uiManager, "Button 2");
+        final Button button2 = new Button(uiManager, "Button 2");
         box.addChild(button2);
         button2.onClickEvent.addListener(e -> {
             log.info("vector is now {}", v3);
             vEditor.clear();
         });
 
-        // uiManager.roots.add(box);
+        uiManager.roots.add(box);
 
         while (!glfwWindowShouldClose(window)) {
             // loop

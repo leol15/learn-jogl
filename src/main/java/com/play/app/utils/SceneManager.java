@@ -26,7 +26,7 @@ import com.play.app.scene.lights.LightUBO;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.ui.elements.ContainerH;
-import com.play.app.ui.elements.UIButton;
+import com.play.app.ui.elements.Button;
 import com.play.app.ui.elements.UIElement;
 
 import org.joml.Matrix4f;
@@ -134,8 +134,8 @@ public class SceneManager {
     private UIElement createTopButtonRow() {
         // save/load
         final ContainerH row = new ContainerH(uiManager);
-        final UIButton saveButton = new UIButton(uiManager, "Save");
-        final UIButton loadButton = new UIButton(uiManager, "Load");
+        final Button saveButton = new Button(uiManager, "Save");
+        final Button loadButton = new Button(uiManager, "Load");
         final WorldSerializer worldSerializer = new WorldSerializer(cameraManager.getCamera());
         saveButton.onClickEvent.addListener(e -> {
             worldSerializer.save("test-scene.yaml", root);
@@ -144,7 +144,7 @@ public class SceneManager {
             this.root = worldSerializer.load("test-scene.yaml");
         });
 
-        final UIButton switchControlsButton = new UIButton(uiManager, "Switch View");
+        final Button switchControlsButton = new Button(uiManager, "Switch View");
         switchControlsButton.onClickEvent.addListener(e -> {
             if (cameraManager.getActiveController() == cameraManager.EDITOR_CAMERA_CONTROL) {
                 cameraManager.setControll(cameraManager.FIRST_PRESON_CAMERA_CONTROL);
@@ -153,7 +153,7 @@ public class SceneManager {
             }
         });
 
-        final UIButton polygonModeButton = new UIButton(uiManager, "Polygon Mode");
+        final Button polygonModeButton = new Button(uiManager, "Polygon Mode");
         final int[] toggleState = new int[1];
         final int[] polygonMode = { GL_LINE, GL_FILL, GL_POINT };
         polygonModeButton.onClickEvent.addListener(e -> {

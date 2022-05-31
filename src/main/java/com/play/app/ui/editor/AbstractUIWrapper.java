@@ -20,12 +20,12 @@ public abstract class AbstractUIWrapper extends AbstractUIElement {
     abstract protected UIElement getWrappedElement();
 
     @Override
-    public float getW() {
+    protected float getW() {
         return getWrappedElement().getWidth();
     }
 
     @Override
-    public float getH() {
+    protected float getH() {
         return getWrappedElement().getHeight();
     }
 

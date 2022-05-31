@@ -13,24 +13,24 @@ import lombok.extern.log4j.Log4j2;
  * Basically a clickabe text
  */
 @Log4j2
-public class UIButton extends AbstractUIElement {
+public class Button extends AbstractUIElement {
 
     public float padding = 5;
-    public final Event<UIButton> onClickEvent;
+    public final Event<Button> onClickEvent;
 
     private String label;
     private final UIText text; // the space padded `label`  
     private final Matrix4f textTransform = new Matrix4f();
 
-    public UIButton(UIManager uiManager) {
+    public Button(UIManager uiManager) {
         this(uiManager, "button");
     }
 
-    public UIButton(UIManager uiManager, CharSequence label) {
+    public Button(UIManager uiManager, CharSequence label) {
         super(uiManager);
         this.label = " " + label + " ";
         text = new UIText(uiManager, this.label);
-        onClickEvent = new Event<UIButton>(this);
+        onClickEvent = new Event<Button>(this);
         setDefaultColors();
     }
 

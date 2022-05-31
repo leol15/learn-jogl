@@ -7,6 +7,30 @@ root:
     rotation: "0.000 0.000 0.000 1.000"
   children:
   - modelInfo:
+      translation: "1.000 1.000 1.000"
+      scale: "1.000 1.000 1.000"
+      rotation: "0.000 0.000 0.000 1.000"
+    children: []
+    sceneObject:
+      OBJ_TYPE: "com.play.app.scene.sceneobject.SimpleSceneObject"
+      OBJ_DATA:
+        property:
+          shader: "Simple3D"
+          texture: null
+          material:
+            color: "1.000 0.000 0.000 1.000"
+            specularHardness: 100.0
+        shape:
+          mesh:
+            OBJ_TYPE: "com.play.app.mesh.UnitMesh"
+            OBJ_DATA:
+              type: "Sphere"
+              resolution: 20
+          collider:
+            OBJ_TYPE: "com.play.app.collider.UnitCollider"
+            OBJ_DATA:
+              type: "Sphere"
+  - modelInfo:
       translation: "-0.400 2.200 -0.800"
       scale: "1.000 1.000 1.000"
       rotation: "0.384 0.010 -0.137 0.913"
@@ -34,63 +58,8 @@ root:
           OBJ_TYPE: "com.play.app.scene.lights.SpotLight"
           OBJ_DATA:
             color: "1.000 1.000 0.000 1.000"
-            attenuation: "0.010 0.010 0.300"
-            angle: 35.0
-  - modelInfo:
-      translation: "0.000 0.000 0.000"
-      scale: "1.000 1.000 1.000"
-      rotation: "0.000 0.000 0.000 1.000"
-    children: []
-    sceneObject:
-      OBJ_TYPE: "com.play.app.scene.sceneobject.ParticlesSceneObject"
-      OBJ_DATA:
-        property:
-          shader: "BlinnPhong"
-          texture: "resources/textures/dash.png"
-          material:
-            color: "0.000 1.000 1.000 1.000"
-            specularHardness: 100.0
-        shape:
-          mesh:
-            OBJ_TYPE: "com.play.app.mesh.UnitMesh"
-            OBJ_DATA:
-              type: "Cube"
-              resolution: 20
-          collider:
-            OBJ_TYPE: "com.play.app.collider.UnitCollider"
-            OBJ_DATA:
-              type: "Cube"
-        isBillboard: false
-        isTransparent: false
-        force: "0.000 -0.300 0.000"
-        emitTime: 0.0
-        TTL: 5.0
-        intialPositionDelta: "-0.300 -0.300 -0.000"
-        initalVelocity: "-0.100 0.100 -0.100"
-  - modelInfo:
-      translation: "1.000 1.000 1.000"
-      scale: "1.000 1.000 1.000"
-      rotation: "0.000 0.000 0.000 1.000"
-    children: []
-    sceneObject:
-      OBJ_TYPE: "com.play.app.scene.sceneobject.SimpleSceneObject"
-      OBJ_DATA:
-        property:
-          shader: "Simple3D"
-          texture: null
-          material:
-            color: "1.000 0.000 0.000 1.000"
-            specularHardness: 100.0
-        shape:
-          mesh:
-            OBJ_TYPE: "com.play.app.mesh.UnitMesh"
-            OBJ_DATA:
-              type: "Sphere"
-              resolution: 20
-          collider:
-            OBJ_TYPE: "com.play.app.collider.UnitCollider"
-            OBJ_DATA:
-              type: "Sphere"
+            attenuation: "0.000 0.060 0.300"
+            angle: 65.0
   - modelInfo:
       translation: "3.000 1.000 1.000"
       scale: "1.000 1.000 1.000"
@@ -115,4 +84,35 @@ root:
             OBJ_TYPE: "com.play.app.collider.UnitCollider"
             OBJ_DATA:
               type: "Sphere"
+  - modelInfo:
+      translation: "0.000 0.000 0.000"
+      scale: "1.000 1.000 1.000"
+      rotation: "0.000 0.000 0.000 1.000"
+    children: []
+    sceneObject:
+      OBJ_TYPE: "com.play.app.scene.sceneobject.ParticlesSceneObject"
+      OBJ_DATA:
+        property:
+          shader: "BlinnPhong"
+          texture: "resources/textures/dash.png"
+          material:
+            color: "1.000 0.400 1.100 1.000"
+            specularHardness: 100.0
+        shape:
+          mesh:
+            OBJ_TYPE: "com.play.app.mesh.UnitMesh"
+            OBJ_DATA:
+              type: "Cube"
+              resolution: 20
+          collider:
+            OBJ_TYPE: "com.play.app.collider.UnitCollider"
+            OBJ_DATA:
+              type: "Cube"
+        isBillboard: false
+        isTransparent: false
+        force: "0.000 -0.400 0.000"
+        emitTime: 0.0
+        TTL: 5.0
+        intialPositionDelta: "-0.300 -0.300 -0.000"
+        initalVelocity: "-0.100 0.100 -0.100"
   sceneObject: null

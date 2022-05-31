@@ -1,14 +1,14 @@
 package com.play.app.ui.editor;
 
 import com.play.app.ui.UIManager;
-import com.play.app.ui.elements.UIButton;
+import com.play.app.ui.elements.Button;
 import com.play.app.ui.elements.UIElement;
 import com.play.app.ui.property.BooleanProperty;
 
 public class BooleanEditor extends AbstractUIWrapper {
 
     // this is a werid composition, might just subclass?
-    private final UIButton stateButton;
+    private final Button stateButton;
     private BooleanProperty booleanProperty;
 
     public BooleanEditor(UIManager uiManager) {
@@ -17,12 +17,12 @@ public class BooleanEditor extends AbstractUIWrapper {
 
     public BooleanEditor(UIManager uiManager, BooleanProperty bool) {
         super(uiManager);
-        stateButton = new UIButton(uiManager, "boolean");
+        stateButton = new Button(uiManager, "boolean");
         stateButton.onClickEvent.addListener(this::onClick);
         setProperty(bool);
     }
 
-    private void onClick(UIButton stateButton) {
+    private void onClick(Button stateButton) {
         if (booleanProperty != null) {
             booleanProperty.setValue(!booleanProperty.getValue());
         }
