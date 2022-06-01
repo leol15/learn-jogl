@@ -1,6 +1,9 @@
 package com.play.app.ui.elements;
 
+import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
+import com.play.app.ui.enums.ButtonAction;
+import com.play.app.ui.enums.MouseButtonType;
 
 import org.joml.Matrix4f;
 
@@ -38,6 +41,14 @@ public class Padding extends AbstractUIElement {
     @Override
     public void drawInternal(Matrix4f transform) {
         drawBackground(transform);
+    }
+
+    @Override
+    public UIElement onMouseButton(MouseButtonType button, ButtonAction action, int mods, float mouseX, float mouseY) {
+        if (action == ButtonAction.PRESS) {
+            log.trace("You clicked a padding!");
+        }
+        return null;
     }
 
 }

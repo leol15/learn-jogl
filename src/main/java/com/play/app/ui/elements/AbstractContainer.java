@@ -3,6 +3,7 @@ package com.play.app.ui.elements;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.enums.ButtonAction;
 
@@ -17,8 +18,36 @@ public abstract class AbstractContainer extends AbstractUIElement {
 
     protected final List<UIElement> children = new ArrayList<>();
 
+    public int numChildren() {
+        return children.size();
+    }
+
+    public void addChild(UIElement e) {
+        children.add(e);
+    }
+
+    public void preprendChild(UIElement e) {
+        children.add(0, e);
+    }
+
+    public UIElement removeChild(UIElement e) {
+        if (children.remove(e)) {
+            return e;
+        } else {
+            return null;
+        }
+    }
+
     public void clear() {
-        children.clear();
+        children.removeIf(c -> {
+            c.destroy();
+            return true;
+        });
+    }
+
+    @Override
+    public void destroy() {
+        clear();
     }
 
     @Override

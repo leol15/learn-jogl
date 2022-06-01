@@ -1,9 +1,11 @@
 package com.play.app.ui.elements;
 
 import com.play.app.basics.Event;
+import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.enums.ButtonAction;
 import com.play.app.ui.enums.MouseButtonType;
+import com.play.app.utils.Color;
 
 import org.joml.Matrix4f;
 
@@ -43,16 +45,18 @@ public class Button extends AbstractUIElement {
         text.setText(this.label);
     }
 
+    public Color textColor() {
+        return text.textColor;
+    }
+
     private void setDefaultColors() {
         bgColor.set(0, 0.6, 0);
         text.bgColor.set(0);
-        text.textColor.set(0.9);
     }
 
     private void setActiveColors() {
         bgColor.set(0, 0.9, 0);
         text.bgColor.set(0);
-        text.textColor.set(0.9);
     }
 
     @Override
@@ -70,6 +74,11 @@ public class Button extends AbstractUIElement {
         drawBackground(transform);
         textTransform.identity().translate(padding, padding, 0).mulLocal(transform);
         text.draw(textTransform);
+    }
+
+    @Override
+    public void destroy() {
+        text.destroy();
     }
 
     @Override

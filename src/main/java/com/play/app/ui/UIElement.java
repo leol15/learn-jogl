@@ -1,6 +1,4 @@
-package com.play.app.ui.elements;
-
-import com.play.app.ui.UIEventHandler;
+package com.play.app.ui;
 
 import org.joml.Matrix4f;
 
@@ -24,5 +22,10 @@ public interface UIElement extends UIEventHandler {
      * @param transform will be unchanged
      */
     public void draw(Matrix4f transform);
+
+    /**
+     * Chance to release resources
+     */
+    default void destroy() {}
 
 }

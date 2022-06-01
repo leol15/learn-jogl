@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.play.app.basics.Drawable;
 import com.play.app.graphics.ShaderProgram;
-import com.play.app.ui.elements.UIElement;
 import com.play.app.ui.enums.ButtonAction;
 import com.play.app.ui.enums.MouseButtonType;
 import com.play.app.utils.ShaderUtils;

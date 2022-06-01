@@ -1,8 +1,8 @@
 package com.play.app.ui.editor;
 
+import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.elements.AbstractUIElement;
-import com.play.app.ui.elements.UIElement;
 import com.play.app.ui.enums.ButtonAction;
 import com.play.app.ui.enums.MouseButtonType;
 
@@ -21,48 +21,69 @@ public abstract class AbstractUIWrapper extends AbstractUIElement {
 
     @Override
     protected float getW() {
-        return getWrappedElement().getWidth();
+        final UIElement e = getWrappedElement();
+        return e != null ? e.getWidth() : 0;
     }
 
     @Override
     protected float getH() {
-        return getWrappedElement().getHeight();
+        final UIElement e = getWrappedElement();
+        return e != null ? e.getHeight() : 0;
     }
 
     @Override
     protected void drawInternal(Matrix4f transform) {
         drawBackground(transform);
-        getWrappedElement().draw(transform);
+        final UIElement e = getWrappedElement();
+        if (e != null) {
+            e.draw(transform);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        final UIElement e = getWrappedElement();
+        if (e != null) {
+            e.destroy();
+        }
     }
 
     @Override
     public UIElement onChar(int c) {
-        return getWrappedElement().onChar(c);
+        final UIElement e = getWrappedElement();
+        return e != null ? e.onChar(c) : null;
     }
 
     @Override
     public UIElement onKey(int key, int scancode, ButtonAction action, int mods) {
-        return getWrappedElement().onKey(key, scancode, action, mods);
+        final UIElement e = getWrappedElement();
+        return e != null ? e.onKey(key, scancode, action, mods) : null;
     }
 
     @Override
     public UIElement onMouseButton(MouseButtonType button, ButtonAction action, int mods, float mouseX, float mouseY) {
-        return getWrappedElement().onMouseButton(button, action, mods, mouseX, mouseY);
+        final UIElement e = getWrappedElement();
+        return e != null ? e.onMouseButton(button, action, mods, mouseX, mouseY) : null;
     }
 
     @Override
     public UIElement onMouseMove(double xpos, double ypos) {
-        return getWrappedElement().onMouseMove(xpos, ypos);
+        final UIElement e = getWrappedElement();
+        return e != null ? e.onMouseMove(xpos, ypos) : null;
     }
 
     @Override
     public UIElement onScroll(float mouseX, float mouseY, double xoffset, double yoffset) {
-        return getWrappedElement().onScroll(mouseX, mouseY, xoffset, yoffset);
+        final UIElement e = getWrappedElement();
+        return e != null ? e.onScroll(mouseX, mouseY, xoffset, yoffset) : null;
     }
 
     @Override
     public void onWindowResize(int width, int height) {
-        getWrappedElement().onWindowResize(width, height);
+        final UIElement e = getWrappedElement();
+        if (e != null) {
+            e.onWindowResize(width, height);
+        }
     }
 
 }

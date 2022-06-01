@@ -81,7 +81,7 @@ public class VAO {
         // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 
-    public void delete() {
+    public void destroy() {
         if (vao != 0)
             glDeleteVertexArrays(vao);
         for (int i = 0; i < vertexShaderVBOs.length; i++) {

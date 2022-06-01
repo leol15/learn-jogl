@@ -1,8 +1,8 @@
 package com.play.app.ui.editor;
 
+import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.elements.Button;
-import com.play.app.ui.elements.UIElement;
 import com.play.app.ui.property.BooleanProperty;
 
 public class BooleanEditor extends AbstractUIWrapper {

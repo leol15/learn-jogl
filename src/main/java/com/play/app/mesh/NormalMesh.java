@@ -112,6 +112,11 @@ public class NormalMesh implements Mesh {
     }
 
     @Override
+    public void destroy() {
+        vao.destroy();
+    }
+
+    @Override
     public void save(WorldSerializer writer) throws IOException {
         // TODO save to a file with a random name?
     }

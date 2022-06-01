@@ -1,5 +1,6 @@
 package com.play.app.ui.elements;
 
+import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.editor.AbstractUIWrapper;
 import com.play.app.ui.enums.ButtonAction;
@@ -10,10 +11,12 @@ import org.joml.Vector2f;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * give a transformation to an arbitrary UIElement
  */
+@Log4j2
 public class UITransformer extends AbstractUIWrapper {
 
     @Getter
@@ -24,7 +27,12 @@ public class UITransformer extends AbstractUIWrapper {
     public final Vector2f scale = new Vector2f(1);
 
     public UITransformer(UIManager uiManager) {
+        this(uiManager, null);
+    }
+
+    public UITransformer(UIManager uiManager, UIElement element) {
         super(uiManager);
+        setTarget(element);
     }
 
     @Override
@@ -45,11 +53,13 @@ public class UITransformer extends AbstractUIWrapper {
 
     @Override
     protected void drawInternal(Matrix4f transform) {
-        targetTransform.identity()
-                .scale(scale.x, scale.y, 1)
-                .translate(translation.x, translation.y, 0);
-        targetTransform.mulLocal(transform);
-        target.draw(targetTransform);
+        if (target != null) {
+            targetTransform.identity()
+                    .translate(translation.x, translation.y, 0)
+                    .scale(scale.x, scale.y, 1);
+            targetTransform.mulLocal(transform);
+            target.draw(targetTransform);
+        }
     }
 
     @Override
@@ -59,14 +69,30 @@ public class UITransformer extends AbstractUIWrapper {
 
     @Override
     public UIElement onMouseButton(MouseButtonType button, ButtonAction action, int mods, float mouseX, float mouseY) {
-        // TODO implement
-        return super.onMouseButton(button, action, mods, mouseX, mouseY);
+        if (target == null) {
+            return null;
+        }
+        // to target's local space
+        mouseX = (mouseX - translation.x) / scale.x;
+        mouseY = (mouseY - translation.y) / scale.y;
+        if (target.contains(mouseX, mouseY)) {
+            return target.onMouseButton(button, action, mods, mouseX, mouseY);
+        }
+        return null;
     }
 
     @Override
     public UIElement onScroll(float mouseX, float mouseY, double xoffset, double yoffset) {
-        // TODO implement
-        return super.onScroll(mouseX, mouseY, xoffset, yoffset);
+        if (target == null) {
+            return null;
+        }
+        // to target's local space
+        mouseX = (mouseX - translation.x) / scale.x;
+        mouseY = (mouseY - translation.y) / scale.y;
+        if (target.contains(mouseX, mouseY)) {
+            return target.onScroll(mouseX, mouseY, xoffset, yoffset);
+        }
+        return null;
     }
 
 }

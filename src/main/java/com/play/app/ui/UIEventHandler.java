@@ -1,6 +1,5 @@
 package com.play.app.ui;
 
-import com.play.app.ui.elements.UIElement;
 import com.play.app.ui.enums.ButtonAction;
 import com.play.app.ui.enums.MouseButtonType;
 

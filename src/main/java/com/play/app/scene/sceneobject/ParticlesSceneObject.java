@@ -116,12 +116,12 @@ public class ParticlesSceneObject extends SimpleSceneObject {
         editor.addProperty("billboard", isBillboard);
         editor.addProperty("transparent", isTransparent);
 
-        editor.addProperty("Force", force);
+        editor.addProperty("Force", force, 0.01f);
         editor.addProperty("emit time", emitTime, 0.01f);
 
         editor.addProperty("TTL", TTL);
         editor.addProperty("Intial dx", intialPositionDelta);
-        editor.addProperty("Intial V", initalVelocity);
+        editor.addProperty("Intial V", initalVelocity, 0.05f);
     }
 
     @Override

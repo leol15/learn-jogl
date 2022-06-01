@@ -1,6 +1,7 @@
 package com.play.app.ui.elements;
 
 import com.play.app.graphics.*;
+import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
 import com.play.app.utils.*;
 

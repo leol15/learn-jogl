@@ -2,9 +2,7 @@ package com.play.app.scene;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.BiConsumer;
 
 import com.fasterxml.jackson.core.JsonToken;
@@ -27,7 +25,7 @@ import lombok.experimental.Accessors;
 public class SceneNode implements Savable {
 
     public final SpacialThing modelInfo = new SpacialThing();
-    private final Set<SceneNode> children = new HashSet<>();
+    private final List<SceneNode> children = new ArrayList<>();
     private SceneNode parent = null;
 
     @Getter

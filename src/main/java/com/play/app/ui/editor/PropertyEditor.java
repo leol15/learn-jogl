@@ -1,10 +1,10 @@
 package com.play.app.ui.editor;
 
 import com.play.app.basics.SpacialThing;
+import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.elements.ContainerH;
 import com.play.app.ui.elements.ContainerV;
-import com.play.app.ui.elements.UIElement;
 import com.play.app.ui.elements.UIText;
 import com.play.app.ui.property.BooleanProperty;
 import com.play.app.ui.property.FloatProperty;

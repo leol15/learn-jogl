@@ -1,5 +1,6 @@
 package com.play.app.ui.elements;
 
+import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.enums.ButtonAction;
 import com.play.app.ui.enums.MouseButtonType;
@@ -14,10 +15,6 @@ public class ContainerH extends AbstractContainer {
 
     public ContainerH(UIManager uiManager) {
         super(uiManager);
-    }
-
-    public void addChild(UIElement e) {
-        children.add(e);
     }
 
     @Override

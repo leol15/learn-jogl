@@ -5,6 +5,7 @@ import static java.awt.Font.MONOSPACED;
 
 import com.play.app.graphics.ShaderProgram;
 import com.play.app.mesh.NormalMesh;
+import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.enums.ButtonAction;
 import com.play.app.ui.enums.MouseButtonType;
@@ -141,8 +142,13 @@ public class UIText extends AbstractUIElement {
     }
 
     @Override
+    public void destroy() {
+        mesh.destroy();
+    }
+
+    @Override
     public UIElement onMouseButton(MouseButtonType button, ButtonAction action, int mods, float mouseX, float mouseY) {
-        log.debug("UIText {} {}", width, height);
+        log.trace("UIText {} {}", width, height);
         return this;
     }
 }

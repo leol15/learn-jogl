@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.play.app.basics.Event;
+import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.enums.ButtonAction;
 import com.play.app.ui.enums.MouseButtonType;
@@ -87,6 +88,11 @@ public class TextInput extends AbstractUIElement {
         text.draw(textTransform);
     }
 
+    @Override
+    public void destroy() {
+        text.destroy();
+    }
+
     public void setContent(String text) {
         textContent.clear();
         for (char c : text.toCharArray()) {
@@ -112,7 +118,7 @@ public class TextInput extends AbstractUIElement {
     }
 
     private void updated() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         textContent.forEach(c -> sb.append(c));
         text.setText(" " + sb.toString() + " ");
         if (focused) {
@@ -134,7 +140,15 @@ public class TextInput extends AbstractUIElement {
     private void computeNumberFormat() {
         final String deltaStr = String.valueOf(scrollDelta);
         final int dotIdx = deltaStr.indexOf(".");
-        NUMBER_FORMAT = "%." + (dotIdx == -1 ? 0 : deltaStr.length() - dotIdx - 1) + "f";
+        if (dotIdx == -1) {
+            NUMBER_FORMAT = "%.0f";
+        } else {
+            int i = deltaStr.length() - 1;
+            while (deltaStr.charAt(i) == '0') {
+                i--;
+            }
+            NUMBER_FORMAT = "%." + (i - dotIdx) + "f";
+        }
     }
 
     ////////////////

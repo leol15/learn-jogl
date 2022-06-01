@@ -1,10 +1,10 @@
 package com.play.app.ui.editor;
 
 import com.play.app.basics.SpacialThing;
+import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.elements.ContainerH;
 import com.play.app.ui.elements.ContainerV;
-import com.play.app.ui.elements.UIElement;
 import com.play.app.ui.elements.UIText;
 
 import org.joml.Vector3f;
@@ -30,7 +30,7 @@ public class SpacialThingEditor extends AbstractUIWrapper {
 
         posEditor = new VectorXfEditor(uiManager);
         scaEditor = new VectorXfEditor(uiManager);
-        rotEditor = new VectorXfEditor(uiManager);
+        rotEditor = new VectorXfEditor(uiManager).setScrollDelta(5);
 
         final ContainerH row1 = new ContainerH(uiManager);
         row1.addChild(positionLabel);
