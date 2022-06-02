@@ -9,6 +9,7 @@ import com.play.app.ui.elements.ContainerH;
 import com.play.app.ui.elements.ContainerV;
 import com.play.app.ui.elements.DropdownList;
 import com.play.app.ui.elements.Padding;
+import com.play.app.ui.elements.TextInput;
 import com.play.app.ui.elements.UIText;
 import com.play.app.ui.elements.UITransformer;
 
@@ -26,7 +27,7 @@ public class SceneTreeView extends AbstractUIWrapper {
     private Listener<SceneNode> sceneNodeListener;
 
     private float leftPadding = 20;
-    private final UIText sceneNodeLabel;
+    private final TextInput sceneNodeLabel;
     private final UIText sceneObjectLabel;
     // to add padding
     private final ContainerV container;
@@ -48,7 +49,9 @@ public class SceneTreeView extends AbstractUIWrapper {
         sceneNode = node;
         this.sceneNodeListener = sceneNodeListener;
 
-        sceneNodeLabel = new UIText(uiManager);
+        sceneNodeLabel = new TextInput(uiManager);
+        sceneNodeLabel.setWidth(200);
+        sceneNodeLabel.setPadding(0);
         sceneObjectLabel = new UIText(uiManager);
         dropdownList = new DropdownList(uiManager);
         dropdownTransformer = new UITransformer(uiManager, dropdownList);
@@ -57,7 +60,7 @@ public class SceneTreeView extends AbstractUIWrapper {
         container = new ContainerV(uiManager);
 
         final ContainerH nodeLabelRow = new ContainerH(uiManager);
-        final Button nodeLabelButton = new Button(uiManager, "+");
+        final Button nodeLabelButton = new Button(uiManager, "E");
         nodeLabelButton.padding = 0;
         nodeLabelRow.addChild(sceneNodeLabel);
         nodeLabelRow.addChild(nodeLabelButton);
@@ -78,6 +81,7 @@ public class SceneTreeView extends AbstractUIWrapper {
 
         // events
         nodeLabelButton.onClickEvent.addListener(e -> sceneNodeClicked());
+        sceneNodeLabel.changeEvent.addListener(e -> updateNodeName(e.getAsString()));
 
         sceneNodeUpdated();
     }
@@ -99,20 +103,35 @@ public class SceneTreeView extends AbstractUIWrapper {
         }
     }
 
-    private void sceneNodeUpdated() {
+    private void updateNodeName(String name) {
         if (sceneNode != null) {
-            sceneNodeLabel.setText("SceneNode Name");
-            sceneObjectLabel.setText("SceneObject Name");
-            dropdownList.clear();
+            sceneNode.setName(name);
+        }
+    }
+
+    private void sceneNodeUpdated() {
+        dropdownList.clear();
+        if (sceneNode != null) {
             sceneNode.getChildren().forEach(n -> {
                 dropdownList.addItem(new SceneTreeView(uiManager, n, sceneNodeListener));
             });
-        } else {
-            sceneNodeLabel.setText("SceneNode Null");
-            sceneObjectLabel.setText("Null");
-            dropdownList.clear();
         }
+        configureLabels();
         toggleUpdated();
+    }
+
+    private void configureLabels() {
+        if (sceneNode != null) {
+            sceneNodeLabel.setContent(sceneNode.getName());
+            String sceneObjectName = null;
+            if (sceneNode.getSceneObject() != null) {
+                sceneObjectName = sceneNode.getSceneObject().getClass().getSimpleName();
+            }
+            sceneObjectLabel.setText(String.valueOf(sceneObjectName));
+        } else {
+            sceneNodeLabel.setContent("Empty");
+            sceneObjectLabel.setText("Null");
+        }
     }
 
     private void toggleChildren(Button b) {

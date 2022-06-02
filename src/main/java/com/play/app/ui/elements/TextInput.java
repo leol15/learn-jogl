@@ -21,10 +21,8 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class TextInput extends AbstractUIElement {
 
-    private final float padding = 5;
-    private final UIText text;
-    private final Matrix4f textTransform = new Matrix4f();
-    private final List<Character> textContent = new ArrayList<>();
+    @Setter
+    private float padding = 5;
     public final Event<TextInput> changeEvent;
     @Setter
     private float width = -1;
@@ -33,7 +31,11 @@ public class TextInput extends AbstractUIElement {
     private float scrollDelta = 0.1f;
     private String NUMBER_FORMAT;
 
-    // TODO de-focus when click outside
+    private final UIText text;
+    private final Matrix4f textTransform = new Matrix4f();
+    private final List<Character> textContent = new ArrayList<>();
+
+    // TODO: loose focus when click outside
     private boolean focused = false;
 
     public TextInput(UIManager uiManager) {
@@ -105,14 +107,14 @@ public class TextInput extends AbstractUIElement {
     }
 
     private void setDefaultColor() {
-        bgColor.set(0.6, 0.6, 0);
-        text.bgColor.set(0);
-        text.textColor.set(0.9);
+        bgColor.set(0.4, 0.4, 0);
+        text.bgColor.set(0.1, 0.1, 0, 0.2);
+        text.textColor.set(1);
     }
 
     private void setfocusedColor() {
-        bgColor.set(0.9, 0.9, 0);
-        text.bgColor.set(0);
+        bgColor.set(0, 0.3, 0.3);
+        text.bgColor.set(0.3, 0.3, 0, 0.2);
         text.textColor.set(1);
     }
 
@@ -157,11 +159,12 @@ public class TextInput extends AbstractUIElement {
     @Override
     public UIElement onMouseButton(MouseButtonType button, ButtonAction action, int mods, float mouseX, float mouseY) {
         if (action != ButtonAction.RELEASE) {
+            focused = !focused;
+            updated();
             return this;
+        } else {
+            return null;
         }
-        focused = !focused;
-        updated();
-        return this;
     }
 
     @Override

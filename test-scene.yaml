@@ -1,16 +1,18 @@
 ---
 FILE_VERSION: "v1"
 root:
+  name: "Root"
   modelInfo:
     translation: "0.000 0.000 0.000"
     scale: "1.000 1.000 1.000"
     rotation: "0.000 0.000 0.000 1.000"
+  sceneObject: null
   children:
-  - modelInfo:
+  - name: "Red Ball"
+    modelInfo:
       translation: "1.000 1.000 1.000"
       scale: "1.000 1.000 1.000"
       rotation: "0.000 0.000 0.000 1.000"
-    children: []
     sceneObject:
       OBJ_TYPE: "com.play.app.scene.sceneobject.SimpleSceneObject"
       OBJ_DATA:
@@ -18,7 +20,7 @@ root:
           shader: "Simple3D"
           texture: null
           material:
-            color: "1.000 0.000 0.000 1.000"
+            color: "0.900 0.000 0.000 1.000"
             specularHardness: 100.0
         shape:
           mesh:
@@ -30,11 +32,12 @@ root:
             OBJ_TYPE: "com.play.app.collider.UnitCollider"
             OBJ_DATA:
               type: "Sphere"
-  - modelInfo:
-      translation: "-0.400 2.200 -0.800"
-      scale: "1.000 1.000 1.000"
-      rotation: "0.384 0.010 -0.137 0.913"
     children: []
+  - name: "Spot Light"
+    modelInfo:
+      translation: "-2.300 2.200 -0.800"
+      scale: "1.000 1.000 1.000"
+      rotation: "0.637 -0.084 0.100 0.759"
     sceneObject:
       OBJ_TYPE: "com.play.app.scene.sceneobject.LightSceneObject"
       OBJ_DATA:
@@ -42,7 +45,7 @@ root:
           shader: "Simple3D"
           texture: null
           material:
-            color: "1.000 1.000 0.000 1.000"
+            color: "0.900 0.900 0.000 1.000"
             specularHardness: 100.0
         shape:
           mesh:
@@ -57,14 +60,15 @@ root:
         light:
           OBJ_TYPE: "com.play.app.scene.lights.SpotLight"
           OBJ_DATA:
-            color: "1.000 1.000 0.000 1.000"
-            attenuation: "0.000 0.060 0.300"
-            angle: 65.0
-  - modelInfo:
-      translation: "3.000 1.000 1.000"
+            color: "0.900 0.900 0.000 1.000"
+            attenuation: "0.000 0.100 0.200"
+            angle: 60.0
+    children: []
+  - name: "Green Ball"
+    modelInfo:
+      translation: "2.900 1.000 1.000"
       scale: "1.000 1.000 1.000"
       rotation: "0.000 0.000 0.000 1.000"
-    children: []
     sceneObject:
       OBJ_TYPE: "com.play.app.scene.sceneobject.SimpleSceneObject"
       OBJ_DATA:
@@ -72,7 +76,7 @@ root:
           shader: "Simple3D"
           texture: null
           material:
-            color: "0.000 1.000 0.000 1.000"
+            color: "0.000 0.500 0.000 1.000"
             specularHardness: 100.0
         shape:
           mesh:
@@ -84,11 +88,12 @@ root:
             OBJ_TYPE: "com.play.app.collider.UnitCollider"
             OBJ_DATA:
               type: "Sphere"
-  - modelInfo:
+    children: []
+  - name: "Paticles O"
+    modelInfo:
       translation: "0.000 0.000 0.000"
       scale: "1.000 1.000 1.000"
-      rotation: "0.000 0.000 0.000 1.000"
-    children: []
+      rotation: "-0.653 -0.271 0.031 0.706"
     sceneObject:
       OBJ_TYPE: "com.play.app.scene.sceneobject.ParticlesSceneObject"
       OBJ_DATA:
@@ -110,9 +115,8 @@ root:
               type: "Cube"
         isBillboard: false
         isTransparent: false
-        force: "0.000 -0.400 0.000"
-        emitTime: 0.0
-        TTL: 5.0
-        intialPositionDelta: "-0.300 -0.300 -0.000"
-        initalVelocity: "-0.100 0.100 -0.100"
-  sceneObject: null
+        force: "0.000 -0.160 0.000"
+        emitTime: 0.2
+        TTL: 4.2
+        initalVelocity: "0.000 0.200 -0.100"
+    children: []

@@ -9,9 +9,12 @@ import com.play.app.ui.elements.UIText;
 
 import org.joml.Vector3f;
 
+import lombok.extern.log4j.Log4j2;
+
 /**
  * a form like thing to edit attribute of SpacialThing
  */
+@Log4j2
 public class SpacialThingEditor extends AbstractUIWrapper {
 
     private SpacialThing spacialThing;

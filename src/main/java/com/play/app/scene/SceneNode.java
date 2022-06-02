@@ -24,13 +24,16 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class SceneNode implements Savable {
 
-    public final SpacialThing modelInfo = new SpacialThing();
-    private final List<SceneNode> children = new ArrayList<>();
-    private SceneNode parent = null;
-
+    @Setter
+    @Getter
+    private String name = "SceneNode";
     @Getter
     @Setter
     private SceneObject sceneObject;
+    public final SpacialThing modelInfo = new SpacialThing();
+
+    private final List<SceneNode> children = new ArrayList<>();
+    private SceneNode parent = null;
 
     public SceneNode addChild(final SceneNode child) {
         children.add(child);
@@ -162,15 +165,15 @@ public class SceneNode implements Savable {
     public void save(WorldSerializer writer) throws IOException {
         writer.writeStartObject();
 
+        writer.writeObjectField("name", String.valueOf(name));
         writer.writeObjectField("modelInfo", modelInfo);
+        writer.writeInterfaceField("sceneObject", sceneObject);
 
         writer.writeArrayFieldStart("children");
         for (final SceneNode child : children) {
             child.save(writer);
         }
         writer.writeEndArray();
-
-        writer.writeInterfaceField("sceneObject", sceneObject);
 
         writer.writeEndObject();
     }
@@ -179,7 +182,9 @@ public class SceneNode implements Savable {
         final SceneNode node = new SceneNode();
         reader.consumeStartObject();
 
+        node.setName(reader.consumeStringField("name"));
         reader.consumeObjectField("modelInfo", node.modelInfo);
+        node.sceneObject = (SceneObject) reader.consumeInterfaceField("sceneObject");
 
         reader.consumeArrayFieldStart("children");
         while (reader.currentToken() != JsonToken.END_ARRAY) {
@@ -188,8 +193,6 @@ public class SceneNode implements Savable {
             node.children.add(child);
         }
         reader.consumeEndArray();
-
-        node.sceneObject = (SceneObject) reader.consumeInterfaceField("sceneObject");
 
         reader.consumeEndObject();
         return node;

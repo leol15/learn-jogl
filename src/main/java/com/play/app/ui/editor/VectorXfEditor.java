@@ -126,6 +126,7 @@ public class VectorXfEditor extends AbstractUIWrapper {
         if (index < 4 && vector4f != null) {
             vector4f.setComponent(index, value);
         }
+        valueChangeEvent.fire();
     }
 
     // reference has changed, will update TextInput display now

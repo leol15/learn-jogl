@@ -36,6 +36,10 @@ public class Color {
         set(r, g, b, a);
     }
 
+    public Color(double r, double g, double b, double a) {
+        set(r, g, b, a);
+    }
+
     public Vector4f get() {
         return v;
     }
@@ -74,6 +78,10 @@ public class Color {
 
     public void set(float r, float g, float b, float a) {
         v.set(r, g, b, a);
+    }
+
+    public void set(double r, double g, double b, double a) {
+        v.set((float) r, (float) g, (float) b, (float) a);
     }
 
     public void set(final Vector4f c) {

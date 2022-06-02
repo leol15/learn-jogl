@@ -31,7 +31,6 @@ public class ParticlesSceneObject extends SimpleSceneObject {
     public BooleanProperty isTransparent = new BooleanProperty(true);
     public FloatProperty TTL = new FloatProperty(5f); // in seconds
     public final Vector3f initalVelocity = new Vector3f(0.02f, 0.06f, 0);
-    public final Vector3f intialPositionDelta = new Vector3f(0);
 
     // helper
     private float TTE = 0;
@@ -116,12 +115,11 @@ public class ParticlesSceneObject extends SimpleSceneObject {
         editor.addProperty("billboard", isBillboard);
         editor.addProperty("transparent", isTransparent);
 
-        editor.addProperty("Force", force, 0.01f);
         editor.addProperty("emit time", emitTime, 0.01f);
-
         editor.addProperty("TTL", TTL);
-        editor.addProperty("Intial dx", intialPositionDelta);
+
         editor.addProperty("Intial V", initalVelocity, 0.05f);
+        editor.addProperty("Force", force, 0.01f);
     }
 
     @Override
@@ -134,7 +132,6 @@ public class ParticlesSceneObject extends SimpleSceneObject {
         writer.writeObjectField("force", force);
         writer.writeObjectField("emitTime", emitTime.getValue());
         writer.writeObjectField("TTL", TTL.getValue());
-        writer.writeObjectField("intialPositionDelta", intialPositionDelta);
         writer.writeObjectField("initalVelocity", initalVelocity);
         writer.writeEndObject();
     }
@@ -149,7 +146,6 @@ public class ParticlesSceneObject extends SimpleSceneObject {
         reader.consumeObjectField("force", pso.force);
         pso.emitTime.setValue(reader.consumeFloatField("emitTime"));
         pso.TTL.setValue(reader.consumeFloatField("TTL"));
-        reader.consumeObjectField("intialPositionDelta", pso.intialPositionDelta);
         reader.consumeObjectField("initalVelocity", pso.initalVelocity);
         reader.consumeEndObject();
         return pso;
@@ -180,7 +176,6 @@ public class ParticlesSceneObject extends SimpleSceneObject {
         // get initial position and scale from parent transformation
         p.model.set(lastTransform);
 
-        p.model.translation.add(intialPositionDelta);
         p.velocity.set(initalVelocity);
 
         particles.add(p);
