@@ -1,5 +1,11 @@
 package com.play.app.ui;
 
+import static org.lwjgl.opengl.GL11.GL_BLEND;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
+import static org.lwjgl.opengl.GL11.glEnable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +23,8 @@ import org.lwjgl.opengl.GL11;
 import lombok.extern.log4j.Log4j2;
 
 /**
- * Handle alllllll the UIs
- * Event Handling
+ * Handle drawing alllllll the UIs
+ * And their event dispatch
  */
 @Log4j2
 public class UIManager implements Drawable {
@@ -63,10 +69,11 @@ public class UIManager implements Drawable {
 
     @Override
     public void draw() {
-        // alpha blending for UI, TODO not implemented
         GL11.glDepthFunc(GL11.GL_ALWAYS);
 
-        // GL11.glEnable(GL11.GL_BLEND);
+        // alpha blending for UI
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         // GL45.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE,
         //         GL11.GL_ONE_MINUS_SRC_ALPHA);
         // GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_SRC_ALPHA_SATURATE);

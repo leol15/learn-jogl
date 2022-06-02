@@ -126,8 +126,6 @@ public class UIText extends AbstractUIElement {
 
     @Override
     public void drawInternal(Matrix4f transform) {
-        drawBackground(transform);
-
         textShader.uniform4f(CONST.MATERIAL_COLOR, textColor.get());
         textShader.uniformMatrix4fv(CONST.MODEL_MATRIX, transform);
 

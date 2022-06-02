@@ -33,6 +33,7 @@ public class UITransformer extends AbstractUIWrapper {
     public UITransformer(UIManager uiManager, UIElement element) {
         super(uiManager);
         setTarget(element);
+        setDrawBackground(false);
     }
 
     @Override

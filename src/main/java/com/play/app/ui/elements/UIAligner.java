@@ -37,6 +37,7 @@ public class UIAligner extends AbstractUIWrapper {
         }
         el = element;
         container = new UITransformer(uiManager, element);
+        setDrawBackground(false);
     }
 
     @Override
@@ -70,12 +71,12 @@ public class UIAligner extends AbstractUIWrapper {
 
     @Override
     protected float getW() {
-        return Math.max(width, super.getW());
+        return Math.max(width, el.getWidth());
     }
 
     @Override
     protected float getH() {
-        return Math.max(height, super.getH());
+        return Math.max(height, el.getHeight());
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.play.app.ui.editor;
 
-import com.play.app.basics.Event;
+import com.play.app.basics.Listener;
 import com.play.app.scene.SceneNode;
 import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
@@ -23,8 +23,7 @@ public class SceneTreeView extends AbstractUIWrapper {
 
     @Getter
     private SceneNode sceneNode;
-    // TODO. who is the receiver of this event? rethink design
-    public final Event<SceneTreeView> sceneNodeClickEvent;
+    private Listener<SceneNode> sceneNodeListener;
 
     private float leftPadding = 20;
     private final UIText sceneNodeLabel;
@@ -37,16 +36,17 @@ public class SceneTreeView extends AbstractUIWrapper {
     private final Button expandChildrenButton;
 
     public SceneTreeView(UIManager uiManager) {
-        this(uiManager, null);
+        this(uiManager, null, null);
     }
 
     public SceneTreeView(UIManager uiManager, SceneNode node) {
-        this(uiManager, node, true);
+        this(uiManager, node, null);
     }
 
-    private SceneTreeView(UIManager uiManager, SceneNode node, boolean isRoot) {
+    public SceneTreeView(UIManager uiManager, SceneNode node, Listener<SceneNode> sceneNodeListener) {
         super(uiManager);
         sceneNode = node;
+        this.sceneNodeListener = sceneNodeListener;
 
         sceneNodeLabel = new UIText(uiManager);
         sceneObjectLabel = new UIText(uiManager);
@@ -77,8 +77,7 @@ public class SceneTreeView extends AbstractUIWrapper {
         expandChildrenButton.padding = 0;
 
         // events
-        sceneNodeClickEvent = new Event<SceneTreeView>(this);
-        nodeLabelButton.onClickEvent.addListener(e -> sceneNodeClickEvent.fire());
+        nodeLabelButton.onClickEvent.addListener(e -> sceneNodeClicked());
 
         sceneNodeUpdated();
     }
@@ -88,13 +87,25 @@ public class SceneTreeView extends AbstractUIWrapper {
         sceneNodeUpdated();
     }
 
+    public void setSceneNodeListener(Listener<SceneNode> l) {
+        sceneNodeListener = l;
+        // requires to rebuild tree to propagate callback, could optimize
+        sceneNodeUpdated();
+    }
+
+    private void sceneNodeClicked() {
+        if (sceneNodeListener != null) {
+            sceneNodeListener.hey(sceneNode);
+        }
+    }
+
     private void sceneNodeUpdated() {
         if (sceneNode != null) {
             sceneNodeLabel.setText("SceneNode Name");
             sceneObjectLabel.setText("SceneObject Name");
             dropdownList.clear();
             sceneNode.getChildren().forEach(n -> {
-                dropdownList.addItem(new SceneTreeView(uiManager, n, false));
+                dropdownList.addItem(new SceneTreeView(uiManager, n, sceneNodeListener));
             });
         } else {
             sceneNodeLabel.setText("SceneNode Null");

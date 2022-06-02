@@ -8,10 +8,13 @@ import com.play.app.utils.*;
 import org.joml.Matrix4f;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public abstract class AbstractUIElement implements UIElement {
 
     public final Color bgColor = new Color(0.2f, 0.2f, 0.2f, 0.3f);
+    @Setter
+    public boolean drawBackground = true;
 
     protected final UIManager uiManager;
     @Getter
@@ -59,6 +62,9 @@ public abstract class AbstractUIElement implements UIElement {
     @Override
     public final void draw(Matrix4f transform) {
         if (this.isVisible()) {
+            if (drawBackground) {
+                drawBackground(transform);
+            }
             drawInternal(transform);
         }
     }

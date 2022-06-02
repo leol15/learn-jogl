@@ -77,7 +77,6 @@ public class TextInput extends AbstractUIElement {
 
     @Override
     protected void drawInternal(Matrix4f transform) {
-        drawBackground(transform);
         // try to center text
         textTransform.identity();
         textTransform.translate(padding, padding, 0);

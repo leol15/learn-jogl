@@ -22,12 +22,14 @@ public abstract class AbstractContainer extends AbstractUIElement {
         return children.size();
     }
 
-    public void addChild(UIElement e) {
+    public <T extends UIElement> T addChild(T e) {
         children.add(e);
+        return e;
     }
 
-    public void preprendChild(UIElement e) {
+    public <T extends UIElement> T preprendChild(T e) {
         children.add(0, e);
+        return e;
     }
 
     public UIElement removeChild(UIElement e) {

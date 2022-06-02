@@ -117,7 +117,9 @@ public class SceneNode implements Savable {
 
     public void select(PropertyEditor editor) {
         editor.addProperty("SceneNode", modelInfo);
-        sceneObject.addToEditor(editor);
+        if (sceneObject != null) {
+            sceneObject.addToEditor(editor);
+        }
     }
 
     public void deselect(PropertyEditor editor) {

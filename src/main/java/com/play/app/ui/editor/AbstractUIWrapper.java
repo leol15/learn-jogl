@@ -33,7 +33,6 @@ public abstract class AbstractUIWrapper extends AbstractUIElement {
 
     @Override
     protected void drawInternal(Matrix4f transform) {
-        drawBackground(transform);
         final UIElement e = getWrappedElement();
         if (e != null) {
             e.draw(transform);

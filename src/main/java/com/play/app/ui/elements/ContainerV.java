@@ -21,6 +21,7 @@ public class ContainerV extends AbstractContainer {
 
     public ContainerV(UIManager uiManager) {
         super(uiManager);
+        setDrawBackground(false);
     }
 
     @Override
@@ -46,7 +47,6 @@ public class ContainerV extends AbstractContainer {
 
     @Override
     public void drawInternal(Matrix4f transform) {
-        drawBackground(transform);
         float y = 0;
         for (final UIElement child : children) {
             transform.translate(0, y, 0, childTransform);

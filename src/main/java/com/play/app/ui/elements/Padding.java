@@ -39,9 +39,7 @@ public class Padding extends AbstractUIElement {
     }
 
     @Override
-    public void drawInternal(Matrix4f transform) {
-        drawBackground(transform);
-    }
+    public void drawInternal(Matrix4f transform) {}
 
     @Override
     public UIElement onMouseButton(MouseButtonType button, ButtonAction action, int mods, float mouseX, float mouseY) {

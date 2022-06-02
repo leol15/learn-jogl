@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 public class Event<T> {
 
     private final List<Listener<T>> listeners = new ArrayList<>();
-    private final T owner;
+    private final T owner; // TODO, bad. could deliver at run time
 
     final public void addListener(Listener<T> listener) {
         listeners.add(listener);
@@ -25,6 +25,14 @@ public class Event<T> {
     final public void fire() {
         for (final Listener<T> l : listeners) {
             l.hey(owner);
+        }
+    }
+
+    // The method that owner should call
+    // v2, better?
+    final public void fire(T e) {
+        for (final Listener<T> l : listeners) {
+            l.hey(e);
         }
     }
 

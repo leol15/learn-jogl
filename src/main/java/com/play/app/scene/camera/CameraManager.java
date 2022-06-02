@@ -1,9 +1,11 @@
 package com.play.app.scene.camera;
 
-import com.play.app.utils.*;
+import com.play.app.utils.SceneManager;
+import com.play.app.utils.WindowManager;
 import com.play.app.utils.WindowManager.Layer;
 
-import org.lwjgl.glfw.*;
+import org.lwjgl.glfw.GLFWCursorPosCallbackI;
+import org.lwjgl.glfw.GLFWScrollCallbackI;
 
 import lombok.Getter;
 

@@ -71,7 +71,6 @@ public class Button extends AbstractUIElement {
 
     @Override
     public void drawInternal(Matrix4f transform) {
-        drawBackground(transform);
         textTransform.identity().translate(padding, padding, 0).mulLocal(transform);
         text.draw(textTransform);
     }

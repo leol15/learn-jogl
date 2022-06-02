@@ -37,8 +37,8 @@ public class UseUI {
         final SceneManager sceneManager = new SceneManager(windowManager, root);
         final TimeStepEngine timeStepEngine = new TimeStepEngine();
 
-        // final UIManager uiManager = sceneManager.uiManager;
-        final UIManager uiManager = new UIManager(windowManager);
+        final UIManager uiManager = sceneManager.uiManager;
+        // final UIManager uiManager = new UIManager(windowManager);
 
         final ContainerV box = new ContainerV(uiManager);
         box.addChild(new Padding(uiManager));
@@ -111,16 +111,16 @@ public class UseUI {
 
         // box.addChild(new SpacialThingEditor(uiManager));
 
-        uiManager.roots.add(box);
+        // uiManager.roots.add(box);
 
         while (!glfwWindowShouldClose(window)) {
             // loop
             glfwSwapBuffers(window);
 
-            // sceneManager.render();
+            sceneManager.render();
 
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-            uiManager.draw();
+            // GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+            // uiManager.draw();
 
             glfwPollEvents();
         }
