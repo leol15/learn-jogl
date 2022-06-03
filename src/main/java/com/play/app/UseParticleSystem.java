@@ -76,10 +76,6 @@ public class UseParticleSystem {
                     (rand.nextFloat() - 0.5f) / 20,
                     (rand.nextFloat() - 0.5f) / 20,
                     (rand.nextFloat() - 0.5f) / 20);
-            pSO.intialPositionDelta.set(
-                    (rand.nextFloat() - 0.5f),
-                    (rand.nextFloat() - 0.5f),
-                    (rand.nextFloat() - 0.5f));
             // particleCount.draw();
             // particleCount.setText("Particle Count: " + pSO.getParticleCount());
 

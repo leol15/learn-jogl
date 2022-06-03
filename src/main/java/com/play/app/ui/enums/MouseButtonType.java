@@ -8,7 +8,6 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum MouseButtonType {
-    // TODO verify
     NONE(-1), LEFT(GLFW_MOUSE_BUTTON_1), RIGHT(GLFW_MOUSE_BUTTON_2), MIDDLE(GLFW_MOUSE_BUTTON_3);
 
     int GLFW_ID;

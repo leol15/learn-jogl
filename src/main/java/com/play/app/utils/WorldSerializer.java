@@ -57,7 +57,9 @@ public class WorldSerializer {
             root.save(this);
             generator.writeEndObject();
             generator.flush();
+            generator.close();
         } catch (IOException e) {
+            log.error("Error saving scene node {}", root);
             e.printStackTrace();
         }
     }

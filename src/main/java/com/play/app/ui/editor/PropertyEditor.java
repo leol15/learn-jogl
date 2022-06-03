@@ -5,6 +5,7 @@ import com.play.app.ui.UIElement;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.elements.ContainerH;
 import com.play.app.ui.elements.ContainerV;
+import com.play.app.ui.elements.Padding;
 import com.play.app.ui.elements.UIText;
 import com.play.app.ui.property.BooleanProperty;
 import com.play.app.ui.property.FloatProperty;
@@ -25,6 +26,16 @@ public class PropertyEditor extends AbstractUIWrapper {
     public PropertyEditor(UIManager uiManager) {
         super(uiManager);
         container = new ContainerV(uiManager);
+    }
+
+    public void addDivider() {
+        final Padding p = new Padding(uiManager, 150, 8);
+        p.bgColor.set(0, 0.7, 0.7);
+        container.addChild(p);
+    }
+
+    public void addHeader(String name) {
+        container.addChild(new UIText(uiManager, name));
     }
 
     public void addProperty(String name, final SpacialThing ref) {

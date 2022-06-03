@@ -14,6 +14,7 @@ import com.play.app.ui.enums.ButtonAction;
 import com.play.app.ui.enums.MouseButtonType;
 
 import org.joml.Matrix4f;
+import org.lwjgl.glfw.GLFW;
 
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -202,6 +203,12 @@ public class TextInput extends AbstractUIElement {
         if (key == GLFW_KEY_BACKSPACE) {
             if (action == ButtonAction.PRESS) {
                 deleteChar(mods);
+            }
+        } else if (key == GLFW.GLFW_KEY_ENTER) {
+            if (action == ButtonAction.RELEASE) {
+                // end
+                focused = false;
+                updated();
             }
         }
         return this;

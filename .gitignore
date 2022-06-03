@@ -3,3 +3,6 @@
 /target
 *.png
 *.log
+
+# maybe? saved scenes
+/Scene\ Files

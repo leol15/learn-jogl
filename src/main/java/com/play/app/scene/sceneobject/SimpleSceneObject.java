@@ -34,6 +34,7 @@ public class SimpleSceneObject implements SceneObject {
     @Override
     public void addToEditor(PropertyEditor editor) {
         property.addToEditor(editor);
+        editor.addDivider();
         shape.addToEditor(editor);
     }
 

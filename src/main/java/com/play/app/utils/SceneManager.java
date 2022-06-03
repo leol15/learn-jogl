@@ -20,6 +20,7 @@ import com.play.app.scene.camera.CameraUBO;
 import com.play.app.scene.lights.LightUBO;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.elements.Button;
+import com.play.app.ui.elements.TextInput;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -128,27 +129,54 @@ public class SceneManager {
         // save/load
         final Button saveButton = new Button(uiManager, "Save");
         final Button loadButton = new Button(uiManager, "Load");
-        saveButton.onClickEvent.addListener(e -> saveScene());
-        loadButton.onClickEvent.addListener(e -> loadScene());
+        final TextInput fileNameInput = new TextInput(uiManager, "test-scene");
+        saveButton.onClickEvent.addListener(e -> saveScene(fileNameInput.getAsString()));
+        loadButton.onClickEvent.addListener(e -> loadScene(fileNameInput.getAsString()));
 
         // switch control
         final Button switchControlsButton = new Button(uiManager, "Switch View");
         switchControlsButton.onClickEvent.addListener(e -> switchCameraControl());
 
+        editorUI.topRow.addChild(switchControlsButton);
+        editorUI.topRow.addChild(fileNameInput);
         editorUI.topRow.addChild(saveButton);
         editorUI.topRow.addChild(loadButton);
-        editorUI.topRow.addChild(switchControlsButton);
+
     }
 
-    private void loadScene() {
+    private void loadScene(String fileName) {
+        if (fileName == null) {
+            return;
+        }
         final WorldSerializer worldSerializer = new WorldSerializer(cameraManager.getCamera());
-        root = worldSerializer.load("test-scene.yaml");
-        editorUI.sceneTreeView.setSceneNode(this.root);
+        fileName = toSceneFilePath(fileName);
+        final SceneNode newRoot = worldSerializer.load(fileName);
+        if (newRoot == null) {
+            log.error("Error reading world file [{}]", fileName);
+        } else {
+            root = newRoot;
+            editorUI.sceneTreeView.setSceneNode(root);
+        }
     }
 
-    private void saveScene() {
+    private String toSceneFilePath(String fileName) {
+        fileName = fileName.trim();
+        if (!fileName.endsWith(".yaml")) {
+            fileName += ".yaml";
+        }
+        if (!fileName.startsWith("Scene Files/")) {
+            fileName = "Scene Files/" + fileName;
+        }
+        return fileName;
+    }
+
+    private void saveScene(String fileName) {
+        if (fileName == null || fileName.length() == 0) {
+            fileName = "Untitled Project [" + System.currentTimeMillis() + "]";
+        }
+        fileName = toSceneFilePath(fileName);
         final WorldSerializer worldSerializer = new WorldSerializer(cameraManager.getCamera());
-        worldSerializer.save("test-scene.yaml", root);
+        worldSerializer.save(fileName, root);
     }
 
     private void switchCameraControl() {
