@@ -80,6 +80,10 @@ public class SceneManager {
         uiManager.draw();
     }
 
+    public void rootNodeUpdate() {
+        editorUI.sceneTreeView.setSceneNode(root);
+    }
+
     // select node via ray (click in scene)
     public void selectSceneNode(Ray ray) {
         selectSceneNode(root.castRay(ray));
@@ -155,7 +159,7 @@ public class SceneManager {
             log.error("Error reading world file [{}]", fileName);
         } else {
             root = newRoot;
-            editorUI.sceneTreeView.setSceneNode(root);
+            rootNodeUpdate();
         }
     }
 

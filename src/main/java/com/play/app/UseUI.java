@@ -4,7 +4,6 @@ import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
-import com.play.app.physics.TimeStepEngine;
 import com.play.app.scene.SceneNode;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.editor.SceneTreeView;
@@ -16,14 +15,13 @@ import com.play.app.ui.elements.DropdownList;
 import com.play.app.ui.elements.Padding;
 import com.play.app.ui.elements.TextInput;
 import com.play.app.ui.elements.UIAligner;
+import com.play.app.ui.elements.UIAligner.Alignment;
 import com.play.app.ui.elements.UIText;
 import com.play.app.ui.elements.UITransformer;
-import com.play.app.ui.elements.UIAligner.Alignment;
 import com.play.app.utils.SceneManager;
 import com.play.app.utils.WindowManager;
 
 import org.joml.Vector3f;
-import org.lwjgl.opengl.GL11;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -35,7 +33,6 @@ public class UseUI {
         final WindowManager windowManager = new WindowManager(window);
         final SceneNode root = new SceneNode();
         final SceneManager sceneManager = new SceneManager(windowManager, root);
-        final TimeStepEngine timeStepEngine = new TimeStepEngine();
 
         final UIManager uiManager = sceneManager.uiManager;
         // final UIManager uiManager = new UIManager(windowManager);
@@ -124,8 +121,6 @@ public class UseUI {
 
             glfwPollEvents();
         }
-
-        timeStepEngine.terminated = true;
 
     }
 }

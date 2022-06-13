@@ -48,8 +48,10 @@ public class App {
 		// new UseLights(window);
 		// new UseParticleSystem(window);
 		// new UseCameraControl(window);
+		// new UseUI(window);
 		// new UseSpring(window);
-		new UseUI(window);
+		// new TestCollision(window);
+		new TestSupportFunc(window);
 
 		// Free the window callbacks and destroy the window
 		glfwFreeCallbacks(window);

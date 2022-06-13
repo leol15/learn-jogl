@@ -69,6 +69,10 @@ public class UIManager implements Drawable {
 
     @Override
     public void draw() {
+        // always show text
+        final int previousPolygonMode = GL11.glGetInteger(GL11.GL_POLYGON_MODE);
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+
         GL11.glDepthFunc(GL11.GL_ALWAYS);
 
         // alpha blending for UI
@@ -82,6 +86,7 @@ public class UIManager implements Drawable {
         roots.forEach(e -> e.draw(new Matrix4f()));
 
         GL11.glDepthFunc(GL11.GL_LESS);
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, previousPolygonMode);
     }
 
     ///////////////////////////////////

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import com.play.app.physics.*;
 import com.play.app.physics.interactions.Spring;
+import com.play.app.physics.physicsentities.Particle;
 import com.play.app.utils.WorldSerializer;
 
 import lombok.extern.log4j.Log4j2;
@@ -13,7 +14,7 @@ public class SpringMesh implements Mesh {
 
     final NormalMesh mesh;
 
-    public SpringMesh(TimeStepEngine timeStepEngine) {
+    public SpringMesh(PhysicsEngine physicsEngine) {
         mesh = new NormalMesh();
 
         Particle pA = new Particle(0.2f);
@@ -38,17 +39,17 @@ public class SpringMesh implements Mesh {
         mesh.addTriangle(0, 2, 3);
         mesh.uploadData();
 
-        timeStepEngine.addInteraction(new Spring(pA, pB, 0.8f, 0.4f));
-        // timeStepEngine.addInteraction(new Spring(pA, pC, 0.8f, 0.4f));
-        timeStepEngine.addInteraction(new Spring(pA, pD, 0.8f, 0.4f));
-        timeStepEngine.addInteraction(new Spring(pB, pC, 0.8f, 0.4f));
-        timeStepEngine.addInteraction(new Spring(pB, pD, 0.8f, 0.4f));
-        timeStepEngine.addInteraction(new Spring(pC, pD, 0.8f, 0.4f));
+        physicsEngine.addInteraction(new Spring(pA, pB, 0.8f, 0.4f));
+        // physicsEngine.addInteraction(new Spring(pA, pC, 0.8f, 0.4f));
+        physicsEngine.addInteraction(new Spring(pA, pD, 0.8f, 0.4f));
+        physicsEngine.addInteraction(new Spring(pB, pC, 0.8f, 0.4f));
+        physicsEngine.addInteraction(new Spring(pB, pD, 0.8f, 0.4f));
+        physicsEngine.addInteraction(new Spring(pC, pD, 0.8f, 0.4f));
 
-        timeStepEngine.addObject(pA);
-        timeStepEngine.addObject(pB);
-        timeStepEngine.addObject(pC);
-        timeStepEngine.addObject(pD);
+        physicsEngine.addObject(pA);
+        physicsEngine.addObject(pB);
+        physicsEngine.addObject(pC);
+        physicsEngine.addObject(pD);
     }
 
     @Override

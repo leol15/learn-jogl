@@ -23,7 +23,7 @@ public class EditorCameraControl implements CameraControl {
     private static final Vector3f DEFAULT_CAM_TARGET = new Vector3f();
 
     private Camera camera;
-    private MouseButton activeMouseButton = MouseButton.NONE;
+    private int activeMouseButton = -1;
     private double mouseX, mouseY;
 
     // grid related
@@ -52,9 +52,9 @@ public class EditorCameraControl implements CameraControl {
     private final WindowManager windowManager;
     private final SceneManager sceneManager;
 
-    private enum MouseButton {
-        LEFT, RIGHT, MIDDLE, NONE;
-    };
+    // private enum MouseButton {
+    //     LEFT, RIGHT, MIDDLE, NONE;
+    // };
 
     public EditorCameraControl(WindowManager windowManager, SceneManager sceneManager) {
         this.windowManager = windowManager;
@@ -79,10 +79,10 @@ public class EditorCameraControl implements CameraControl {
             return false;
         }
         if (action == 1) {
-            activeMouseButton = MouseButton.values()[button];
+            activeMouseButton = button;
             return onCursorPos(mouseX, mouseY);
         } else {
-            activeMouseButton = MouseButton.NONE;
+            activeMouseButton = -1;
         }
         return false;
     }
@@ -97,15 +97,15 @@ public class EditorCameraControl implements CameraControl {
         mouseX = xpos;
         mouseY = ypos;
         switch (activeMouseButton) {
-            case LEFT:
+            case 0:
                 markerScale = 30;
                 moveCamera(dx, dy);
                 return true;
-            case RIGHT:
+            case 1:
                 markerScale = 15;
                 rotateCamera(dx, dy);
                 return true;
-            case MIDDLE:
+            case 2:
                 markerScale = 15;
                 rotateCamera(dx, dy);
                 return true;
@@ -127,7 +127,7 @@ public class EditorCameraControl implements CameraControl {
         if (camera == null) {
             return false;
         }
-        if (activeMouseButton == MouseButton.MIDDLE) {
+        if (activeMouseButton == 2) {
             // rotating, skip zoom
             return false;
         }
@@ -181,7 +181,7 @@ public class EditorCameraControl implements CameraControl {
         }
 
         // only draw marker when moving or rotating
-        if (activeMouseButton == MouseButton.NONE && drawMarkerFrame <= 0) {
+        if (activeMouseButton == -1 && drawMarkerFrame <= 0) {
             return;
         }
         drawMarkerFrame--;

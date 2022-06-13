@@ -21,6 +21,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+/**
+ * A SceneNode keeps a transformation (modelInfo) and a SceneObject
+ */
 @Accessors(chain = true)
 public class SceneNode implements Savable {
 

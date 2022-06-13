@@ -1,6 +1,7 @@
 package com.play.app.physics.interactions;
 
 import com.play.app.physics.*;
+import com.play.app.physics.physicsentities.Particle;
 
 import org.joml.Vector3f;
 
@@ -15,8 +16,8 @@ public class Spring implements Interaction {
     public Spring(Particle a, Particle b, float restLengh, float springConstant) {
         p1 = a.p;
         p2 = b.p;
-        p1Accu = a.accumulator;
-        p2Accu = b.accumulator;
+        p1Accu = a.getAccumulator();
+        p2Accu = b.getAccumulator();
         this.restLengh = restLengh;
         this.springConstant = springConstant;
     }

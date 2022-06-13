@@ -12,16 +12,22 @@ import com.play.app.utils.*;
 import org.joml.*;
 import org.lwjgl.BufferUtils;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * A normal(regular) mesh, with position, normal, and triangle data,
  * and maybe UVs
  */
 public class NormalMesh implements Mesh {
+    @Getter
     final VAO vao;
     final List<Vector3f> positions = new ArrayList<>();
     final List<Vector3f> normals = new ArrayList<>();
     final List<Vector2f> uvs = new ArrayList<>();
     final List<Integer> triangles = new ArrayList<>();
+    @Setter
+    private int glPrimitiveType = GL_TRIANGLES;
 
     public NormalMesh() {
         vao = new VAO();
@@ -42,7 +48,7 @@ public class NormalMesh implements Mesh {
     public void draw() {
         // assume data is uploaded to VAO already
         vao.bind();
-        glDrawElements(GL_TRIANGLES, triangles.size(), GL_UNSIGNED_INT, 0);
+        glDrawElements(glPrimitiveType, triangles.size(), GL_UNSIGNED_INT, 0);
         vao.unbind();
     }
 
@@ -74,6 +80,10 @@ public class NormalMesh implements Mesh {
         triangles.add(a);
         triangles.add(b);
         triangles.add(c);
+    }
+
+    public void addElement(int a) {
+        triangles.add(a);
     }
 
     public void uploadData() {

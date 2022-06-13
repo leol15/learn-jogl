@@ -2,15 +2,17 @@ package com.play.app.scene.lights;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.dataformat.yaml.YAMLParser;
-import com.play.app.collider.*;
+import com.play.app.collider.Collider;
+import com.play.app.collider.UnitCollider;
 import com.play.app.graphics.UnitGeometries;
 import com.play.app.graphics.UnitGeometries.Type;
-import com.play.app.mesh.*;
+import com.play.app.mesh.Mesh;
+import com.play.app.mesh.UnitMesh;
 import com.play.app.ui.editor.PropertyEditor;
 import com.play.app.utils.WorldSerializer;
 
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Vector4f;
 
 /**
  * light direction is (0, 1, 0)
@@ -51,13 +53,16 @@ public class DirectionalLight implements Light {
     @Override
     public void save(WorldSerializer writer) throws IOException {
         writer.writeStartObject();
-        writer.writeObjectType(this.getClass());
         writer.writeObjectField("color", color);
         writer.writeEndObject();
     }
 
-    public static DirectionalLight load(YAMLParser parser) {
-        return null;
+    public static DirectionalLight create(WorldSerializer reader) throws IOException {
+        final DirectionalLight dl = new DirectionalLight();
+        reader.consumeStartObject();
+        reader.consumeObjectField("color", dl.color);
+        reader.consumeEndObject();
+        return dl;
     }
 
 }

@@ -7,7 +7,7 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import com.play.app.collider.UnitCollider;
 import com.play.app.graphics.UnitGeometries.Type;
 import com.play.app.mesh.SpringMesh;
-import com.play.app.physics.TimeStepEngine;
+import com.play.app.physics.PhysicsEngine;
 import com.play.app.scene.SceneNode;
 import com.play.app.scene.sceneobject.SimpleSceneObject;
 import com.play.app.utils.SceneManager;
@@ -22,9 +22,9 @@ public class UseSpring {
         final SceneNode root = new SceneNode();
         final SceneManager sceneManager = new SceneManager(windowManager, root);
 
-        final TimeStepEngine timeStepEngine = new TimeStepEngine();
+        final PhysicsEngine physicsEngine = new PhysicsEngine();
 
-        final SpringMesh mesh = new SpringMesh(timeStepEngine);
+        final SpringMesh mesh = new SpringMesh(physicsEngine);
         final SimpleSceneObject simpleSO = new SimpleSceneObject();
         simpleSO.shape.setMesh(mesh);
         simpleSO.shape.setCollider(new UnitCollider(Type.Cube));
@@ -40,7 +40,7 @@ public class UseSpring {
             glfwPollEvents();
         }
 
-        timeStepEngine.terminated = true;
+        physicsEngine.setStop(true);
 
     }
 }
