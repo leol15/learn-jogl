@@ -35,7 +35,6 @@ import lombok.extern.log4j.Log4j2;
 public class SceneManager {
     private SceneNode root;
 
-    private final WindowManager windowManager;
     public final UIManager uiManager;
     @Getter
     private final CameraManager cameraManager;
@@ -48,7 +47,6 @@ public class SceneManager {
     public SceneManager(WindowManager windowManager, SceneNode root) {
         this.root = root;
         // this.cam = cam;
-        this.windowManager = windowManager;
         this.uiManager = new UIManager(windowManager);
         cameraManager = new CameraManager(windowManager, this);
         editorUI = new EditorUI(uiManager);
@@ -58,8 +56,7 @@ public class SceneManager {
         CameraUBO.getInstance();
 
         // some editor buttons
-        createTopButtonRow();
-        editorUI.treeViewSelectNodeEvent.addListener(this::selectSceneNode);
+        addTopButtonRow();
 
         // set background color
         glClearColor(0.12f, 0.12f, 0.12f, 0.0f);
@@ -81,24 +78,12 @@ public class SceneManager {
     }
 
     public void rootNodeUpdate() {
-        editorUI.sceneTreeView.setSceneNode(root);
+        editorUI.setRootNode(root);
     }
 
     // select node via ray (click in scene)
     public void selectSceneNode(Ray ray) {
-        selectSceneNode(root.castRay(ray));
-    }
-
-    private void selectSceneNode(SceneNode newSceneNode) {
-        editorUI.propertyEditor.clear();
-        if (selectedNode != null) {
-            selectedNode.deselect(editorUI.propertyEditor);
-            editorUI.propertyEditor.clear();
-        }
-        if (newSceneNode != null) {
-            selectedNode = newSceneNode;
-            selectedNode.select(editorUI.propertyEditor);
-        }
+        editorUI.selectSceneNode(root.castRay(ray));
     }
 
     public boolean focusSelect() {
@@ -129,7 +114,7 @@ public class SceneManager {
         glDepthMask(true);
     }
 
-    private void createTopButtonRow() {
+    private void addTopButtonRow() {
         // save/load
         final Button saveButton = new Button(uiManager, "Save");
         final Button loadButton = new Button(uiManager, "Load");
@@ -141,11 +126,10 @@ public class SceneManager {
         final Button switchControlsButton = new Button(uiManager, "Switch View");
         switchControlsButton.onClickEvent.addListener(e -> switchCameraControl());
 
-        editorUI.topRow.addChild(switchControlsButton);
-        editorUI.topRow.addChild(fileNameInput);
-        editorUI.topRow.addChild(saveButton);
-        editorUI.topRow.addChild(loadButton);
-
+        editorUI.addTopRowElement(switchControlsButton);
+        editorUI.addTopRowElement(fileNameInput);
+        editorUI.addTopRowElement(saveButton);
+        editorUI.addTopRowElement(loadButton);
     }
 
     private void loadScene(String fileName) {

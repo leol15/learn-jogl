@@ -13,7 +13,9 @@ import org.lwjgl.BufferUtils;
 /**
  * Represent unit shapes
  * 
- * For example -Unit plane: [0, 1][0, 1][0, 0]
+ * For example:
+ * - Unit plane: [0, 1][0, 1][0, 0]
+ * - Unit sphere: diameter 1 centered at origin          
  * Vertex attribute layout: position(3) normal(3) uv(2)
  */
 public class UnitGeometries {

@@ -22,19 +22,24 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class SceneTreeView extends AbstractUIWrapper {
 
+    private static final String EDIT_NODE_BUTTON_TEXT = "o";
+
     @Getter
     private SceneNode sceneNode;
-    private Listener<SceneNode> sceneNodeListener;
+
+    private final TextInput sceneNodeLabel;
+    private final UIText sceneObjectType;
+    private final DropdownList childrenDropdown;
+    private final Button expandChildrenButton;
+    private final Button focusNodeBtn;
 
     private float leftPadding = 20;
-    private final TextInput sceneNodeLabel;
-    private final UIText sceneObjectLabel;
     // to add padding
     private final ContainerV container;
     private final UITransformer dropdownTransformer;
     private final Padding listDivider;
-    private final DropdownList dropdownList;
-    private final Button expandChildrenButton;
+
+    private Listener<SceneTreeView> focusNodeListener;
 
     public SceneTreeView(UIManager uiManager) {
         this(uiManager, null, null);
@@ -44,43 +49,43 @@ public class SceneTreeView extends AbstractUIWrapper {
         this(uiManager, node, null);
     }
 
-    public SceneTreeView(UIManager uiManager, SceneNode node, Listener<SceneNode> sceneNodeListener) {
+    public SceneTreeView(UIManager uiManager, SceneNode node, Listener<SceneTreeView> sceneNodeListener) {
         super(uiManager);
         sceneNode = node;
-        this.sceneNodeListener = sceneNodeListener;
+        this.focusNodeListener = sceneNodeListener;
 
         sceneNodeLabel = new TextInput(uiManager);
         sceneNodeLabel.setWidth(200);
         sceneNodeLabel.setPadding(0);
-        sceneObjectLabel = new UIText(uiManager);
-        dropdownList = new DropdownList(uiManager);
-        dropdownTransformer = new UITransformer(uiManager, dropdownList);
+        sceneObjectType = new UIText(uiManager);
+        childrenDropdown = new DropdownList(uiManager);
+        dropdownTransformer = new UITransformer(uiManager, childrenDropdown);
         expandChildrenButton = new Button(uiManager);
 
         container = new ContainerV(uiManager);
 
         final ContainerH nodeLabelRow = new ContainerH(uiManager);
-        final Button nodeLabelButton = new Button(uiManager, "E");
-        nodeLabelButton.padding = 0;
+        focusNodeBtn = new Button(uiManager, EDIT_NODE_BUTTON_TEXT);
+        focusNodeBtn.padding = 0;
         nodeLabelRow.addChild(sceneNodeLabel);
-        nodeLabelRow.addChild(nodeLabelButton);
+        nodeLabelRow.addChild(focusNodeBtn);
         nodeLabelRow.addChild(expandChildrenButton);
 
         container.addChild(nodeLabelRow);
-        container.addChild(sceneObjectLabel);
+        container.addChild(sceneObjectType);
         listDivider = new Padding(uiManager, 100, 6);
         container.addChild(listDivider);
 
         container.addChild(dropdownTransformer);
         dropdownTransformer.translation.x = leftPadding;
 
-        dropdownList.setShowButton(false);
+        childrenDropdown.setShowButton(false);
         expandChildrenButton.onClickEvent.addListener(this::toggleChildren);
         expandChildrenButton.textColor().set(1, 1, 0);
         expandChildrenButton.padding = 0;
 
         // events
-        nodeLabelButton.onClickEvent.addListener(e -> sceneNodeClicked());
+        focusNodeBtn.onClickEvent.addListener(e -> sceneNodeClicked());
         sceneNodeLabel.changeEvent.addListener(e -> updateNodeName(e.getAsString()));
 
         sceneNodeUpdated();
@@ -91,15 +96,20 @@ public class SceneTreeView extends AbstractUIWrapper {
         sceneNodeUpdated();
     }
 
-    public void setSceneNodeListener(Listener<SceneNode> l) {
-        sceneNodeListener = l;
-        // requires to rebuild tree to propagate callback, could optimize
-        sceneNodeUpdated();
+    /**
+     * UI indication of it being edited 
+     */
+    public void focus() {
+        focusNodeBtn.setDrawBackground(false);
+    }
+
+    public void defocus() {
+        focusNodeBtn.setDrawBackground(true);
     }
 
     private void sceneNodeClicked() {
-        if (sceneNodeListener != null) {
-            sceneNodeListener.hey(sceneNode);
+        if (focusNodeListener != null) {
+            focusNodeListener.hey(this);
         }
     }
 
@@ -109,11 +119,14 @@ public class SceneTreeView extends AbstractUIWrapper {
         }
     }
 
-    private void sceneNodeUpdated() {
-        dropdownList.clear();
+    /**
+     * A change in SN happened, need to rebuild view
+     */
+    public void sceneNodeUpdated() {
+        childrenDropdown.clear();
         if (sceneNode != null) {
             sceneNode.getChildren().forEach(n -> {
-                dropdownList.addItem(new SceneTreeView(uiManager, n, sceneNodeListener));
+                childrenDropdown.addItem(new SceneTreeView(uiManager, n, focusNodeListener));
             });
         }
         configureLabels();
@@ -127,15 +140,15 @@ public class SceneTreeView extends AbstractUIWrapper {
             if (sceneNode.getSceneObject() != null) {
                 sceneObjectName = sceneNode.getSceneObject().getClass().getSimpleName();
             }
-            sceneObjectLabel.setText(String.valueOf(sceneObjectName));
+            sceneObjectType.setText(String.valueOf(sceneObjectName));
         } else {
             sceneNodeLabel.setContent("Empty");
-            sceneObjectLabel.setText("Null");
+            sceneObjectType.setText("Null");
         }
     }
 
     private void toggleChildren(Button b) {
-        dropdownList.toggle();
+        childrenDropdown.toggle();
         toggleUpdated();
     }
 
@@ -145,11 +158,11 @@ public class SceneTreeView extends AbstractUIWrapper {
             listDivider.bgColor.set(0.6, 0.6, 0.6);
         } else {
             final int numChildren = sceneNode.getNumChildren();
-            if (dropdownList.isExpanded()) {
-                expandChildrenButton.setLabel(String.format("v [%d]", numChildren));
+            if (childrenDropdown.isExpanded()) {
+                expandChildrenButton.setLabel(String.format("- [%d]", numChildren));
                 listDivider.bgColor.set(0, 0.3, 0.3);
             } else {
-                expandChildrenButton.setLabel(String.format("< [%d]", numChildren));
+                expandChildrenButton.setLabel(String.format("+ [%d]", numChildren));
                 if (numChildren == 0) {
                     listDivider.bgColor.set(0.6, 0.2, 0.2);
                 } else {

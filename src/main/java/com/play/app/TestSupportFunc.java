@@ -7,21 +7,18 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.play.app.mesh.Mesh;
 import com.play.app.scene.SceneNode;
 import com.play.app.scene.sceneobject.SimpleSceneObject;
 import com.play.app.utils.SceneManager;
 import com.play.app.utils.ShaderUtils;
 import com.play.app.utils.WindowManager;
 import com.play.app.zSupportFunc.GJKSolver;
-import com.play.app.zSupportFunc.SupportDrawer;
 import com.play.app.zSupportFunc.SupportFunc;
 import com.play.app.zSupportFunc.funcs.CircleSupp;
 import com.play.app.zSupportFunc.funcs.CompositeSupp;
+import com.play.app.zSupportFunc.funcs.SphereSupp;
 import com.play.app.zSupportFunc.funcs.SquareSupp;
 import com.play.app.zSupportFunc.funcs.TriangleSupp;
-
-import org.joml.Vector3f;
 
 import lombok.extern.log4j.Log4j2;
 
@@ -30,7 +27,8 @@ public class TestSupportFunc {
 
     private final CompositeSupp compositeSupp;
     private final SimpleSceneObject compositeSO;
-    private final SceneNode circleNode, squareNode, triangleNode;
+    private SceneNode circleNode, squareNode, triangleNode;
+    private final SceneNode sphereNode;
 
     public TestSupportFunc(long window) {
 
@@ -41,35 +39,37 @@ public class TestSupportFunc {
         final SupportFunc square = new SquareSupp();
         squareNode = createSO(root, square);
         square.setModel(squareNode.modelInfo);
+        squareNode.setName("Square");
         squareNode.modelInfo.translation.set(-0.8, -0.7, -0.5);
 
-        final TriangleSupp triangle = new TriangleSupp();
-        triangleNode = createSO(root, triangle);
-        triangle.setModel(triangleNode.modelInfo);
-        triangleNode.modelInfo.translation.x = 2;
+        // final TriangleSupp triangle = new TriangleSupp();
+        // triangleNode = createSO(root, triangle);
+        // triangle.setModel(triangleNode.modelInfo);
+        // triangleNode.modelInfo.translation.x = 2;
 
-        final CircleSupp circle = new CircleSupp();
-        // circleNode = null;
-        circleNode = createSO(root, circle);
-        circle.setModel(circleNode.modelInfo);
+        // final CircleSupp circle = new CircleSupp();
+        // // circleNode = null;
+        // circleNode = createSO(root, circle);
+        // circle.setModel(circleNode.modelInfo);
+
+        final SphereSupp sphere = new SphereSupp();
+        sphereNode = createSO(root, sphere);
+        sphereNode.setName("Sphere");
+        sphere.setModel(sphereNode.modelInfo);
 
         // for collision
         final List<SupportFunc> shapes = new ArrayList<>();
         shapes.add(square);
-        shapes.add(circle);
+        shapes.add(sphere);
         final List<SceneNode> shapeNodes = new ArrayList<>();
         shapeNodes.add(squareNode);
-        shapeNodes.add(circleNode);
+        shapeNodes.add(sphereNode);
 
         compositeSupp = new CompositeSupp();
         compositeSupp.add(square);
         // compositeSupp.subtract(triangle);
         // compositeSupp.subtract(square);
-        compositeSupp.subtract(circle);
-
-        // debug
-        final Vector3f pOnComp = compositeSupp.getMaxWorld(new Vector3f(1, -2, 1).normalize());
-        log.debug("pOnComp {}", pOnComp);
+        compositeSupp.subtract(sphere);
 
         compositeSO = (SimpleSceneObject) createSO(root, compositeSupp).getSceneObject();
 
@@ -94,13 +94,13 @@ public class TestSupportFunc {
     private SceneNode createSO(SceneNode root, SupportFunc f) {
         final SimpleSceneObject so = new SimpleSceneObject();
         so.property.shader = ShaderUtils.getShader("Simple3D");
-        so.shape.mesh = SupportDrawer.toMesh(f);
+        so.shape.mesh = f.getDebugMesh();
         return root.createChild().setSceneObject(so);
     }
 
     private void recomputeComposite() {
         compositeSO.shape.mesh.destroy();
-        compositeSO.shape.mesh = SupportDrawer.toMesh(compositeSupp);
+        compositeSO.shape.mesh = compositeSupp.getDebugMesh();
     }
 
     private void solveCollisions(List<SupportFunc> shapes, List<SceneNode> nodes) {

@@ -1,6 +1,7 @@
 package com.play.app.zSupportFunc;
 
 import com.play.app.basics.SpacialThing;
+import com.play.app.mesh.Mesh;
 import com.play.app.utils.Func;
 
 import org.joml.Matrix4f;
@@ -34,6 +35,11 @@ public abstract class SupportFunc {
         // to world space
         model.getModelMatrix(modelMat);
         return Func.multMat(posLocal, 1, modelMat);
+    }
+
+    // debugging
+    public Mesh getDebugMesh() {
+        return SupportDrawer.toMesh(this);
     }
 
     // gets the points on shape with maximum projection on direction
