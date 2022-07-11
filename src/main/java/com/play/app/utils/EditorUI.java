@@ -58,6 +58,7 @@ public class EditorUI {
         sceneNodeEditRow = new ContainerH(uiManager);
         middleColumnContents.addChild(topRow);
         middleColumnContents.addChild(sceneNodeEditRow);
+        sceneNodeEditRow.setVisible(false); // starts hidden
 
         // right column
         final UIAligner rightColumnAligner = new UIAligner(uiManager, rightColumnContents);
@@ -96,23 +97,16 @@ public class EditorUI {
      * Adds button to create child nodes
      */
     private void setupSceneNodeEditRow() {
-        SceneNodeFactory.setupCreateButtons(uiManager, sceneNodeEditRow, this::addChildSceneNode);
-        // final Button createCubeBtn = new Button(uiManager, "+ Cube");
-        // createCubeBtn.onClickEvent.addListener(btn -> {
-        //     addChildSceneNode(SceneNodeFactory.createCube());
-        // });
-        // sceneNodeEditRow.addChild(createCubeBtn);
-    }
-
-    private void addChildSceneNode(SceneNode node) {
-        if (selectedNode != null) {
-            selectedNode.addChild(node);
-            if (selectedSceneTreeView != null) {
-                selectedSceneTreeView.sceneNodeUpdated();
-            } else {
-                sceneTreeView.sceneNodeUpdated();
+        SceneNodeFactory.setupCreateButtons(uiManager, sceneNodeEditRow, node -> {
+            if (selectedNode != null) {
+                selectedNode.addChild(node);
+                if (selectedSceneTreeView != null) {
+                    selectedSceneTreeView.sceneNodeUpdated();
+                } else {
+                    sceneTreeView.sceneNodeUpdated();
+                }
             }
-        }
+        });
     }
 
     /**
@@ -135,9 +129,17 @@ public class EditorUI {
     }
 
     private void selectSceneTreeView(SceneTreeView sceneTreeView) {
-        selectSceneNode(sceneTreeView.getSceneNode());
-        selectedSceneTreeView = sceneTreeView;
-        sceneTreeView.focus();
+        if (sceneTreeView == null || sceneTreeView == selectedSceneTreeView) {
+            // de-select
+            selectSceneNode(null);
+            selectedSceneTreeView = null;
+            sceneNodeEditRow.setVisible(false);
+        } else {
+            selectSceneNode(sceneTreeView.getSceneNode());
+            selectedSceneTreeView = sceneTreeView;
+            sceneNodeEditRow.setVisible(true);
+            sceneTreeView.focus();
+        }
     }
 
     public void setRootNode(SceneNode root) {

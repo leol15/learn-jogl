@@ -7,7 +7,6 @@ import com.play.app.graphics.UnitGeometries;
 import com.play.app.graphics.UnitGeometries.Type;
 import com.play.app.mesh.UnitMesh;
 import com.play.app.scene.SceneNode;
-import com.play.app.scene.sceneobject.SOShape;
 import com.play.app.scene.sceneobject.SimpleSceneObject;
 import com.play.app.ui.UIManager;
 import com.play.app.ui.elements.AbstractContainer;
@@ -40,14 +39,11 @@ public class SceneNodeFactory {
         final SimpleSceneObject so = new SimpleSceneObject();
         node.setSceneObject(so);
 
-        configureShape(so.shape, type);
-        so.property.shader = ShaderUtils.getShader(shaderName);
+        so.property.setShader(ShaderUtils.getShader(shaderName));
+        so.shape.setMesh(new UnitMesh(type))
+                .setCollider(new UnitCollider(type));
 
         return node;
     }
 
-    private static void configureShape(SOShape shape, UnitGeometries.Type type) {
-        shape.setMesh(new UnitMesh(type))
-                .setCollider(new UnitCollider(type));
-    }
 }

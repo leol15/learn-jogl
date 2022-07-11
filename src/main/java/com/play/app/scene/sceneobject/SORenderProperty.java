@@ -9,11 +9,14 @@ import com.play.app.graphics.ShaderProgram;
 import com.play.app.graphics.Texture;
 import com.play.app.scene.lights.LightingMaterial;
 import com.play.app.ui.editor.PropertyEditor;
+import com.play.app.ui.property.StringProperty;
 import com.play.app.utils.CONST;
+import com.play.app.utils.ShaderUtils;
 import com.play.app.utils.WorldSerializer;
 
 import org.joml.Matrix4f;
 
+import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -22,15 +25,33 @@ import lombok.experimental.Accessors;
  */
 @Accessors(chain = true)
 public class SORenderProperty implements Editable, Savable, Loadable {
-    @Setter
-    public ShaderProgram shader;
+
+    @Getter
+    private ShaderProgram shader;
+    private StringProperty shaderName = new StringProperty("");
     @Setter
     public Texture texture;
     public final LightingMaterial material = new LightingMaterial();
 
+    public SORenderProperty() {
+        shaderName.updateEvent.addListener(sp -> {
+            final ShaderProgram newShader = ShaderUtils.getShader(sp.getValue());
+            if (newShader != null) {
+                setShader(newShader);
+            }
+        });
+    }
+
+    public SORenderProperty setShader(ShaderProgram newShader) {
+        shader = newShader;
+        shaderName.setValue(ShaderUtils.getShaderName(shader));
+        return this;
+    }
+
     @Override
     public void addToEditor(PropertyEditor editor) {
         material.select(editor);
+        editor.addProperty("Shader", shaderName);
     }
 
     public void bind(Matrix4f modelMatrix) {
@@ -68,9 +89,11 @@ public class SORenderProperty implements Editable, Savable, Loadable {
         reader.consumeStartObject();
 
         reader.consumeFieldName("shader");
-        shader = ShaderProgram.create(reader);
+        setShader(ShaderProgram.create(reader));
+
         reader.consumeFieldName("texture");
-        texture = Texture.create(reader);
+        setTexture(Texture.create(reader));
+
         reader.consumeObjectField("material", material);
 
         reader.consumeEndObject();

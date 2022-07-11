@@ -25,14 +25,14 @@ public class UseCameraControl {
 
         final SimpleSceneObject simpleSO = new SimpleSceneObject();
         simpleSO.shape.setUnitGeometry(Type.Sphere);
-        simpleSO.property.shader = ShaderUtils.getShader("Weird");
+        simpleSO.property.setShader(ShaderUtils.getShader("Weird"));
         root.createChild().setSceneObject(simpleSO);
 
         while (!glfwWindowShouldClose(window)) {
             // loop
             glfwSwapBuffers(window);
             final float t = (float) glfwGetTime();
-            simpleSO.property.shader.uniformf("t", t);
+            simpleSO.property.getShader().uniformf("t", t);
             sceneManager.render();
 
             glfwPollEvents();

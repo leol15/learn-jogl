@@ -93,7 +93,7 @@ public class TestSupportFunc {
 
     private SceneNode createSO(SceneNode root, SupportFunc f) {
         final SimpleSceneObject so = new SimpleSceneObject();
-        so.property.shader = ShaderUtils.getShader("Simple3D");
+        so.property.setShader(ShaderUtils.getShader("Simple3D"));
         so.shape.mesh = f.getDebugMesh();
         return root.createChild().setSceneObject(so);
     }

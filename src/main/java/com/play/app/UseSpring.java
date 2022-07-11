@@ -28,8 +28,8 @@ public class UseSpring {
         final SimpleSceneObject simpleSO = new SimpleSceneObject();
         simpleSO.shape.setMesh(mesh);
         simpleSO.shape.setCollider(new UnitCollider(Type.Cube));
-        simpleSO.property.shader = ShaderUtils.getShader("Simple3D");
-        simpleSO.property.shader.uniform("debug", 1);
+        simpleSO.property.setShader(ShaderUtils.getShader("Simple3D"));
+        simpleSO.property.getShader().uniform("debug", 1);
         root.createChild().setSceneObject(simpleSO);
 
         while (!glfwWindowShouldClose(window)) {

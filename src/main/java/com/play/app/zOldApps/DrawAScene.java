@@ -81,7 +81,7 @@ public class DrawAScene {
                 InstancingObject clickLines = new InstancingObject();
                 clickLines.shape.setMesh(new UnitMesh(UnitGeometries.Type.Cyclinder));
                 // clickLines.setColor(Func.toVec4(Color.YELLOW));
-                clickLines.property.shader = simple3DShader;
+                clickLines.property.setShader(simple3DShader);
 
                 SceneNode lineSceneNode = new SceneNode().setSceneObject(clickLines);
                 rootSceneNode.addChild(lineSceneNode);

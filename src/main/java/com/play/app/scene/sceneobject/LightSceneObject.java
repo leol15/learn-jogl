@@ -17,7 +17,7 @@ public class LightSceneObject extends SimpleSceneObject {
     public LightSceneObject(Light light) {
         super();
         // debug shader
-        property.shader = ShaderUtils.getShader("Simple3D");
+        property.setShader(ShaderUtils.getShader("Simple3D"));
         setLight(light);
     }
 

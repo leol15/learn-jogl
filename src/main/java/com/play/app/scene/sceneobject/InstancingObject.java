@@ -45,7 +45,7 @@ public class InstancingObject implements SceneObject {
 
         for (final SpacialThing modelInfo : instances) {
             // override the instance model matrix
-            if (property.shader != null) {
+            if (property.getShader() != null) {
                 modelInfo.getModelMatrix(tmpMatrix);
                 tmpMatrix.mulLocal(transform);
                 property.bind(tmpMatrix);

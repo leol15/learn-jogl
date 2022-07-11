@@ -81,7 +81,7 @@ public class ParticlesSceneObject extends SimpleSceneObject {
         }
 
         for (final Particle p : particles) {
-            if (property.shader != null) {
+            if (property.getShader() != null) {
                 // rotate to face camera 
                 if (isBillboard.getValue()) {
                     p.model.rotation.set(invertedCameraRotation);

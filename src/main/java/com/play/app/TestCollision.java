@@ -35,7 +35,7 @@ public class TestCollision {
         root.createChild().setSceneObject(sphere);
         // sphere.shape.collider = new UnitCollider(UnitGeometries.Type.Sphere);
         sphere.shape.mesh = new UnitMesh(UnitGeometries.Type.Sphere);
-        sphere.property.shader = ShaderUtils.getShader("Simple3D");
+        sphere.property.setShader(ShaderUtils.getShader("Simple3D"));
 
         physicsEngine.addGlobalActor(entity -> {
             entity.getAccumulator().force.add(0, -0.1f, 0);

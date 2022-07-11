@@ -9,6 +9,7 @@ import com.play.app.ui.elements.Padding;
 import com.play.app.ui.elements.UIText;
 import com.play.app.ui.property.BooleanProperty;
 import com.play.app.ui.property.FloatProperty;
+import com.play.app.ui.property.StringProperty;
 
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -76,6 +77,10 @@ public class PropertyEditor extends AbstractUIWrapper {
 
     public void addProperty(String name, final BooleanProperty ref) {
         addRow(name).addChild(new BooleanEditor(uiManager, ref));
+    }
+
+    public void addProperty(String name, StringProperty ref) {
+        addRow(name).addChild(new StringEditor(uiManager, ref));
     }
 
     public void clear() {

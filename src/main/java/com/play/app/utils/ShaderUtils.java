@@ -60,6 +60,9 @@ public class ShaderUtils {
     }
 
     public static String getShaderName(ShaderProgram shader) {
+        if (shader == null) {
+            return "null";
+        }
         for (final String k : SHADERS.keySet()) {
             if (SHADERS.get(k).equals(shader)) {
                 return k;
