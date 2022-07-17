@@ -15,29 +15,39 @@ public class DropdownList extends AbstractUIWrapper {
     private final Button button;
     private final ContainerV items;
     private final ContainerV container;
+    private String dropDownLabel = "dropdown";
 
     public DropdownList(UIManager uiManager) {
         super(uiManager);
         container = new ContainerV(uiManager);
         items = new ContainerV(uiManager);
-        button = new Button(uiManager, "Expand (0)");
+        button = new Button(uiManager);
         container.addChild(button);
 
         items.padding = 4;
         button.onClickEvent.addListener(e -> toggle());
+
+        updateLabel();
     }
 
     public void addItem(UIElement e) {
         items.addChild(e);
+        updateLabel();
     }
 
     public UIElement removeItem(UIElement e) {
         final UIElement el = items.removeChild(e);
+        updateLabel();
         return el;
+    }
+
+    public int size() {
+        return items.numChildren();
     }
 
     public void clear() {
         items.clear();
+        updateLabel();
     }
 
     public void toggle() {
@@ -47,12 +57,16 @@ public class DropdownList extends AbstractUIWrapper {
         }
         expanded = !expanded;
         if (expanded) {
-            button.setLabel("Collapse");
             container.addChild(items);
         } else {
-            button.setLabel(String.format("Expand (%d)", items.numChildren()));
             container.removeChild(items);
         }
+        updateLabel();
+    }
+
+    public void setDropDownLabel(String label) {
+        dropDownLabel = label;
+        updateLabel();
     }
 
     public void setShowButton(boolean showButton) {
@@ -64,6 +78,14 @@ public class DropdownList extends AbstractUIWrapper {
             container.preprendChild(button);
         } else {
             container.removeChild(button);
+        }
+    }
+
+    private void updateLabel() {
+        if (expanded) {
+            button.setLabel(String.format("%s -(%d)", dropDownLabel, items.numChildren()));
+        } else {
+            button.setLabel(String.format("%s +(%d)", dropDownLabel, items.numChildren()));
         }
     }
 

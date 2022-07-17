@@ -18,9 +18,12 @@ import com.play.app.ui.elements.UIAligner;
 import com.play.app.ui.elements.UIAligner.Alignment;
 import com.play.app.utils.WindowManager.Layer;
 
+import lombok.extern.log4j.Log4j2;
+
 /**
  * Builds a UI for editing view
  */
+@Log4j2
 public class EditorUI {
 
     // ui elements
@@ -97,16 +100,40 @@ public class EditorUI {
      * Adds button to create child nodes
      */
     private void setupSceneNodeEditRow() {
-        SceneNodeFactory.setupCreateButtons(uiManager, sceneNodeEditRow, node -> {
-            if (selectedNode != null) {
-                selectedNode.addChild(node);
-                if (selectedSceneTreeView != null) {
-                    selectedSceneTreeView.sceneNodeUpdated();
-                } else {
-                    sceneTreeView.sceneNodeUpdated();
-                }
-            }
+        // create children
+        SceneNodeFactory.setupCreateButtons(uiManager, sceneNodeEditRow, this::addChildNode);
+
+        // create empty node
+        final Button createEmptyNodeBtn = new Button(uiManager, "New Empty Node");
+        createEmptyNodeBtn.onClickEvent.addListener(btn -> {
+            addChildNode(new SceneNode().setName("Node"));
         });
+        sceneNodeEditRow.addChild(createEmptyNodeBtn);
+
+        // remove node
+        final Button deleteNodeBtn = new Button(uiManager, "Delete");
+        deleteNodeBtn.bgColor.set(0.8, 0.2, 0.2);
+        deleteNodeBtn.onClickEvent.addListener(btn -> {
+            if (selectedNode != null) {
+                final SceneNode tbr = selectedNode;
+                selectSceneTreeView(null);
+                tbr.getParent().removeChild(selectedNode);
+                sceneTreeView.sceneNodeUpdated();
+            }
+            deleteNodeBtn.bgColor.set(0.8, 0.2, 0.2);
+        });
+        sceneNodeEditRow.addChild(deleteNodeBtn);
+    }
+
+    private void addChildNode(SceneNode node) {
+        if (selectedNode != null) {
+            selectedNode.addChild(node);
+            if (selectedSceneTreeView != null) {
+                selectedSceneTreeView.sceneNodeUpdated();
+            } else {
+                sceneTreeView.sceneNodeUpdated();
+            }
+        }
     }
 
     /**

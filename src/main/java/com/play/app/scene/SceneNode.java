@@ -36,6 +36,7 @@ public class SceneNode implements Savable {
     public final SpacialThing modelInfo = new SpacialThing();
 
     private final List<SceneNode> children = new ArrayList<>();
+    @Getter
     private SceneNode parent = null;
 
     public SceneNode addChild(final SceneNode child) {
