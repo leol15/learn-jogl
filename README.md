@@ -5,7 +5,7 @@ Playing with LWJGL
 To get started, run
 
 ```
-make
+git clone git@github.com:leol15/learn-jogl.git && cd learn-jogl && make
 ```
 
 ### To learn / configure depenency see
