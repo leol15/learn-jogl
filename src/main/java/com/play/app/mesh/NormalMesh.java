@@ -11,6 +11,7 @@ import com.play.app.utils.*;
 
 import org.joml.*;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -48,7 +49,11 @@ public class NormalMesh implements Mesh {
     public void draw() {
         // assume data is uploaded to VAO already
         vao.bind();
-        glDrawElements(glPrimitiveType, triangles.size(), GL_UNSIGNED_INT, 0);
+        if (glPrimitiveType == GL11.GL_LINE_LOOP) {
+            glDrawArrays(GL_LINE_LOOP, 0, triangles.size());
+        } else {
+            glDrawElements(glPrimitiveType, triangles.size(), GL_UNSIGNED_INT, 0);
+        }
         vao.unbind();
     }
 

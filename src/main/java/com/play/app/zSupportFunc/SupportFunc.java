@@ -37,6 +37,11 @@ public abstract class SupportFunc {
         return Func.multMat(posLocal, 1, modelMat);
     }
 
+    // experiment
+    final public Vector3f getSlice(Vector3f worldHeight, Vector3f sliceDir) {
+        return new Vector3f();
+    }
+
     // debugging
     public Mesh getDebugMesh() {
         return SupportDrawer.toMesh(this);

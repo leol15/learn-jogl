@@ -3,6 +3,8 @@ package com.play.app.zSupportFunc.funcs;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.play.app.mesh.Mesh;
+import com.play.app.zSupportFunc.SupportDrawer;
 import com.play.app.zSupportFunc.SupportFunc;
 
 import org.joml.Vector3f;
@@ -30,6 +32,11 @@ public class CompositeSupp extends SupportFunc {
         final Vector3f negDir = new Vector3f(direction).mul(-1);
         negative.forEach(f -> max.sub(f.getMaxWorld(negDir)));
         return max;
+    }
+
+    @Override
+    public Mesh getDebugMesh() {
+        return SupportDrawer.toLineMesh(this);
     }
 
 }

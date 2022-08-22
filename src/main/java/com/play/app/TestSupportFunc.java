@@ -16,6 +16,7 @@ import com.play.app.zSupportFunc.GJKSolver;
 import com.play.app.zSupportFunc.SupportFunc;
 import com.play.app.zSupportFunc.funcs.CircleSupp;
 import com.play.app.zSupportFunc.funcs.CompositeSupp;
+import com.play.app.zSupportFunc.funcs.CyclinderSupp;
 import com.play.app.zSupportFunc.funcs.SphereSupp;
 import com.play.app.zSupportFunc.funcs.SquareSupp;
 import com.play.app.zSupportFunc.funcs.TriangleSupp;
@@ -28,7 +29,7 @@ public class TestSupportFunc {
     private final CompositeSupp compositeSupp;
     private final SimpleSceneObject compositeSO;
     private SceneNode circleNode, squareNode, triangleNode;
-    private final SceneNode sphereNode;
+    private SceneNode sphereNode;
 
     public TestSupportFunc(long window) {
 
@@ -52,26 +53,32 @@ public class TestSupportFunc {
         // circleNode = createSO(root, circle);
         // circle.setModel(circleNode.modelInfo);
 
-        final SphereSupp sphere = new SphereSupp();
-        sphereNode = createSO(root, sphere);
-        sphereNode.setName("Sphere");
-        sphere.setModel(sphereNode.modelInfo);
+        // final SphereSupp sphere = new SphereSupp();
+        // sphereNode = createSO(root, sphere);
+        // sphereNode.setName("Sphere");
+        // sphere.setModel(sphereNode.modelInfo);
+
+        final CyclinderSupp cyclinder = new CyclinderSupp();
+        final SceneNode cyclinderNode = createSO(root, cyclinder);
+        cyclinderNode.setName("Cyclinder");
+        cyclinder.setModel(cyclinderNode.modelInfo);
 
         // for collision
         final List<SupportFunc> shapes = new ArrayList<>();
         shapes.add(square);
-        shapes.add(sphere);
+        shapes.add(cyclinder);
         final List<SceneNode> shapeNodes = new ArrayList<>();
         shapeNodes.add(squareNode);
-        shapeNodes.add(sphereNode);
+        shapeNodes.add(cyclinderNode);
 
         compositeSupp = new CompositeSupp();
-        compositeSupp.add(square);
+        compositeSupp.add(cyclinder);
         // compositeSupp.subtract(triangle);
         // compositeSupp.subtract(square);
-        compositeSupp.subtract(sphere);
+        // compositeSupp.subtract(cyclinder);
 
         compositeSO = (SimpleSceneObject) createSO(root, compositeSupp).getSceneObject();
+        compositeSO.property.setShader(ShaderUtils.getShader("Line"));
 
         sceneManager.rootNodeUpdate();
 

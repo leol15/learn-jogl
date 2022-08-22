@@ -33,37 +33,6 @@ root:
             OBJ_DATA:
               type: "Sphere"
     children: []
-  - name: "Spot Light"
-    modelInfo:
-      translation: "0.000 20.000 0.000"
-      scale: "1.000 1.000 1.000"
-      rotation: "0.000 0.000 0.000 1.000"
-    sceneObject:
-      OBJ_TYPE: "com.play.app.scene.sceneobject.LightSceneObject"
-      OBJ_DATA:
-        property:
-          shader: "Simple3D"
-          texture: null
-          material:
-            color: "1.000 1.000 1.000 1.000"
-            specularHardness: 100.0
-        shape:
-          mesh:
-            OBJ_TYPE: "com.play.app.mesh.UnitMesh"
-            OBJ_DATA:
-              type: "Cone"
-              resolution: 20
-          collider:
-            OBJ_TYPE: "com.play.app.collider.UnitCollider"
-            OBJ_DATA:
-              type: "Cube"
-        light:
-          OBJ_TYPE: "com.play.app.scene.lights.SpotLight"
-          OBJ_DATA:
-            color: "1.000 1.000 1.000 1.000"
-            attenuation: "0.000 0.010 1.000"
-            angle: 60.0
-    children: []
   - name: "Green Ball"
     modelInfo:
       translation: "2.900 1.000 1.000"
@@ -202,3 +171,32 @@ root:
               OBJ_DATA:
                 type: "Cube"
       children: []
+  - name: "Dir Light"
+    modelInfo:
+      translation: "0.000 10.000 0.000"
+      scale: "1.000 1.000 1.000"
+      rotation: "-0.966 0.000 0.000 0.259"
+    sceneObject:
+      OBJ_TYPE: "com.play.app.scene.sceneobject.LightSceneObject"
+      OBJ_DATA:
+        property:
+          shader: "Simple3D"
+          texture: null
+          material:
+            color: "0.900 0.900 0.900 1.000"
+            specularHardness: 100.0
+        shape:
+          mesh:
+            OBJ_TYPE: "com.play.app.mesh.UnitMesh"
+            OBJ_DATA:
+              type: "Cone"
+              resolution: 20
+          collider:
+            OBJ_TYPE: "com.play.app.collider.UnitCollider"
+            OBJ_DATA:
+              type: "Cone"
+        light:
+          OBJ_TYPE: "com.play.app.scene.lights.DirectionalLight"
+          OBJ_DATA:
+            color: "0.900 0.900 0.900 1.000"
+    children: []

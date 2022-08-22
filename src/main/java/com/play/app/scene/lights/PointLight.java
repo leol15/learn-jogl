@@ -50,7 +50,7 @@ public class PointLight implements Light {
         writer.writeEndObject();
     }
 
-    public static PointLight load(WorldSerializer reader) throws IOException {
+    public static PointLight create(WorldSerializer reader) throws IOException {
         final PointLight pl = new PointLight();
 
         reader.consumeStartObject();

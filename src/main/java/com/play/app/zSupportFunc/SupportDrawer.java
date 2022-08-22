@@ -14,7 +14,7 @@ public class SupportDrawer {
 
     public static Mesh toMesh(SupportFunc f) {
         final NormalMesh mesh = new NormalMesh();
-        // sample a bunch for points
+        // sample a bunch of points
         int count = 100;
         Vector3f prevP = null;
         for (int i = 0; i < count; i++) {
@@ -32,6 +32,44 @@ public class SupportDrawer {
             mesh.addElement(i);
         }
         mesh.setGlPrimitiveType(GL11.GL_TRIANGLE_FAN);
+        mesh.uploadData();
+        return mesh;
+    }
+
+    public static Mesh toLineMesh(SupportFunc f) {
+        final NormalMesh mesh = new NormalMesh();
+        // sample a 3D thing, slice it
+        // sphere radius 1 centered at origin
+        final Vector3f dir = new Vector3f();
+        final int numLevels = 20;
+        final int numSlices = 20;
+        int vertexCt = 0;
+        // bottom
+        dir.set(0, -1, 0);
+        mesh.addPos(f.getMaxWorld(dir));
+        mesh.addElement(vertexCt);
+        vertexCt++;
+        // circle
+        for (int i = 1; i < numLevels; i++) {
+            float y = 2.0f * i / numLevels - 1;
+            for (int j = 0; j <= numSlices; j++) {
+                float angle = (float) (2 * Math.PI * j / numSlices);
+                float x = Math.cos(angle);
+                float z = Math.sin(angle);
+                dir.set(x, y, z);
+                final Vector3f p = f.getMaxWorld(dir);
+                mesh.addPos(p);
+                mesh.addElement(vertexCt);
+                vertexCt++;
+            }
+        }
+        // top
+        dir.set(0, 1, 0);
+        mesh.addPos(f.getMaxWorld(dir));
+        mesh.addElement(vertexCt);
+        vertexCt++;
+
+        mesh.setGlPrimitiveType(GL11.GL_LINE_LOOP);
         mesh.uploadData();
         return mesh;
     }
